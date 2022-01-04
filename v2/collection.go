@@ -1,6 +1,8 @@
 package ecore
 
 type Collection[T any] interface {
+	Iterable[T]
+
 	Add(t T) bool
 
 	AddAll(c Collection[T]) bool
