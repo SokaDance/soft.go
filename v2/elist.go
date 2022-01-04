@@ -13,6 +13,8 @@ type EList[T any] interface {
 
 	MoveIndex(oldIndex int, newIndex int) T
 
+	IndexOf(T) int
+
 	Get(int) T
 
 	Set(int, T) T
