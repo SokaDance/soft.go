@@ -9,7 +9,7 @@
 
 package ecore
 
-func diagnosticError(errors EList) string {
+func diagnosticError(errors EList[EDiagnostic]) string {
 	if errors.Empty() {
 		return ""
 	} else {
