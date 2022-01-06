@@ -1,11 +1,11 @@
 package ecore
 
 type EList[T any] interface {
-	Collection[T]
+	ECollection[T]
 
 	Insert(int, T) bool
 
-	InsertAll(int, Collection[T]) bool
+	InsertAll(int, ECollection[T]) bool
 
 	RemoveAt(int) T
 

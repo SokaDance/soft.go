@@ -18,7 +18,7 @@ func (l *emptyImmutableEList[T]) Add(t T) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList[T]) AddAll(c Collection[T]) bool {
+func (l *emptyImmutableEList[T]) AddAll(c ECollection[T]) bool {
 	panic("Immutable list can't be modified")
 }
 
@@ -26,7 +26,7 @@ func (l *emptyImmutableEList[T]) Insert(index int, t T) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList[T]) InsertAll(index int, c Collection[T]) bool {
+func (l *emptyImmutableEList[T]) InsertAll(index int, c ECollection[T]) bool {
 	panic("Immutable list can't be modified")
 }
 
@@ -55,11 +55,11 @@ func (l *emptyImmutableEList[T]) Remove(t T) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList[T]) RemoveAll(c Collection[T]) bool {
+func (l *emptyImmutableEList[T]) RemoveAll(c ECollection[T]) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList[T]) RetainAll(c Collection[T]) bool {
+func (l *emptyImmutableEList[T]) RetainAll(c ECollection[T]) bool {
 	panic("Immutable list can't be modified")
 }
 
@@ -88,7 +88,7 @@ func (l *emptyImmutableEList[T]) IndexOf(t T) int {
 }
 
 // Iterator through the array
-func (l *emptyImmutableEList[T]) Iterator() Iterator[T] {
+func (l *emptyImmutableEList[T]) Iterator() EIterator[T] {
 	return &eListIterator[T]{list: l}
 }
 
@@ -149,7 +149,7 @@ func (l *immutableEList[T]) IndexOf(t T) int {
 }
 
 // Iterator through the array
-func (l *immutableEList[T]) Iterator() Iterator[T] {
+func (l *immutableEList[T]) Iterator() EIterator[T] {
 	return &eListIterator[T]{list: l}
 }
 

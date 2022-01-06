@@ -104,7 +104,7 @@ func TestMockEList_AddAll(t *testing.T) {
 	l := &MockEList[int]{}
 	c := &MockEList[int]{}
 	l.On("AddAll", c).Once().Return(true)
-	l.On("AddAll", c).Once().Return(func(Collection[int]) bool {
+	l.On("AddAll", c).Once().Return(func(ECollection[int]) bool {
 		return true
 	})
 	assert.True(t, l.AddAll(c))
@@ -116,7 +116,7 @@ func TestMockEList_InsertAll(t *testing.T) {
 	l := &MockEList[int]{}
 	c := &MockEList[int]{}
 	l.On("InsertAll", 0, c).Once().Return(true)
-	l.On("InsertAll", 0, c).Once().Return(func(int, Collection[int]) bool {
+	l.On("InsertAll", 0, c).Once().Return(func(int, ECollection[int]) bool {
 		return true
 	})
 	assert.True(t, l.InsertAll(0, c))
@@ -128,7 +128,7 @@ func TestMockEList_RemoveAll(t *testing.T) {
 	l := &MockEList[int]{}
 	c := &MockEList[int]{}
 	l.On("RemoveAll", c).Once().Return(true)
-	l.On("RemoveAll", c).Once().Return(func(Collection[int]) bool {
+	l.On("RemoveAll", c).Once().Return(func(ECollection[int]) bool {
 		return true
 	})
 	assert.True(t, l.RemoveAll(c))
@@ -140,7 +140,7 @@ func TestMockEList_RetainAll(t *testing.T) {
 	l := &MockEList[int]{}
 	c := &MockEList[int]{}
 	l.On("RetainAll", c).Once().Return(true)
-	l.On("RetainAll", c).Once().Return(func(Collection[int]) bool {
+	l.On("RetainAll", c).Once().Return(func(ECollection[int]) bool {
 		return true
 	})
 	assert.True(t, l.RetainAll(c))
@@ -181,7 +181,7 @@ func TestMockEList_Iterator(t *testing.T) {
 	l := &MockEList[int]{}
 	it := &MockIterator[int]{}
 	l.On("Iterator").Once().Return(it)
-	l.On("Iterator").Once().Return(func() Iterator[int] {
+	l.On("Iterator").Once().Return(func() EIterator[int] {
 		return it
 	})
 	assert.Equal(t, it, l.Iterator())

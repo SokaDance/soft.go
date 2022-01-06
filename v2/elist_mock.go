@@ -32,11 +32,11 @@ func (_m *MockEList[T]) Add(_a0 T) bool {
 }
 
 // AddAll provides a mock function with given fields: _a0
-func (_m *MockEList[T]) AddAll(_a0 Collection[T]) bool {
+func (_m *MockEList[T]) AddAll(_a0 ECollection[T]) bool {
 	ret := _m.Called(_a0)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(Collection[T]) bool); ok {
+	if rf, ok := ret.Get(0).(func(ECollection[T]) bool); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -123,11 +123,11 @@ func (_m *MockEList[T]) Insert(_a0 int, _a1 T) bool {
 }
 
 // InsertAll provides a mock function with given fields: _a0, _a1
-func (_m *MockEList[T]) InsertAll(_a0 int, _a1 Collection[T]) bool {
+func (_m *MockEList[T]) InsertAll(_a0 int, _a1 ECollection[T]) bool {
 	ret := _m.Called(_a0, _a1)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(int, Collection[T]) bool); ok {
+	if rf, ok := ret.Get(0).(func(int, ECollection[T]) bool); ok {
 		r0 = rf(_a0, _a1)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -137,15 +137,15 @@ func (_m *MockEList[T]) InsertAll(_a0 int, _a1 Collection[T]) bool {
 }
 
 // Iterator provides a mock function with given fields:
-func (_m *MockEList[T]) Iterator() Iterator[T] {
+func (_m *MockEList[T]) Iterator() EIterator[T] {
 	ret := _m.Called()
 
-	var r0 Iterator[T]
-	if rf, ok := ret.Get(0).(func() Iterator[T]); ok {
+	var r0 EIterator[T]
+	if rf, ok := ret.Get(0).(func() EIterator[T]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(Iterator[T])
+			r0 = ret.Get(0).(EIterator[T])
 		}
 	}
 
@@ -204,11 +204,11 @@ func (_m *MockEList[T]) RemoveAt(_a0 int) T {
 }
 
 // RemoveAll provides a mock function with given fields: _a0
-func (_m *MockEList[T]) RemoveAll(_a0 Collection[T]) bool {
+func (_m *MockEList[T]) RemoveAll(_a0 ECollection[T]) bool {
 	ret := _m.Called(_a0)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(Collection[T]) bool); ok {
+	if rf, ok := ret.Get(0).(func(ECollection[T]) bool); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -218,11 +218,11 @@ func (_m *MockEList[T]) RemoveAll(_a0 Collection[T]) bool {
 }
 
 // RemoveAll provides a mock function with given fields: _a0
-func (_m *MockEList[T]) RetainAll(_a0 Collection[T]) bool {
+func (_m *MockEList[T]) RetainAll(_a0 ECollection[T]) bool {
 	ret := _m.Called(_a0)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(Collection[T]) bool); ok {
+	if rf, ok := ret.Get(0).(func(ECollection[T]) bool); ok {
 		r0 = rf(_a0)
 	} else {
 		r0 = ret.Get(0).(bool)

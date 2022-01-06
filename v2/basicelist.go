@@ -18,11 +18,11 @@ type abstractEList[T comparable] interface {
 
 	doAdd(t T)
 
-	doAddAll(c Collection[T]) bool
+	doAddAll(c ECollection[T]) bool
 
 	doInsert(index int, t T)
 
-	doInsertAll(index int, c Collection[T]) bool
+	doInsertAll(index int, c ECollection[T]) bool
 
 	doClear() []T
 
@@ -90,7 +90,7 @@ func (list *basicEList[T]) asEList() EList[T] {
 }
 
 // Remove all elements in collection that already are in list
-func  (list *basicEList[T]) getNonDuplicates(c Collection[T]) Collection[T] {
+func  (list *basicEList[T]) getNonDuplicates(c ECollection[T]) ECollection[T] {
 	newList := NewBasicEList([]T{})
 	refList := list.asEList()
 	for it := c.Iterator(); it.HasNext(); {
@@ -121,7 +121,7 @@ func (list *basicEList[T]) doAdd(e T) {
 }
 
 // AddAll elements of an array in the current one
-func (list *basicEList[T]) AddAll(collection Collection[T]) bool {
+func (list *basicEList[T]) AddAll(collection ECollection[T]) bool {
 	if list.isUnique {
 		collection = list.getNonDuplicates(collection)
 		if collection.Size() == 0 {
@@ -132,7 +132,7 @@ func (list *basicEList[T]) AddAll(collection Collection[T]) bool {
 	return true
 }
 
-func (list *basicEList[T]) doAddAll(collection Collection[T]) bool {
+func (list *basicEList[T]) doAddAll(collection ECollection[T]) bool {
 	data := collection.ToArray()
 	list.data = append(list.data, data...)
 	abstractEList := list.asAbstractEList()
@@ -167,7 +167,7 @@ func (list *basicEList[T]) doInsert(index int, t T) {
 }
 
 // InsertAll element of an array at a given position
-func (list *basicEList[T]) InsertAll(index int, collection Collection[T]) bool {
+func (list *basicEList[T]) InsertAll(index int, collection ECollection[T]) bool {
 	if index < 0 || index > list.Size() {
 		panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(list.Size()))
 	}
@@ -181,7 +181,7 @@ func (list *basicEList[T]) InsertAll(index int, collection Collection[T]) bool {
 	return true
 }
 
-func (list *basicEList[T]) doInsertAll(index int, collection Collection[T]) bool {
+func (list *basicEList[T]) doInsertAll(index int, collection ECollection[T]) bool {
 	data := collection.ToArray()
 	list.data = append(list.data[:index], append(data, list.data[index:]...)...)
 	// events
@@ -258,7 +258,7 @@ func (list *basicEList[T]) doRemove(index int) T {
 	return object
 }
 
-func (list *basicEList[T]) RemoveAll(collection Collection[T]) bool {
+func (list *basicEList[T]) RemoveAll(collection ECollection[T]) bool {
 	modified := false
 	for i := list.Size() - 1; i >= 0; {
 		if collection.Contains(list.Get(i)) {
@@ -270,7 +270,7 @@ func (list *basicEList[T]) RemoveAll(collection Collection[T]) bool {
 	return modified
 }
 
-func (list *basicEList[T]) RetainAll(collection Collection[T]) bool {
+func (list *basicEList[T]) RetainAll(collection ECollection[T]) bool {
 	modified := false
 	for i := list.Size() - 1; i >= 0; {
 		if (!collection.Contains(list.Get(i))) {
@@ -359,7 +359,7 @@ func (list *basicEList[T]) IndexOf(t T) int {
 }
 
 // Iterator through the array
-func (list *basicEList[T]) Iterator() Iterator[T] {
+func (list *basicEList[T]) Iterator() EIterator[T] {
 	return &eListIterator[T]{list: list}
 }
 
