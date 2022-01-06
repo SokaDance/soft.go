@@ -59,7 +59,7 @@ func (l *notifierAdapterList) didAdd(index int, adapter EAdapter) {
 func (l *notifierAdapterList) didRemove(index int, adapter EAdapter) {
 	notifier := l.notifier.interfaces.(ENotifier)
 	if notifier.EDeliver() {
-		adapter.NotifyChanged(newNotifierNotification(l.notifier, REMOVING_ADAPTER, elem, nil, index))
+		adapter.NotifyChanged(newNotifierNotification(l.notifier, REMOVING_ADAPTER, adapter, nil, index))
 	}
 	adapter.UnSetTarget(notifier)
 }
@@ -102,7 +102,7 @@ func (notifier *AbstractENotifier) EBasicHasAdapters() bool {
 }
 
 func (notifier *AbstractENotifier) EAdapters() EList[EAdapter] {
-	return NewEmptyImmutableEList()
+	return NewEmptyImmutableEList[EAdapter]()
 }
 
 func (notifier *AbstractENotifier) EDeliver() bool {
