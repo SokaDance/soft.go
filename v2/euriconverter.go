@@ -16,5 +16,5 @@ type EURIConverter interface {
 
 	GetURIHandler(uri *URI) EURIHandler
 
-	GetURIHandlers() EList
+	GetURIHandlers() EList[EURIHandler]
 }
