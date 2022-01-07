@@ -179,7 +179,7 @@ func TestMockEList_Empty(t *testing.T) {
 
 func TestMockEList_Iterator(t *testing.T) {
 	l := &MockEList[int]{}
-	it := &MockIterator[int]{}
+	it := &MockEIterator[int]{}
 	l.On("Iterator").Once().Return(it)
 	l.On("Iterator").Once().Return(func() EIterator[int] {
 		return it
