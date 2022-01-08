@@ -91,7 +91,7 @@ func (list *basicEObjectList[T]) resolve(index int, object T) T {
 		if list.containment {
 			internal := list.interfaces.(eNotifyingListInternal[T])
 			notifications = internal.inverseRemove(object, notifications)
-			if resolvedInternal, _ := resolved.(EObjectInternal); resolvedInternal != nil && resolvedInternal.EInternalContainer() == nil {
+			if resolvedInternal, _ := any(resolved).(EObjectInternal); resolvedInternal != nil && resolvedInternal.EInternalContainer() == nil {
 				notifications = internal.inverseAdd(resolved, notifications)
 			}
 		}
@@ -102,13 +102,13 @@ func (list *basicEObjectList[T]) resolve(index int, object T) T {
 
 func (list *basicEObjectList[T]) resolveProxy(eObject T) T {
 	if list.proxies && eObject.EIsProxy() {
-		eObject , _ = list.owner.(EObjectInternal).EResolveProxy(eObject).(T)
+		eObject , _ = list.owner.EResolveProxy(eObject).(T)
 	}
 	return eObject
 }
 
 func (list *basicEObjectList[T]) inverseAdd(object T, notifications ENotificationChain) ENotificationChain {
-	internal, _ := object.(EObjectInternal)
+	internal, _ := any(object).(EObjectInternal)
 	if internal != nil && list.inverse {
 		if list.opposite {
 			return internal.EInverseAdd(list.owner, list.inverseFeatureID, notifications)
@@ -120,7 +120,7 @@ func (list *basicEObjectList[T]) inverseAdd(object T, notifications ENotificatio
 }
 
 func (list *basicEObjectList[T]) inverseRemove(object T, notifications ENotificationChain) ENotificationChain {
-	internal, _ := object.(EObjectInternal)
+	internal, _ := any(object).(EObjectInternal)
 	if internal != nil && list.inverse {
 		if list.opposite {
 			return internal.EInverseRemove(list.owner, list.inverseFeatureID, notifications)
@@ -146,8 +146,8 @@ func (l *unResolvedBasicEObjectList[T]) Add(elem T) bool {
 // AddAll elements of an list in the current one
 func (l *unResolvedBasicEObjectList[T]) AddAll(c ECollection[T]) bool {
 	if l.delegate.isUnique {
-		list = getNonDuplicates(list, c)
-		if list.Size() == 0 {
+		c = getNonDuplicates[T](l,c)
+		if c.Empty() {
 			return false
 		}
 	}
@@ -173,8 +173,8 @@ func (l *unResolvedBasicEObjectList[T]) InsertAll(index int, c ECollection[T]) b
 		panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(l.Size()))
 	}
 	if l.delegate.isUnique {
-		list = getNonDuplicates(list, c)
-		if list.Size() == 0 {
+		c = getNonDuplicates[T](l,c)
+		if c.Empty() {
 			return false
 		}
 	}
@@ -224,7 +224,15 @@ func (l *unResolvedBasicEObjectList[T]) RemoveAll(collection ECollection[T]) boo
 }
 
 func (l *unResolvedBasicEObjectList[T]) RetainAll(collection ECollection[T]) bool {
-	return false
+	modified := false
+	for i := l.Size() - 1; i >= 0; {
+		if !collection.Contains(l.Get(i)) {
+			l.RemoveAt(i)
+			modified = true
+		}
+		i--
+	}
+	return modified
 }
 
 // Get an element of the list
@@ -276,7 +284,7 @@ func (l *unResolvedBasicEObjectList[T]) IndexOf(elem T) int {
 
 // Iterator through the list
 func (l *unResolvedBasicEObjectList[T]) Iterator() EIterator[T] {
-	return &listIterator{list: l}
+	return &eListIterator[T]{list: l}
 }
 
 func (l *unResolvedBasicEObjectList[T]) ToArray() []T {

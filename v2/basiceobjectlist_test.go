@@ -18,14 +18,14 @@ import (
 
 func TestBasicEObjectListAccessors(t *testing.T) {
 	{
-		list := NewBasicEObjectList(nil, 1, -1, false, true, false, false, false)
+		list := NewBasicEObjectList[EObject](nil, 1, -1, false, true, false, false, false)
 		assert.Equal(t, nil, list.GetNotifier())
 		assert.Equal(t, nil, list.GetFeature())
 		assert.Equal(t, 1, list.GetFeatureID())
 	}
 	{
 		mockOwner := &MockEObjectInternal{}
-		list := NewBasicEObjectList(mockOwner, 1, -1, false, true, false, false, false)
+		list := NewBasicEObjectList[EObject](mockOwner, 1, -1, false, true, false, false, false)
 		assert.Equal(t, mockOwner, list.GetNotifier())
 		assert.Equal(t, 1, list.GetFeatureID())
 		mockClass := &MockEClass{}
@@ -42,7 +42,7 @@ func TestBasicEObjectListInverseNoOpposite(t *testing.T) {
 	mockOwner.On("EDeliver").Return(false)
 
 	mockObject := &MockEObjectInternal{}
-	list := NewBasicEObjectList(mockOwner, 1, -1, false, true, false, false, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, -1, false, true, false, false, false)
 	mockObject.On("EInverseAdd", mockOwner, -2, nil).Return(nil)
 
 	assert.True(t, list.Add(mockObject))
@@ -58,7 +58,7 @@ func TestBasicEObjectListInverseOpposite(t *testing.T) {
 	mockOwner.On("EDeliver").Return(false)
 
 	mockObject := &MockEObjectInternal{}
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, true, true, false, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, true, true, false, false)
 
 	mockObject.On("EInverseAdd", mockOwner, 2, nil).Return(nil)
 	assert.True(t, list.Add(mockObject))
@@ -75,7 +75,7 @@ func TestBasicEObjectListContains(t *testing.T) {
 
 	// no proxy
 	{
-		list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, false, false)
+		list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, false, false)
 		mockObject := &MockEObjectInternal{}
 		list.Add(mockObject)
 		assert.True(t, list.Contains(mockObject))
@@ -86,7 +86,7 @@ func TestBasicEObjectListContains(t *testing.T) {
 
 	// with proxy
 	{
-		list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+		list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 		mockObject := &MockEObjectInternal{}
 		list.Add(mockObject)
 		assert.True(t, list.Contains(mockObject))
@@ -104,7 +104,7 @@ func TestBasicEObjectListGet(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	mockOwner.On("EDeliver").Return(false)
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, false, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, false, false)
 	mockObject := &MockEObjectInternal{}
 	list.Add(mockObject)
 	assert.Equal(t, mockObject, list.Get(0))
@@ -112,7 +112,7 @@ func TestBasicEObjectListGet(t *testing.T) {
 
 	// with proxy
 	{
-		list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+		list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 		mockObject := &MockEObjectInternal{}
 		list.Add(mockObject)
 
@@ -130,7 +130,7 @@ func TestBasicEObjectListGetProxy(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	mockOwner.On("EDeliver").Return(false)
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	mockObject := &MockEObjectInternal{}
 	list.Add(mockObject)
 
@@ -146,7 +146,7 @@ func TestBasicEObjectListGetProxyContainment(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	mockOwner.On("EDeliver").Return(false).Once()
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, true, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, true, false, false, true, false)
 	mockObject := &MockEObjectInternal{}
 	list.Add(mockObject)
 	mock.AssertExpectationsForObjects(t, mockObject, mockOwner)
@@ -156,7 +156,7 @@ func TestBasicEObjectListGetProxyContainment(t *testing.T) {
 	mockResolved.On("EInternalContainer").Return(nil).Once()
 	mockObject.On("EIsProxy").Return(true)
 	mockOwner.On("EDeliver").Return(true).Once()
-	mockOwner.On("EAdapters").Return(NewImmutableEList([]interface{}{mockAdapter}))
+	mockOwner.On("EAdapters").Return(NewImmutableEList[EAdapter]([]EAdapter{mockAdapter}))
 	mockOwner.On("EResolveProxy", mockObject).Return(mockResolved)
 	mockOwner.On("ENotify", mock.MatchedBy(func(n ENotification) bool {
 		return n.GetNotifier() == mockOwner &&
@@ -174,18 +174,18 @@ func TestBasicEObjectListUnResolved(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	// no proxy
 	{
-		list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, false, false)
+		list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, false, false)
 		assert.Equal(t, list, list.GetUnResolvedList())
 	}
 	// with proxy
 	{
-		list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+		list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 		unresolved := list.GetUnResolvedList()
 		assert.NotEqual(t, list, unresolved)
-		unresolvedAsEObjectList, _ := unresolved.(EObjectList)
+		unresolvedAsEObjectList, _ := unresolved.(EObjectList[EObject])
 		assert.NotNil(t, unresolvedAsEObjectList)
 		assert.Equal(t, unresolved, unresolvedAsEObjectList.GetUnResolvedList())
-		unresolvedAsENotifyingList, _ := unresolved.(ENotifyingList)
+		unresolvedAsENotifyingList, _ := unresolved.(ENotifyingList[EObject])
 		assert.NotNil(t, unresolvedAsENotifyingList)
 	}
 }
@@ -195,7 +195,7 @@ func TestBasicEObjectListUnResolvedGet(t *testing.T) {
 	mockOwner.On("EDeliver").Return(false)
 
 	// add an object to unresolved
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 	mockObject := &MockEObjectInternal{}
 	unresolved.Add(mockObject)
@@ -220,7 +220,7 @@ func TestBasicEObjectListUnResolvedContains(t *testing.T) {
 	mockOwner.On("EDeliver").Return(false)
 
 	// add an object to unresolved
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 	mockObject := &MockEObjectInternal{}
 	unresolved.Add(mockObject)
@@ -242,7 +242,7 @@ func TestBasicEObjectListUnResolvedSet(t *testing.T) {
 	mockOwner.On("EDeliver").Return(false)
 
 	// add an object to unresolved
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 	mockObject := &MockEObjectInternal{}
 	unresolved.Add(mockObject)
@@ -263,12 +263,12 @@ func TestBasicEObjectListUnResolvedSetAlreadyPresent(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	// add an object to unresolved
 	mockOwner.On("EDeliver").Return(false).Once()
-	assert.True(t, unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2})))
+	assert.True(t, unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2})))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1)
 
 	assert.Panics(t, func() { unresolved.Set(1, mockObject1) })
@@ -279,7 +279,7 @@ func TestBasicEObjectListUnResolvedAdd(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	mockObject := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	// add an object to unresolved
@@ -297,21 +297,21 @@ func TestBasicEObjectListUnResolvedAddAll(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	// add an object to unresolved
 	mockOwner.On("EDeliver").Return(false).Once()
-	assert.True(t, unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1})))
+	assert.True(t, unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1})))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1)
 
 	// add two object with one already in the list
 	mockOwner.On("EDeliver").Return(false).Once()
-	assert.True(t, unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2})))
+	assert.True(t, unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2})))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
 	// add two object with already in the list
-	assert.False(t, unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2})))
+	assert.False(t, unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2})))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 }
 
@@ -319,7 +319,7 @@ func TestBasicEObjectListUnResolvedInsert(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	mockObject := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	assert.Panics(t, func() {
@@ -339,22 +339,22 @@ func TestBasicEObjectListUnResolvedInsertAll(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	assert.Panics(t, func() {
-		unresolved.InsertAll(1, NewImmutableEList([]interface{}{mockObject1}))
+		unresolved.InsertAll(1, NewImmutableEList([]EObject{mockObject1}))
 	})
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	assert.True(t, unresolved.InsertAll(0, NewImmutableEList([]interface{}{mockObject1})))
+	assert.True(t, unresolved.InsertAll(0, NewImmutableEList[EObject]([]EObject{mockObject1})))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1)
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	assert.True(t, unresolved.InsertAll(0, NewImmutableEList([]interface{}{mockObject1, mockObject2})))
+	assert.True(t, unresolved.InsertAll(0, NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2})))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
-	assert.False(t, unresolved.InsertAll(0, NewImmutableEList([]interface{}{mockObject1, mockObject2})))
+	assert.False(t, unresolved.InsertAll(0, NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2})))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 }
 
@@ -363,7 +363,7 @@ func TestBasicEObjectListUnResolvedMoveObject(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	assert.Panics(t, func() {
@@ -371,12 +371,12 @@ func TestBasicEObjectListUnResolvedMoveObject(t *testing.T) {
 	})
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2}))
+	unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2}))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
 	mockOwner.On("EDeliver").Return(false).Once()
 	unresolved.MoveObject(0, mockObject2)
-	assert.Equal(t, []interface{}{mockObject2, mockObject1}, unresolved.ToArray())
+	assert.Equal(t, []EObject{mockObject2, mockObject1}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 }
 
@@ -386,16 +386,16 @@ func TestBasicEObjectListUnResolvedMoveIndex(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2}))
+	unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2}))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.Move(0, 1)
-	assert.Equal(t, []interface{}{mockObject2, mockObject1}, unresolved.ToArray())
+	unresolved.MoveIndex(0, 1)
+	assert.Equal(t, []EObject{mockObject2, mockObject1}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
 }
@@ -405,16 +405,16 @@ func TestBasicEObjectListUnResolvedRemoveAt(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2}))
+	unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2}))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
 	mockOwner.On("EDeliver").Return(false).Once()
 	unresolved.RemoveAt(0)
-	assert.Equal(t, []interface{}{mockObject2}, unresolved.ToArray())
+	assert.Equal(t, []EObject{mockObject2}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 }
 
@@ -423,17 +423,17 @@ func TestBasicEObjectListUnResolvedRemove(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1}))
+	unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1}))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1)
 
 	mockOwner.On("EDeliver").Return(false).Once()
 	assert.False(t, unresolved.Remove(mockObject2))
 	assert.True(t, unresolved.Remove(mockObject1))
-	assert.Equal(t, []interface{}{}, unresolved.ToArray())
+	assert.Equal(t, []EObject{}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 }
 
@@ -443,16 +443,16 @@ func TestBasicEObjectListUnResolvedRemoveAll(t *testing.T) {
 	mockObject2 := &MockEObjectInternal{}
 	mockObject3 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2, mockObject3}))
+	unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2, mockObject3}))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1)
 
 	mockOwner.On("EDeliver").Return(false).Twice()
-	assert.True(t, unresolved.RemoveAll(NewImmutableEList([]interface{}{mockObject1, mockObject2})))
-	assert.Equal(t, []interface{}{mockObject3}, unresolved.ToArray())
+	assert.True(t, unresolved.RemoveAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2})))
+	assert.Equal(t, []EObject{mockObject3}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2, mockObject3)
 }
 
@@ -462,11 +462,11 @@ func TestBasicEObjectListUnResolvedClear(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
 	unresolved := list.GetUnResolvedList()
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2}))
+	unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2}))
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
 	mockOwner.On("EDeliver").Return(false).Once()
@@ -478,8 +478,8 @@ func TestBasicEObjectListUnResolvedAccessors(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	mockClass := &MockEClass{}
 	mockFeature := &MockEStructuralFeature{}
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
-	unresolved, _ := list.GetUnResolvedList().(ENotifyingList)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
+	unresolved, _ := list.GetUnResolvedList().(ENotifyingList[EObject])
 	assert.NotNil(t, unresolved)
 	assert.Equal(t, mockOwner, unresolved.GetNotifier())
 	assert.Equal(t, 1, unresolved.GetFeatureID())
@@ -495,12 +495,12 @@ func TestBasicEObjectListUnResolvedAddWithNotification(t *testing.T) {
 	mockOwner := &MockEObjectInternal{}
 	mockObject1 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
-	unresolved, _ := list.GetUnResolvedList().(ENotifyingList)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
+	unresolved, _ := list.GetUnResolvedList().(ENotifyingList[EObject])
 
 	mockOwner.On("EDeliver").Return(false).Once()
 	unresolved.AddWithNotification(mockObject1, nil)
-	assert.Equal(t, []interface{}{mockObject1}, unresolved.ToArray())
+	assert.Equal(t, []EObject{mockObject1}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1)
 }
 
@@ -509,17 +509,17 @@ func TestBasicEObjectListUnResolvedRemoveWithNotification(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
-	unresolved, _ := list.GetUnResolvedList().(ENotifyingList)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
+	unresolved, _ := list.GetUnResolvedList().(ENotifyingList[EObject])
 
 	mockOwner.On("EDeliver").Return(false).Once()
-	unresolved.AddAll(NewImmutableEList([]interface{}{mockObject1, mockObject2}))
-	assert.Equal(t, []interface{}{mockObject1, mockObject2}, unresolved.ToArray())
+	unresolved.AddAll(NewImmutableEList[EObject]([]EObject{mockObject1, mockObject2}))
+	assert.Equal(t, []EObject{mockObject1, mockObject2}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 
 	mockOwner.On("EDeliver").Return(false).Once()
 	unresolved.RemoveWithNotification(mockObject2, nil)
-	assert.Equal(t, []interface{}{mockObject1}, unresolved.ToArray())
+	assert.Equal(t, []EObject{mockObject1}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 }
 
@@ -528,16 +528,16 @@ func TestBasicEObjectListUnResolvedSetWithNotification(t *testing.T) {
 	mockObject1 := &MockEObjectInternal{}
 	mockObject2 := &MockEObjectInternal{}
 
-	list := NewBasicEObjectList(mockOwner, 1, 2, false, false, false, true, false)
-	unresolved, _ := list.GetUnResolvedList().(ENotifyingList)
+	list := NewBasicEObjectList[EObject](mockOwner, 1, 2, false, false, false, true, false)
+	unresolved, _ := list.GetUnResolvedList().(ENotifyingList[EObject])
 
 	mockOwner.On("EDeliver").Return(false).Once()
 	unresolved.Add(mockObject1)
-	assert.Equal(t, []interface{}{mockObject1}, unresolved.ToArray())
+	assert.Equal(t, []EObject{mockObject1}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1)
 
 	mockOwner.On("EDeliver").Return(false).Once()
 	unresolved.SetWithNotification(0, mockObject2, nil)
-	assert.Equal(t, []interface{}{mockObject2}, unresolved.ToArray())
+	assert.Equal(t, []EObject{mockObject2}, unresolved.ToArray())
 	mock.AssertExpectationsForObjects(t, mockOwner, mockObject1, mockObject2)
 }
