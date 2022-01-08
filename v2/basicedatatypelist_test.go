@@ -9,14 +9,14 @@ import (
 
 func TestBasicEDataTypeListAccessors(t *testing.T) {
 	{
-		list := NewBasicEDataTypeList(nil, 1, false)
+		list := NewBasicEDataTypeList[string](nil, 1, false)
 		assert.Equal(t, nil, list.GetNotifier())
 		assert.Equal(t, nil, list.GetFeature())
 		assert.Equal(t, 1, list.GetFeatureID())
 	}
 	{
 		mockOwner := &MockEObjectInternal{}
-		list := NewBasicEDataTypeList(mockOwner, 1, true)
+		list := NewBasicEDataTypeList[int](mockOwner, 1, true)
 		assert.Equal(t, mockOwner, list.GetNotifier())
 		assert.Equal(t, 1, list.GetFeatureID())
 		mockClass := &MockEClass{}
