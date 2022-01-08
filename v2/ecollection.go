@@ -23,3 +23,12 @@ type ECollection[T any] interface {
 
 	ToArray() []T
 }
+
+func ToArray[T,U any](c ECollection[T]) []U {
+	result := make([]U,c.Size())
+	i := 0
+	for it := c.Iterator() ; it.HasNext(); i++{
+		result[i] = any(it.Next()).(U)
+	}
+	return result
+}
