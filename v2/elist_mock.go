@@ -11,71 +11,8 @@
 
 package ecore
 
-import mock "github.com/stretchr/testify/mock"
-
 type MockEList[T any] struct {
-	mock.Mock
-}
-
-// Add provides a mock function with given fields: _a0
-func (_m *MockEList[T]) Add(_a0 T) bool {
-	ret := _m.Called(_a0)
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(T) bool); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
-}
-
-// AddAll provides a mock function with given fields: _a0
-func (_m *MockEList[T]) AddAll(_a0 ECollection[T]) bool {
-	ret := _m.Called(_a0)
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(ECollection[T]) bool); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
-}
-
-// Clear provides a mock function with given fields:
-func (_m *MockEList[T]) Clear() {
-	_m.Called()
-}
-
-// Contains provides a mock function with given fields: _a0
-func (_m *MockEList[T]) Contains(_a0 T) bool {
-	ret := _m.Called(_a0)
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(T) bool); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
-}
-
-// Empty provides a mock function with given fields:
-func (_m *MockEList[T]) Empty() bool {
-	ret := _m.Called()
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func() bool); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
+	MockECollection[T]
 }
 
 // Get provides a mock function with given fields: _a0
@@ -136,22 +73,6 @@ func (_m *MockEList[T]) InsertAll(_a0 int, _a1 ECollection[T]) bool {
 	return r0
 }
 
-// Iterator provides a mock function with given fields:
-func (_m *MockEList[T]) Iterator() EIterator[T] {
-	ret := _m.Called()
-
-	var r0 EIterator[T]
-	if rf, ok := ret.Get(0).(func() EIterator[T]); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EIterator[T])
-		}
-	}
-
-	return r0
-}
-
 // Move provides a mock function with given fields: _a0, _a1
 func (_m *MockEList[T]) MoveIndex(_a0 int, _a1 int) T {
 	ret := _m.Called(_a0, _a1)
@@ -173,20 +94,6 @@ func (_m *MockEList[T]) MoveObject(_a0 int, _a1 T) {
 	_m.Called(_a0, _a1)
 }
 
-// Remove provides a mock function with given fields: _a0
-func (_m *MockEList[T]) Remove(_a0 T) bool {
-	ret := _m.Called(_a0)
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(T) bool); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
-}
-
 // RemoveAt provides a mock function with given fields: _a0
 func (_m *MockEList[T]) RemoveAt(_a0 int) T {
 	ret := _m.Called(_a0)
@@ -203,35 +110,6 @@ func (_m *MockEList[T]) RemoveAt(_a0 int) T {
 	return r0
 }
 
-// RemoveAll provides a mock function with given fields: _a0
-func (_m *MockEList[T]) RemoveAll(_a0 ECollection[T]) bool {
-	ret := _m.Called(_a0)
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(ECollection[T]) bool); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
-}
-
-// RemoveAll provides a mock function with given fields: _a0
-func (_m *MockEList[T]) RetainAll(_a0 ECollection[T]) bool {
-	ret := _m.Called(_a0)
-
-	var r0 bool
-	if rf, ok := ret.Get(0).(func(ECollection[T]) bool); ok {
-		r0 = rf(_a0)
-	} else {
-		r0 = ret.Get(0).(bool)
-	}
-
-	return r0
-}
-
-
 // Set provides a mock function with given fields: _a0, _a1
 func (_m *MockEList[T]) Set(_a0 int, _a1 T) T {
 	ret := _m.Called(_a0, _a1)
@@ -242,36 +120,6 @@ func (_m *MockEList[T]) Set(_a0 int, _a1 T) T {
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(T)
-		}
-	}
-
-	return r0
-}
-
-// Size provides a mock function with given fields:
-func (_m *MockEList[T]) Size() int {
-	ret := _m.Called()
-
-	var r0 int
-	if rf, ok := ret.Get(0).(func() int); ok {
-		r0 = rf()
-	} else {
-		r0 = ret.Get(0).(int)
-	}
-
-	return r0
-}
-
-// ToArray provides a mock function with given fields:
-func (_m *MockEList[T]) ToArray() []T {
-	ret := _m.Called()
-
-	var r0 []T
-	if rf, ok := ret.Get(0).(func() []T); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]T)
 		}
 	}
 
