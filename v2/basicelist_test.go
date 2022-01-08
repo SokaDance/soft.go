@@ -13,6 +13,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBasicEListGet(t *testing.T) {
@@ -21,6 +22,12 @@ func TestBasicEListGet(t *testing.T) {
 	assert.Equal(t, arr.Get(1), 5)
 	assert.Equal(t, arr.Get(2), 7)
 	assert.Panics(t, func() { arr.Get(3) })
+}
+
+func TestBasicEListAsAbstractEList(t *testing.T) {
+	arr := NewBasicEList[int]([]int{3, 5, 7})
+	abs , _ := arr.interfaces.(abstractEList[int])
+	require.NotNil(t,abs)
 }
 
 func TestBasicSetInterafaces(t *testing.T) {

@@ -90,12 +90,11 @@ func (list *basicEList[T]) asEList() EList[T] {
 }
 
 // Remove all elements in collection that already are in list
-func  (list *basicEList[T]) getNonDuplicates(c ECollection[T]) ECollection[T] {
+func getNonDuplicates[T comparable](l EList[T] ,c ECollection[T]) ECollection[T] {
 	newList := NewBasicEList([]T{})
-	refList := list.asEList()
 	for it := c.Iterator(); it.HasNext(); {
 		value := it.Next()
-		if !newList.Contains(value) && !refList.Contains(value) {
+		if !newList.Contains(value) && !l.Contains(value) {
 			newList.Add(value)
 		}
 	}
@@ -123,7 +122,7 @@ func (list *basicEList[T]) doAdd(e T) {
 // AddAll elements of an array in the current one
 func (list *basicEList[T]) AddAll(collection ECollection[T]) bool {
 	if list.isUnique {
-		collection = list.getNonDuplicates(collection)
+		collection = getNonDuplicates[T](list,collection)
 		if collection.Size() == 0 {
 			return false
 		}
@@ -172,7 +171,7 @@ func (list *basicEList[T]) InsertAll(index int, collection ECollection[T]) bool 
 		panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(list.Size()))
 	}
 	if list.isUnique {
-		collection = list.getNonDuplicates(collection)
+		collection = getNonDuplicates[T](list,collection)
 		if collection.Size() == 0 {
 			return false
 		}

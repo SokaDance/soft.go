@@ -180,7 +180,7 @@ func (list *BasicENotifyingList[T]) doInsertAll(index int, c ECollection[T]) boo
 	return result
 }
 
-func (list *BasicENotifyingList[T]) doSet(index int, newObject T) interface{} {
+func (list *BasicENotifyingList[T]) doSet(index int, newObject T) T {
 	oldObject := list.basicEList.doSet(index, newObject)
 	if newObject != oldObject {
 		var notifications ENotificationChain
@@ -194,7 +194,7 @@ func (list *BasicENotifyingList[T]) doSet(index int, newObject T) interface{} {
 func (list *BasicENotifyingList[T]) doClear() []T {
 	oldData := list.basicEList.doClear()
 	if len(oldData) == 0 {
-		list.createAndDispatchNotification(nil, REMOVE_MANY, []interface{}{}, nil, -1)
+		list.createAndDispatchNotification(nil, REMOVE_MANY, []T{}, nil, -1)
 	} else {
 		var notifications ENotificationChain = NewNotificationChain()
 		for _, e := range oldData {
