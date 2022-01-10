@@ -22,7 +22,7 @@ func TestEmptyImmutableAdd(t *testing.T) {
 
 func TestEmptyImmutableAddAll(t *testing.T) {
 	a := &emptyImmutableEList[int]{}
-	b := NewImmutableEList[int]([]int{1, 2})
+	b := NewImmutableEList([]int{1, 2})
 	assert.Panics(t, func() { a.AddAll(b) })
 }
 
@@ -33,7 +33,7 @@ func TestEmptyImmutableInsert(t *testing.T) {
 
 func TestEmptyImmutableInsertAll(t *testing.T) {
 	a := &emptyImmutableEList[int]{}
-	b := NewImmutableEList[int]([]int{1, 2})
+	b := NewImmutableEList([]int{1, 2})
 	assert.Panics(t, func() { a.InsertAll(0, b) })
 }
 
@@ -114,7 +114,7 @@ func TestImmutableEListAdd(t *testing.T) {
 
 func TestImmutableEListAddAll(t *testing.T) {
 	a := NewImmutableEList[int](nil)
-	b := NewImmutableEList[int]([]int{1, 2})
+	b := NewImmutableEList([]int{1, 2})
 	assert.Panics(t, func() { a.AddAll(b) })
 }
 
@@ -125,7 +125,7 @@ func TestImmutableEListInsert(t *testing.T) {
 
 func TestImmutableEListInsertAll(t *testing.T) {
 	a := NewImmutableEList[int](nil)
-	b := NewImmutableEList[int]([]int{1, 2})
+	b := NewImmutableEList([]int{1, 2})
 	assert.Panics(t, func() { a.InsertAll(0, b) })
 }
 
@@ -140,7 +140,7 @@ func TestImmutableEListMove(t *testing.T) {
 }
 
 func TestImmutableEListGet(t *testing.T) {
-	a := NewImmutableEList[int]([]int{1, 2})
+	a := NewImmutableEList([]int{1, 2})
 	assert.Equal(t, 1, a.Get(0))
 	assert.Equal(t, 2, a.Get(1))
 	assert.Panics(t, func() { a.Get(2) })
@@ -162,7 +162,7 @@ func TestImmutableEListRemove(t *testing.T) {
 }
 
 func TestImmutableEListSize(t *testing.T) {
-	a := NewImmutableEList[int]([]int{1, 2})
+	a := NewImmutableEList([]int{1, 2})
 	assert.Equal(t, 2, a.Size())
 }
 
@@ -182,7 +182,7 @@ func TestImmutableEListRemoveAll(t *testing.T) {
 }
 
 func TestImmutableEListContains(t *testing.T) {
-	a := NewImmutableEList[int]([]int{1, 2})
+	a := NewImmutableEList([]int{1, 2})
 	assert.True(t, a.Contains(2))
 	assert.False(t, a.Contains(3))
 	b := NewImmutableEList[int](nil)
@@ -192,7 +192,7 @@ func TestImmutableEListContains(t *testing.T) {
 func TestImmutableEListIterate(t *testing.T) {
 	var iDatas []int
 	iDatas = append(iDatas, 0, 2, 4, 6)
-	arr := NewImmutableEList[int](iDatas)
+	arr := NewImmutableEList(iDatas)
 	i := 0
 	for it := arr.Iterator(); it.HasNext(); {
 		assert.Equal(t, it.Next(), i)
@@ -202,6 +202,6 @@ func TestImmutableEListIterate(t *testing.T) {
 }
 
 func TestImmutableEListGetUnResolved(t *testing.T) {
-	l := NewImmutableEList[int]([]int{})
+	l := NewImmutableEList([]int{})
 	assert.Equal(t, l, l.GetUnResolvedList())
 }

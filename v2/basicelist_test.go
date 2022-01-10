@@ -17,7 +17,7 @@ import (
 )
 
 func TestBasicEListGet(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
+	arr := NewBasicEList([]int{3, 5, 7})
 	assert.Equal(t, arr.Get(0), 3)
 	assert.Equal(t, arr.Get(1), 5)
 	assert.Equal(t, arr.Get(2), 7)
@@ -25,9 +25,9 @@ func TestBasicEListGet(t *testing.T) {
 }
 
 func TestBasicEListAsAbstractEList(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
-	abs , _ := arr.interfaces.(abstractEList[int])
-	require.NotNil(t,abs)
+	arr := NewBasicEList([]int{3, 5, 7})
+	abs, _ := arr.interfaces.(abstractEList[int])
+	require.NotNil(t, abs)
 }
 
 func TestBasicSetInterafaces(t *testing.T) {
@@ -36,7 +36,7 @@ func TestBasicSetInterafaces(t *testing.T) {
 }
 
 func TestBasicEListSet(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
+	arr := NewBasicEList([]int{3, 5, 7})
 	arr.Set(0, 4)
 	arr.Set(1, 6)
 	arr.Set(2, 8)
@@ -45,41 +45,41 @@ func TestBasicEListSet(t *testing.T) {
 }
 
 func TestBasicEListSize(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
+	arr := NewBasicEList([]int{3, 5, 7})
 	assert.Equal(t, arr.Size(), 3)
 }
 
 func TestBasicEListAddAll(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
-	arr2 := NewBasicEList[int]([]int{2})
+	arr := NewBasicEList([]int{3, 5, 7})
+	arr2 := NewBasicEList([]int{2})
 	assert.True(t, arr2.AddAll(arr))
 	assert.Equal(t, []int{2, 3, 5, 7}, arr2.ToArray())
 }
 
 func TestBasicEListInsertPrepend(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3})
+	arr := NewBasicEList([]int{3})
 	assert.True(t, arr.Insert(0, 2))
 	assert.Equal(t, []int{2, 3}, arr.ToArray())
 	assert.Panics(t, func() { arr.Insert(-1, 1) })
 }
 
 func TestBasicEListInsertAppend(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3})
+	arr := NewBasicEList([]int{3})
 	assert.True(t, arr.Insert(1, 2))
 	assert.Equal(t, []int{3, 2}, arr.ToArray())
 	assert.Panics(t, func() { arr.Insert(3, 1) })
 }
 
 func TestBasicEListInsertMiddle(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
+	arr := NewBasicEList([]int{3, 5, 7})
 	assert.True(t, arr.Insert(1, 2))
 	assert.True(t, arr.Insert(2, 3))
 	assert.Equal(t, []int{3, 2, 3, 5, 7}, arr.ToArray())
 }
 
 func TestBasicEListInsertAll(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
-	arr2 := NewBasicEList[int]([]int{-3, -5, -7})
+	arr := NewBasicEList([]int{3, 5, 7})
+	arr2 := NewBasicEList([]int{-3, -5, -7})
 	arr2.InsertAll(1, arr)
 	assert.Equal(t, []int{-3, 3, 5, 7, -5, -7}, arr2.ToArray())
 	assert.Panics(t, func() { arr.InsertAll(-1, arr) })
@@ -87,92 +87,92 @@ func TestBasicEListInsertAll(t *testing.T) {
 }
 
 func TestBasicEListRemoveAll(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5, 7})
-	arr2 := NewBasicEList[int]([]int{3, 5})
+	arr := NewBasicEList([]int{3, 5, 7})
+	arr2 := NewBasicEList([]int{3, 5})
 	assert.True(t, arr.RemoveAll(arr2))
 	assert.Equal(t, []int{7}, arr.ToArray())
 }
 
 func TestBasicEListMoveObjectBefore(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveObject(3, 4)
 	assert.Equal(t, []int{2, 6, 8, 4, 10}, arr.ToArray())
 }
 
 func TestBasicEListMoveObjectAfter(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveObject(4, 4)
 	assert.Equal(t, []int{2, 6, 8, 10, 4}, arr.ToArray())
 }
 
 func TestBasicEListMoveObjectEnd(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveObject(0, 4)
 	assert.Equal(t, []int{4, 2, 6, 8, 10}, arr.ToArray())
 }
 
 func TestBasicEListMoveObjectSame(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveObject(1, 4)
 	assert.Equal(t, []int{2, 4, 6, 8, 10}, arr.ToArray())
 }
 
 func TestBasicEListMoveObjectInvalid(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	assert.Panics(t, func() { arr.MoveObject(1, 3) })
 }
 
 func TestBasicEListMoveInvalid(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	assert.Panics(t, func() { arr.MoveIndex(1, 7) })
 }
 
 func TestBasicEListMoveBorders(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4})
+	arr := NewBasicEList([]int{2, 4})
 	arr.MoveIndex(0, 1)
 	assert.Equal(t, []int{4, 2}, arr.ToArray())
 }
 
 func TestBasicEListMoveBordersInverse(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4})
+	arr := NewBasicEList([]int{2, 4})
 	arr.MoveIndex(1, 0)
 	assert.Equal(t, []int{4, 2}, arr.ToArray())
 }
 
 func TestBasicEListMoveComplex(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveIndex(0, 3)
 	assert.Equal(t, []int{4, 6, 8, 2, 10}, arr.ToArray())
 }
 
 func TestBasicEListMoveComplexEnd(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveIndex(0, 4)
 	assert.Equal(t, []int{4, 6, 8, 10, 2}, arr.ToArray())
 }
 
 func TestBasicEListMoveComplexInverse(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveIndex(3, 1)
 	assert.Equal(t, []int{2, 8, 4, 6, 10}, arr.ToArray())
 }
 
 func TestBasicEListRemoveBegin(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6})
+	arr := NewBasicEList([]int{2, 4, 6})
 	assert.Equal(t, arr.Size(), 3)
 	arr.Remove(2)
 	assert.Equal(t, []int{4, 6}, arr.ToArray())
 }
 
 func TestBasicEListRemoveEnd(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6})
+	arr := NewBasicEList([]int{2, 4, 6})
 	assert.Equal(t, arr.Size(), 3)
 	arr.Remove(6)
 	assert.Equal(t, []int{2, 4}, arr.ToArray())
 }
 
 func TestBasicEListRemoveMiddle(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 6})
+	arr := NewBasicEList([]int{2, 4, 6, 6})
 	assert.Equal(t, arr.Size(), 4)
 	arr.Remove(4)
 	arr.Remove(6)
@@ -180,44 +180,44 @@ func TestBasicEListRemoveMiddle(t *testing.T) {
 }
 
 func TestBasicEListRemoveInvalid(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	assert.False(t, arr.Remove(7))
 }
 
 func TestBasicEListRemoveAtInvalid(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2, 4, 6, 8, 10})
+	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	assert.Panics(t, func() { arr.RemoveAt(7) })
 }
 
 func TestBasicEListClear(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5})
+	arr := NewBasicEList([]int{3, 5})
 	assert.Equal(t, arr.Size(), 2)
 	arr.Clear()
 	assert.True(t, arr.Empty())
 }
 
 func TestBasicEListEmptyTrue(t *testing.T) {
-	arr := NewBasicEList[int]([]int{3, 5})
+	arr := NewBasicEList([]int{3, 5})
 	assert.False(t, arr.Empty())
 }
 
 func TestBasicEListEmptyFalse(t *testing.T) {
-	arr := NewBasicEList[int]([]int{})
+	arr := NewBasicEList([]int{})
 	assert.True(t, arr.Empty())
 }
 
 func TestBasicEListContainsFalse(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2})
+	arr := NewBasicEList([]int{2})
 	assert.False(t, arr.Contains(4))
 }
 
 func TestBasicEListContainsTrue(t *testing.T) {
-	arr := NewBasicEList[int]([]int{2})
+	arr := NewBasicEList([]int{2})
 	assert.True(t, arr.Contains(2))
 }
 
 func TestBasicEListIterate(t *testing.T) {
-	arr := NewBasicEList[int]([]int{0, 2, 4})
+	arr := NewBasicEList([]int{0, 2, 4})
 	i := 0
 	for it := arr.Iterator(); it.HasNext(); {
 		assert.Equal(t, it.Next(), i)
@@ -227,8 +227,8 @@ func TestBasicEListIterate(t *testing.T) {
 }
 
 func TestBasicEListAddAllUnique(t *testing.T) {
-	arr := NewUniqueBasicEList[int]([]int{3, 5, 7, 5})
-	arr2 := NewUniqueBasicEList[int]([]int{2})
+	arr := NewUniqueBasicEList([]int{3, 5, 7, 5})
+	arr2 := NewUniqueBasicEList([]int{2})
 	arr2.AddAll(arr)
 	assert.Equal(t, []int{2, 3, 5, 7}, arr2.ToArray())
 	arr3 := NewBasicEList[int](nil)
@@ -236,14 +236,14 @@ func TestBasicEListAddAllUnique(t *testing.T) {
 }
 
 func TestBasicEListAddUnique(t *testing.T) {
-	arr := NewUniqueBasicEList[int]([]int{})
+	arr := NewUniqueBasicEList([]int{})
 	assert.True(t, arr.Add(2))
 	assert.True(t, arr.Add(5))
 	assert.False(t, arr.Add(2))
 }
 
 func TestBasicEListInsertUnique(t *testing.T) {
-	arr := NewUniqueBasicEList[int]([]int{3, 5, 7})
+	arr := NewUniqueBasicEList([]int{3, 5, 7})
 	assert.Equal(t, arr.Insert(1, 2), true)
 	assert.Equal(t, arr.Insert(2, 9), true)
 	assert.Equal(t, arr.Insert(2, 3), false)
@@ -251,8 +251,8 @@ func TestBasicEListInsertUnique(t *testing.T) {
 }
 
 func TestBasicEListInsertAllUnique(t *testing.T) {
-	arr := NewUniqueBasicEList[int]([]int{3, 5, -5, 7})
-	arr2 := NewUniqueBasicEList[int]([]int{-3, -5, -7})
+	arr := NewUniqueBasicEList([]int{3, 5, -5, 7})
+	arr2 := NewUniqueBasicEList([]int{-3, -5, -7})
 	arr2.InsertAll(1, arr)
 	assert.Equal(t, arr2.ToArray(), []int{-3, 3, 5, 7, -5, -7})
 
@@ -261,7 +261,7 @@ func TestBasicEListInsertAllUnique(t *testing.T) {
 }
 
 func TestBasicEListSetUnique(t *testing.T) {
-	arr := NewUniqueBasicEList[int]([]int{1, 2})
+	arr := NewUniqueBasicEList([]int{1, 2})
 	assert.Panics(t, func() {
 		arr.Set(0, 2)
 	})

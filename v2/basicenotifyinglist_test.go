@@ -18,7 +18,7 @@ import (
 )
 
 func TestBasicNotifyingListAccessors(t *testing.T) {
-	l := newBasicENotifyingListFromData[any]([]any{})
+	l := newBasicENotifyingListFromData([]any{})
 	assert.Equal(t, nil, l.GetFeature())
 	assert.Equal(t, -1, l.GetFeatureID())
 	assert.Equal(t, nil, l.GetNotifier())
@@ -39,7 +39,7 @@ func newNotifyingListTestFn(factory func() *BasicENotifyingList[any]) *eNotifyin
 	l.mockAdapter = new(MockEAdapter)
 	l.interfaces = l
 	l.mockNotifier.On("EDeliver").Return(true)
-	l.mockNotifier.On("EAdapters").Return(NewImmutableEList[EAdapter]([]EAdapter{l.mockAdapter}))
+	l.mockNotifier.On("EAdapters").Return(NewImmutableEList([]EAdapter{l.mockAdapter}))
 	return l
 }
 
@@ -48,7 +48,7 @@ func newNotifyingListTest() *eNotifyingListTest {
 }
 
 func newNotifyingListTestFromData(data []any) *eNotifyingListTest {
-	return newNotifyingListTestFn(func() *BasicENotifyingList[any] { return newBasicENotifyingListFromData[any](data) })
+	return newNotifyingListTestFn(func() *BasicENotifyingList[any] { return newBasicENotifyingListFromData(data) })
 }
 
 func (list *eNotifyingListTest) GetNotifier() ENotifier {
