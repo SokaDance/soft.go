@@ -11,7 +11,7 @@ package ecore
 
 import "strconv"
 
-type basicEObjectList[T EObjectConstraint] struct {
+type basicEObjectList[T comparable] struct {
 	BasicENotifyingList[T]
 	owner            EObjectInternal
 	featureID        int
@@ -23,7 +23,7 @@ type basicEObjectList[T EObjectConstraint] struct {
 	unset            bool
 }
 
-func NewBasicEObjectList[T EObjectConstraint](owner EObjectInternal, featureID int, inverseFeatureID int, containment, inverse, opposite, proxies, unset bool) *basicEObjectList[T] {
+func NewBasicEObjectList[T comparable](owner EObjectInternal, featureID int, inverseFeatureID int, containment, inverse, opposite, proxies, unset bool) *basicEObjectList[T] {
 	l := new(basicEObjectList[T])
 	l.interfaces = l
 	l.data = []T{}
@@ -84,7 +84,7 @@ func (list *basicEObjectList[T]) doGet(index int) T {
 }
 
 func (list *basicEObjectList[T]) resolve(index int, object T) T {
-	resolved := list.resolveProxy(object)
+	resolved := list.resolveProxy(any(object).(EObject)).(T)
 	if resolved != object {
 		list.basicEList.doSet(index, resolved)
 		var notifications ENotificationChain
@@ -100,9 +100,9 @@ func (list *basicEObjectList[T]) resolve(index int, object T) T {
 	return resolved
 }
 
-func (list *basicEObjectList[T]) resolveProxy(eObject T) T {
+func (list *basicEObjectList[T]) resolveProxy(eObject EObject) EObject {
 	if list.proxies && eObject.EIsProxy() {
-		eObject , _ = list.owner.EResolveProxy(eObject).(T)
+		eObject = list.owner.EResolveProxy(eObject)
 	}
 	return eObject
 }
@@ -131,7 +131,7 @@ func (list *basicEObjectList[T]) inverseRemove(object T, notifications ENotifica
 	return notifications
 }
 
-type unResolvedBasicEObjectList[T EObjectConstraint] struct {
+type unResolvedBasicEObjectList[T comparable] struct {
 	delegate *basicEObjectList[T]
 }
 
@@ -146,7 +146,7 @@ func (l *unResolvedBasicEObjectList[T]) Add(elem T) bool {
 // AddAll elements of an list in the current one
 func (l *unResolvedBasicEObjectList[T]) AddAll(c ECollection[T]) bool {
 	if l.delegate.isUnique {
-		c = getNonDuplicates[T](l,c)
+		c = getNonDuplicates[T](l, c)
 		if c.Empty() {
 			return false
 		}
@@ -173,7 +173,7 @@ func (l *unResolvedBasicEObjectList[T]) InsertAll(index int, c ECollection[T]) b
 		panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(l.Size()))
 	}
 	if l.delegate.isUnique {
-		c = getNonDuplicates[T](l,c)
+		c = getNonDuplicates[T](l, c)
 		if c.Empty() {
 			return false
 		}

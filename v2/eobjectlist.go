@@ -9,13 +9,8 @@
 
 package ecore
 
-type EObjectConstraint interface {
-	comparable
-	EObject
-}
-
 // EObjectList is a list of EObject
-type EObjectList[T EObjectConstraint] interface {
+type EObjectList[T any] interface {
 	EList[T]
 
 	GetUnResolvedList() EList[T]
