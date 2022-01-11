@@ -241,9 +241,9 @@ func (eGenericType *eGenericTypeImpl) ESetFromID(featureID int, newValue any) {
     case EGENERIC_TYPE__ELOWER_BOUND:
         eGenericType.asEGenericType().SetELowerBound(newValue.(EGenericType))
     case EGENERIC_TYPE__ETYPE_ARGUMENTS:
-		list := eGenericType.asEGenericType().GetETypeArguments()
-        list.Clear()
-        list.AddAll(newValue.(EList[EGenericType]))
+		l := eGenericType.asEGenericType().GetETypeArguments()
+        l.Clear()
+        l.AddAll(newValue.(EList[EGenericType]))
     case EGENERIC_TYPE__ETYPE_PARAMETER:
         eGenericType.asEGenericType().SetETypeParameter(newValue.(ETypeParameter))
     case EGENERIC_TYPE__EUPPER_BOUND:

@@ -182,15 +182,15 @@ func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) any {
 func (ePackage *ePackageImpl) ESetFromID(featureID int, newValue any) {
     switch featureID {
     case EPACKAGE__ECLASSIFIERS:
-		list := ePackage.asEPackage().GetEClassifiers()
-        list.Clear()
-        list.AddAll(newValue.(EList[EClassifier]))
+		l := ePackage.asEPackage().GetEClassifiers()
+        l.Clear()
+        l.AddAll(newValue.(EList[EClassifier]))
     case EPACKAGE__EFACTORY_INSTANCE:
         ePackage.asEPackage().SetEFactoryInstance(newValue.(EFactory))
     case EPACKAGE__ESUB_PACKAGES:
-		list := ePackage.asEPackage().GetESubPackages()
-        list.Clear()
-        list.AddAll(newValue.(EList[EPackage]))
+		l := ePackage.asEPackage().GetESubPackages()
+        l.Clear()
+        l.AddAll(newValue.(EList[EPackage]))
     case EPACKAGE__NS_PREFIX:
         ePackage.asEPackage().SetNsPrefix(newValue.(string))
     case EPACKAGE__NS_URI:

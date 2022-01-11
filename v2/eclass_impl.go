@@ -405,17 +405,17 @@ func (eClass *eClassImpl) ESetFromID(featureID int, newValue any) {
     case ECLASS__ABSTRACT:
         eClass.asEClass().SetAbstract(newValue.(bool))
     case ECLASS__EOPERATIONS:
-		list := eClass.asEClass().GetEOperations()
-        list.Clear()
-        list.AddAll(newValue.(EList[EOperation]))
+		l := eClass.asEClass().GetEOperations()
+        l.Clear()
+        l.AddAll(newValue.(EList[EOperation]))
     case ECLASS__ESTRUCTURAL_FEATURES:
-		list := eClass.asEClass().GetEStructuralFeatures()
-        list.Clear()
-        list.AddAll(newValue.(EList[EStructuralFeature]))
+		l := eClass.asEClass().GetEStructuralFeatures()
+        l.Clear()
+        l.AddAll(newValue.(EList[EStructuralFeature]))
     case ECLASS__ESUPER_TYPES:
-		list := eClass.asEClass().GetESuperTypes()
-        list.Clear()
-        list.AddAll(newValue.(EList[EClass]))
+		l := eClass.asEClass().GetESuperTypes()
+        l.Clear()
+        l.AddAll(newValue.(EList[EClass]))
     case ECLASS__INTERFACE:
         eClass.asEClass().SetInterface(newValue.(bool))
     default:

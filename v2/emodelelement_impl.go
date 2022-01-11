@@ -77,9 +77,9 @@ func (eModelElement *eModelElementImpl) EGetFromID(featureID int, resolve bool) 
 func (eModelElement *eModelElementImpl) ESetFromID(featureID int, newValue any) {
     switch featureID {
     case EMODEL_ELEMENT__EANNOTATIONS:
-		list := eModelElement.asEModelElement().GetEAnnotations()
-        list.Clear()
-        list.AddAll(newValue.(EList[EAnnotation]))
+		l := eModelElement.asEModelElement().GetEAnnotations()
+        l.Clear()
+        l.AddAll(newValue.(EList[EAnnotation]))
     default:
         eModelElement.CompactEObjectContainer.ESetFromID(featureID, newValue)
     }

@@ -175,9 +175,9 @@ func (eReference *eReferenceImpl) ESetFromID(featureID int, newValue any) {
     case EREFERENCE__CONTAINMENT:
         eReference.asEReference().SetContainment(newValue.(bool))
     case EREFERENCE__EKEYS:
-		list := eReference.asEReference().GetEKeys()
-        list.Clear()
-        list.AddAll(newValue.(EList[EAttribute]))
+		l := eReference.asEReference().GetEKeys()
+        l.Clear()
+        l.AddAll(newValue.(EList[EAttribute]))
     case EREFERENCE__EOPPOSITE:
         eReference.asEReference().SetEOpposite(newValue.(EReference))
     case EREFERENCE__RESOLVE_PROXIES:

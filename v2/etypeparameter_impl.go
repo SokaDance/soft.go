@@ -73,9 +73,9 @@ func (eTypeParameter *eTypeParameterImpl) EGetFromID(featureID int, resolve bool
 func (eTypeParameter *eTypeParameterImpl) ESetFromID(featureID int, newValue any) {
     switch featureID {
     case ETYPE_PARAMETER__EBOUNDS:
-		list := eTypeParameter.asETypeParameter().GetEBounds()
-        list.Clear()
-        list.AddAll(newValue.(EList[EGenericType]))
+		l := eTypeParameter.asETypeParameter().GetEBounds()
+        l.Clear()
+        l.AddAll(newValue.(EList[EGenericType]))
     default:
         eTypeParameter.eNamedElementImpl.ESetFromID(featureID, newValue)
     }

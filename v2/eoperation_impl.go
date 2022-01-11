@@ -136,13 +136,13 @@ func (eOperation *eOperationImpl) EGetFromID(featureID int, resolve bool) any {
 func (eOperation *eOperationImpl) ESetFromID(featureID int, newValue any) {
     switch featureID {
     case EOPERATION__EEXCEPTIONS:
-		list := eOperation.asEOperation().GetEExceptions()
-        list.Clear()
-        list.AddAll(newValue.(EList[EClassifier]))
+		l := eOperation.asEOperation().GetEExceptions()
+        l.Clear()
+        l.AddAll(newValue.(EList[EClassifier]))
     case EOPERATION__EPARAMETERS:
-		list := eOperation.asEOperation().GetEParameters()
-        list.Clear()
-        list.AddAll(newValue.(EList[EParameter]))
+		l := eOperation.asEOperation().GetEParameters()
+        l.Clear()
+        l.AddAll(newValue.(EList[EParameter]))
     case EOPERATION__OPERATION_ID:
         eOperation.asEOperation().SetOperationID(newValue.(int))
     default:
