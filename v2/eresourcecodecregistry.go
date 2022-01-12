@@ -21,16 +21,16 @@ type EResourceCodecRegistry interface {
 
 var resourceCodecRegistryInstance EResourceCodecRegistry
 
-// func GetResourceCodecRegistry() EResourceCodecRegistry {
-// 	if resourceCodecRegistryInstance == nil {
-// 		resourceCodecRegistryInstance = NewEResourceCodecRegistryImpl()
-// 		// initialize with default codecs
-// 		extensionToCodecs := resourceCodecRegistryInstance.GetExtensionToCodecMap()
-// 		extensionToCodecs["ecore"] = &XMICodec{}
-// 		extensionToCodecs["xml"] = &XMLCodec{}
-// 		extensionToCodecs["bin"] = &BinaryCodec{}
-// 		protocolToCodecs := resourceCodecRegistryInstance.GetProtocolToCodecMap()
-// 		protocolToCodecs["memory"] = &NoCodec{}
-// 	}
-// 	return resourceCodecRegistryInstance
-// }
+func GetResourceCodecRegistry() EResourceCodecRegistry {
+	if resourceCodecRegistryInstance == nil {
+		resourceCodecRegistryInstance = NewEResourceCodecRegistryImpl()
+		// initialize with default codecs
+		extensionToCodecs := resourceCodecRegistryInstance.GetExtensionToCodecMap()
+		extensionToCodecs["ecore"] = &XMICodec{}
+		extensionToCodecs["xml"] = &XMLCodec{}
+		extensionToCodecs["bin"] = &BinaryCodec{}
+		protocolToCodecs := resourceCodecRegistryInstance.GetProtocolToCodecMap()
+		protocolToCodecs["memory"] = &NoCodec{}
+	}
+	return resourceCodecRegistryInstance
+}
