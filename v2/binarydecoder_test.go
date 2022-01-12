@@ -65,7 +65,7 @@ func TestBinaryDecoder_Complex(t *testing.T) {
 	require.NotNil(t, eBookAuthorReference)
 
 	// retrive book
-	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(EList)
+	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(EList[any])
 	assert.NotNil(t, eBooks)
 	eBook := eBooks.Get(0).(EObject)
 	require.NotNil(t, eBook)
@@ -170,13 +170,13 @@ func TestBinaryDecoder_SimpleWithEDataTypeList(t *testing.T) {
 	eLibrary, _ := eResource.GetContents().Get(0).(EObject)
 	require.NotNil(t, eLibrary)
 
-	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList)
+	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList[any])
 	require.NotNil(t, eBooks)
 	require.Equal(t, 4, eBooks.Size())
 
 	eLastBook, _ := eBooks.Get(3).(EObject)
 	require.NotNil(t, eLastBook)
-	eContents, _ := eLastBook.EGet(bookContentsFeature).(EList)
+	eContents, _ := eLastBook.EGet(bookContentsFeature).(EList[any])
 	require.NotNil(t, eContents)
 	assert.Equal(t, 3, eContents.Size())
 	assert.Equal(t, "c1", eContents.Get(0))

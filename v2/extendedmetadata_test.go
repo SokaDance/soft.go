@@ -21,7 +21,7 @@ func TestExtendedMetatData_GetName(t *testing.T) {
 	mockElement := &MockENamedElement{}
 	mockFeature := &MockEStructuralFeature{}
 	mockAnnotation := &MockEAnnotation{}
-	mockDetails := &MockEMap{}
+	mockDetails := &MockEMap[string,string]{}
 
 	// no annotations
 	mockElement.On("GetEAnnotation", annotationURI).Return(nil).Once()
@@ -45,7 +45,7 @@ func TestExtendedMetatData_GetType(t *testing.T) {
 	mockClassifier1 := &MockEClassifier{}
 	mockClassifier2 := &MockEClassifier{}
 	mockAnnotation := &MockEAnnotation{}
-	mockDetails := &MockEMap{}
+	mockDetails := &MockEMap[string,string]{}
 	mockClassifiers := NewImmutableEList([]interface{}{mockClassifier1, mockClassifier2})
 
 	mockPackage.On("GetEClassifiers").Return(mockClassifiers).Once()
@@ -72,7 +72,7 @@ func TestExtendedMetatData_GetNamespace(t *testing.T) {
 	{
 		mockFeature := &MockEStructuralFeature{}
 		mockAnnotation := &MockEAnnotation{}
-		mockDetails := &MockEMap{}
+		mockDetails := &MockEMap[string,string]{}
 		mockFeature.On("GetEAnnotation", annotationURI).Return(mockAnnotation).Once()
 		mockAnnotation.On("GetDetails").Return(mockDetails).Once()
 		mockDetails.On("GetValue", "namespace").Return("namespace").Once()
@@ -83,7 +83,7 @@ func TestExtendedMetatData_GetNamespace(t *testing.T) {
 	{
 		mockFeature := &MockEStructuralFeature{}
 		mockAnnotation := &MockEAnnotation{}
-		mockDetails := &MockEMap{}
+		mockDetails := &MockEMap[string,string]{}
 		mockClass := &MockEClass{}
 		mockPackage := &MockEPackage{}
 		mockFeature.On("GetEAnnotation", annotationURI).Return(mockAnnotation).Once()
@@ -105,7 +105,7 @@ func TestExtendedMetatData_GetDocumentRoot(t *testing.T) {
 		mockClass1 := &MockEClass{}
 		mockClass2 := &MockEClass{}
 		mockAnnotation := &MockEAnnotation{}
-		mockDetails := &MockEMap{}
+		mockDetails := &MockEMap[string,string]{}
 		mockClassifiers := NewImmutableEList([]interface{}{mockClass1, mockClass2})
 		mockPackage.On("GetEClassifiers").Return(mockClassifiers).Once()
 		mockClass1.On("GetEAnnotation", annotationURI).Return(nil).Once()

@@ -618,8 +618,7 @@ func (o *AbstractEObject) EInverseRemove(otherEnd EObject, featureID int, n ENot
 
 // EResolveProxy ...
 func (o *AbstractEObject) EResolveProxy(proxy EObject) EObject {
-	//return ResolveInObject(proxy, o.GetInterfaces().(EObject))
-	return nil
+	return ResolveInObject(proxy, o.GetInterfaces().(EObject))
 }
 
 // EBasicInverseAdd ...

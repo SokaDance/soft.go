@@ -297,7 +297,7 @@ func TestBinaryCodec_EncodeDecodeResource_WithReferences(t *testing.T) {
 	require.NotNil(t, eOrders)
 	assert.Equal(t, eOrdersClass, eOrders.EClass())
 
-	eOrderList, _ := eOrders.EGet(eOrderReference).(EList)
+	eOrderList, _ := eOrders.EGet(eOrderReference).(EList[any])
 	require.NotNil(t, eOrderList)
 	eOrder, _ := eOrderList.Get(0).(EObject)
 	require.NotNil(t, eOrder)
@@ -347,7 +347,7 @@ func TestBinaryCodec_EncodeDecodeObject_WithExternalReferences(t *testing.T) {
 	assert.NotNil(t, eLibrary)
 
 	// retrieve book
-	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(EList)
+	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(EList[any])
 	assert.NotNil(t, eBooks)
 	eBook := eBooks.Get(0).(EObject)
 	require.NotNil(t, eBook)
@@ -442,14 +442,14 @@ func TestBinaryCodec_EncodeDecodeObject_WithInternalReferences(t *testing.T) {
 	require.NotEqual(t, eLibrary, eNewLibrary)
 
 	// first author
-	authors, _ := eNewLibrary.EGet(eLibraryWritersRefeference).(EList)
+	authors, _ := eNewLibrary.EGet(eLibraryWritersRefeference).(EList[any])
 	require.NotNil(t, authors)
 	assert.Equal(t, 1, authors.Size())
 	author := authors.Get(0).(EObject)
 	assert.Equal(t, "Adress 0", author.EGet(eWriterAddressAttribute))
 
 	// check author books
-	books, _ := author.EGet(eWriterBooksReference).(EList)
+	books, _ := author.EGet(eWriterBooksReference).(EList[any])
 	require.NotNil(t, books)
 	assert.Equal(t, 2, books.Size())
 	book := books.Get(0).(EObject)

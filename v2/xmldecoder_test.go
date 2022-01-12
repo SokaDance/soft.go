@@ -97,7 +97,7 @@ func TestXMLDecoderLibraryComplex(t *testing.T) {
 	require.NotNil(t, eBookDateAttribute)
 
 	// retrive book
-	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(EList)
+	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(EList[any])
 	assert.NotNil(t, eBooks)
 	eBook := eBooks.Get(0).(EObject)
 	require.NotNil(t, eBook)
@@ -136,7 +136,7 @@ func TestXMLDecoderLibraryComplexWithOptions(t *testing.T) {
 	assert.NotNil(t, eLibraryNameAttribute)
 
 	// check library name
-	eLibrary, _ := eResource.GetContents().Get(0).(EObject)
+	eLibrary := eResource.GetContents().Get(0)
 	assert.Equal(t, "My Library", eLibrary.EGet(eLibraryNameAttribute))
 }
 
@@ -170,7 +170,7 @@ func TestXMLDecoderSimpleEscapeXML(t *testing.T) {
 	assert.NotNil(t, eLibraryLocationAttribute)
 
 	// check library name
-	eLibrary, _ := eResource.GetContents().Get(0).(EObject)
+	eLibrary := eResource.GetContents().Get(0)
 	assert.Equal(t, "a<b", eLibrary.EGet(eLibraryLocationAttribute))
 }
 
@@ -201,7 +201,7 @@ func TestXMLDecoderSimpleXMLWithIDs(t *testing.T) {
 	require.NotNil(t, eLibrary)
 	assert.Equal(t, int64(0), idManager.GetID(eLibrary))
 
-	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList)
+	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList[any])
 	require.NotNil(t, eBooks)
 	require.Equal(t, 4, eBooks.Size())
 	assert.Equal(t, int64(1), idManager.GetID(eBooks.Get(0).(EObject)))
@@ -234,16 +234,16 @@ func TestXMLDecoderSimpleXMLWithEDataTypeList(t *testing.T) {
 	require.NotNil(t, bookContentsFeature)
 
 	require.Equal(t, 1, eResource.GetContents().Size())
-	eLibrary, _ := eResource.GetContents().Get(0).(EObject)
+	eLibrary := eResource.GetContents().Get(0)
 	require.NotNil(t, eLibrary)
 
-	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList)
+	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList[any])
 	require.NotNil(t, eBooks)
 	require.Equal(t, 4, eBooks.Size())
 
 	eLastBook, _ := eBooks.Get(3).(EObject)
 	require.NotNil(t, eLastBook)
-	eContents, _ := eLastBook.EGet(bookContentsFeature).(EList)
+	eContents, _ := eLastBook.EGet(bookContentsFeature).(EList[any])
 	require.NotNil(t, eContents)
 	assert.Equal(t, 3, eContents.Size())
 	assert.Equal(t, "c1", eContents.Get(0))

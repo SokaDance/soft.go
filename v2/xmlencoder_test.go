@@ -133,7 +133,7 @@ func TestXMLEncoderLibraryComplexSubElement(t *testing.T) {
 	require.NotNil(t, eLibraryClass)
 	eLibraryEmployeesFeature := eLibraryClass.GetEStructuralFeatureFromName("employees")
 	require.NotNil(t, eLibraryEmployeesFeature)
-	eList := eContainer.EGet(eLibraryEmployeesFeature).(EList)
+	eList := eContainer.EGet(eLibraryEmployeesFeature).(EList[any])
 	eList.Add(eObject)
 	assert.Equal(t, eResource, eObject.EResource())
 }
@@ -251,7 +251,7 @@ func TestXMLEncoderSimpleXMLRootObjects(t *testing.T) {
 	eLibrary, _ := eResource.GetContents().Get(0).(EObject)
 	require.NotNil(t, eLibrary)
 
-	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList)
+	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList[any])
 	require.NotNil(t, eBooks)
 	require.Equal(t, 4, eBooks.Size())
 	eBook := eBooks.Get(1).(EObject)
@@ -287,7 +287,7 @@ func TestXMLEncoderSimpleObject(t *testing.T) {
 	eLibrary, _ := eResource.GetContents().Get(0).(EObject)
 	require.NotNil(t, eLibrary)
 
-	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList)
+	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList[any])
 	require.NotNil(t, eBooks)
 	require.Equal(t, 4, eBooks.Size())
 	eBook := eBooks.Get(1).(EObject)
