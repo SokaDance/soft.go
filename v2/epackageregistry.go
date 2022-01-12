@@ -23,10 +23,10 @@ type EPackageRegistry interface {
 
 var packageRegistryInstance EPackageRegistry
 
-// func GetPackageRegistry() EPackageRegistry {
-// 	if packageRegistryInstance == nil {
-// 		packageRegistryInstance = NewEPackageRegistryImpl()
-// 		packageRegistryInstance.RegisterPackage(GetPackage())
-// 	}
-// 	return packageRegistryInstance
-// }
+func GetPackageRegistry() EPackageRegistry {
+	if packageRegistryInstance == nil {
+		packageRegistryInstance = NewEPackageRegistryImpl()
+		packageRegistryInstance.RegisterPackage(GetPackage())
+	}
+	return packageRegistryInstance
+}
