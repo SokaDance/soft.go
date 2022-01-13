@@ -19,7 +19,3 @@ type EList[T any] interface {
 
 	Set(int, T) T
 }
-
-func ToList[T,U any]( l EList[T]) EList[U] {
-	return newListDelegate[T,U](l)
-}
