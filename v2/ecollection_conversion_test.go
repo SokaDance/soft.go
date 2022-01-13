@@ -16,8 +16,8 @@ func TestToAnyArray(t *testing.T) {
 	it.On("HasNext").Once().Return(false)
 	it.On("Next").Once().Return(1)
 	it.On("Next").Once().Return(2)
-	nc := ToAnyArray[int](c)
-	assert.Equal(t, []any{1, 2}, nc)
+	aa := ToAnyArray[int](c)
+	assert.Equal(t, []any{1, 2}, aa)
 	mock.AssertExpectationsForObjects(t, c, it)
 }
 
@@ -26,6 +26,12 @@ func TestCollectionDelegate_Add(t *testing.T) {
 	d := ToAnyCollection[string](l)
 	l.On("Add", "s").Once().Return(true)
 	assert.True(t, d.Add("s"))
+}
+
+func TestCollectionDelegate_AddInvalid(t *testing.T) {
+	l := &MockECollection[string]{}
+	d := ToAnyCollection[string](l)
+	assert.Panics(t, func() { d.Add(1) })
 }
 
 func TestCollectionDelegate_AddAll(t *testing.T) {
