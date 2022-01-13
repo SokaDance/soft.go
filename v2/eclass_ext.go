@@ -57,7 +57,7 @@ func (adapter *eSuperAdapter) NotifyChanged(notification ENotification) {
 			case ADD_MANY:
 				newValue := notification.GetNewValue()
 				if newValue != nil {
-					collection := newValue.([]interface{})
+					collection := newValue.([]any)
 					for _, s := range collection {
 						class := s.(*eClassExt)
 						class.adapter.subClasses = append(class.adapter.subClasses, eNotifier)
@@ -77,7 +77,7 @@ func (adapter *eSuperAdapter) NotifyChanged(notification ENotification) {
 			case REMOVE_MANY:
 				oldValue := notification.GetOldValue()
 				if oldValue != nil {
-					collection := oldValue.([]interface{})
+					collection := oldValue.([]any)
 					for _, s := range collection {
 						class := s.(*eClassExt)
 						for i, s := range class.adapter.subClasses {
