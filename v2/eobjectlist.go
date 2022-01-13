@@ -15,3 +15,7 @@ type EObjectList[T any] interface {
 
 	GetUnResolvedList() EList[T]
 }
+
+func ToObjectList[T,U any](l EObjectList[T]) EObjectList[U] {
+	return newObjectListDelegate[T,U](l)
+}

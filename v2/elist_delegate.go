@@ -5,11 +5,9 @@ type eListDelegate[T any, U any, D EList[T]] struct {
 }
 
 func newListDelegate[T,U any](delegate EList[T]) *eListDelegate[T,U,EList[T]] {
-	return &eListDelegate[T,U,EList[T]]{ 
-		eCollectionDelegate : eCollectionDelegate[T,U,EList[T]]{
-			delegate:delegate,
-		},
-	}
+	l := &eListDelegate[T,U,EList[T]]{}
+	l.delegate = delegate
+	return l	
 }
 
 func (l *eListDelegate[T,U,D]) Insert(index int , u U) bool {
