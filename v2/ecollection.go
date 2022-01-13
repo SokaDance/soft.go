@@ -34,5 +34,5 @@ func ToArray[T,U any](c ECollection[T]) []U {
 }
 
 func ToCollection[T,U any](c ECollection[T]) ECollection[U] {
-	return &eCollectionDelegate[T,U]{delegate:c}
+	return newCollectionDelegate[T,U](c)
 }
