@@ -174,7 +174,7 @@ func (list *BasicENotifyingList[T]) doInsertAll(index int, c ECollection[T]) boo
 		if c.Size() == 1 {
 			return list.createNotification(ADD, nil, c.Iterator().Next(), index)
 		} else {
-			return list.createNotification(ADD_MANY, nil, c.ToArray(), index)
+			return list.createNotification(ADD_MANY, nil, ToArray[T,any](c), index)
 		}
 	})
 	return result
