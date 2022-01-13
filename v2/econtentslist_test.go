@@ -78,7 +78,7 @@ func (suite *EContentsListTestSuite) TestSize() {
 	mock.AssertExpectationsForObjects(suite.T(), suite.mockObject, suite.mockFeature)
 
 	// many
-	l := NewImmutableEList([]interface{}{struct{}{}})
+	l := NewImmutableEList([]EObject{&MockEObject{}})
 	suite.mockObject.On("EIsSet", suite.mockFeature).Return(true).Once()
 	suite.mockObject.On("EGetResolve", suite.mockFeature, false).Return(l).Once()
 	suite.mockFeature.On("IsMany").Return(true).Once()
@@ -129,7 +129,7 @@ func (suite *EContentsListIteratorTestSuite) TestIteratorEmpty() {
 func (suite *EContentsListIteratorTestSuite) TestIteratorSingle() {
 	t := suite.T()
 	it := suite.it
-	value := struct{}{}
+	value := &MockEObject{}
 	suite.mockObject.On("EIsSet", suite.mockFeature).Once().Return(true)
 	suite.mockObject.On("EGetResolve", suite.mockFeature, false).Once().Return(value)
 	suite.mockFeature.On("IsMany").Once().Return(false)

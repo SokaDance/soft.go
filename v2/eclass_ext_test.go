@@ -108,17 +108,17 @@ func TestEClassFeaturesGetters(t *testing.T) {
 	assert.Equal(t, 3, eClass.GetFeatureID(eReference2))
 
 	// collections
-	assert.Equal(t, []interface{}{eAttribute1, eReference1, eAttribute2, eReference2}, eClass.GetEAllStructuralFeatures().ToArray())
-	assert.Equal(t, []interface{}{eAttribute1, eAttribute2}, eClass.GetEAllAttributes().ToArray())
-	assert.Equal(t, []interface{}{eReference1, eReference2}, eClass.GetEAllReferences().ToArray())
-	assert.Equal(t, []interface{}{eAttribute1, eAttribute2}, eClass.GetEAttributes().ToArray())
-	assert.Equal(t, []interface{}{eReference1, eReference2}, eClass.GetEReferences().ToArray())
+	assert.Equal(t, []EStructuralFeature{eAttribute1, eReference1, eAttribute2, eReference2}, eClass.GetEAllStructuralFeatures().ToArray())
+	assert.Equal(t, []EAttribute{eAttribute1, eAttribute2}, eClass.GetEAllAttributes().ToArray())
+	assert.Equal(t, []EReference{eReference1, eReference2}, eClass.GetEAllReferences().ToArray())
+	assert.Equal(t, []EAttribute{eAttribute1, eAttribute2}, eClass.GetEAttributes().ToArray())
+	assert.Equal(t, []EReference{eReference1, eReference2}, eClass.GetEReferences().ToArray())
 
 	// insert another attribute front
 	eAttribute3 := newEAttributeExt()
 	eFeatures.Insert(0, eAttribute3)
-	assert.Equal(t, []interface{}{eAttribute3, eAttribute1, eAttribute2}, eClass.GetEAllAttributes().ToArray())
-	assert.Equal(t, []interface{}{eAttribute3, eAttribute1, eAttribute2}, eClass.GetEAttributes().ToArray())
+	assert.Equal(t, []EAttribute{eAttribute3, eAttribute1, eAttribute2}, eClass.GetEAllAttributes().ToArray())
+	assert.Equal(t, []EAttribute{eAttribute3, eAttribute1, eAttribute2}, eClass.GetEAttributes().ToArray())
 
 	// feature ids
 	assert.Equal(t, 5, eClass.GetFeatureCount())
