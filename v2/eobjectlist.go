@@ -13,5 +13,5 @@ package ecore
 type EObjectList[T any] interface {
 	EList[T]
 
-	GetUnResolvedList() EList[T]
+	GetUnResolvedList() EObjectList[T]
 }

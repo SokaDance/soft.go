@@ -22,6 +22,6 @@ func newObjectListDelegate[T,U any](delegate EObjectList[T]) *eObjectListDelegat
 	return l
 }
 
-func (l *eObjectListDelegate[T,U,D]) GetUnResolvedList() EList[U] {
-	return ToList[T,U](l.delegate.GetUnResolvedList(),l.convertTo,l.convertFrom)
+func (l *eObjectListDelegate[T,U,D]) GetUnResolvedList() EObjectList[U] {
+	return ToObjectList[T,U](l.delegate.GetUnResolvedList(),l.convertTo,l.convertFrom)
 }

@@ -58,7 +58,7 @@ func (list *basicEObjectList[T]) GetFeatureID() int {
 }
 
 // GetUnResolvedList ...
-func (list *basicEObjectList[T]) GetUnResolvedList() EList[T] {
+func (list *basicEObjectList[T]) GetUnResolvedList() EObjectList[T] {
 	if list.proxies {
 		u := new(unResolvedBasicEObjectList[T])
 		u.delegate = list
@@ -320,6 +320,6 @@ func (l *unResolvedBasicEObjectList[T]) SetWithNotification(index int, object T,
 	return l.delegate.SetWithNotification(index, object, notifications)
 }
 
-func (l *unResolvedBasicEObjectList[T]) GetUnResolvedList() EList[T] {
+func (l *unResolvedBasicEObjectList[T]) GetUnResolvedList() EObjectList[T] {
 	return l
 }
