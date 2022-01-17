@@ -84,20 +84,23 @@ func (eFactory *eFactoryImpl) basicSetEPackage( newEPackage EPackage , msgs ENot
 func (eFactory *eFactoryImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case EFACTORY__EPACKAGE:
-        return eFactory.asEFactory().GetEPackage()
+        return ToAny(eFactory.asEFactory().GetEPackage())
     default:
         return eFactory.eModelElementExt.EGetFromID(featureID, resolve)
     }
 }
 
-func (eFactory *eFactoryImpl) ESetFromID(featureID int, newValue any) {
+
+func (eFactory *eFactoryImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case EFACTORY__EPACKAGE:
-        eFactory.asEFactory().SetEPackage(newValue.(EPackage))
+		newValue := FromAny[EPackage](value)
+        eFactory.asEFactory().SetEPackage(newValue)
     default:
-        eFactory.eModelElementExt.ESetFromID(featureID, newValue)
+        eFactory.eModelElementExt.ESetFromID(featureID, value)
     }
 }
+
 
 func (eFactory *eFactoryImpl) EUnsetFromID(featureID int) {
     switch featureID {

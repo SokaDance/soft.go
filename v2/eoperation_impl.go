@@ -115,40 +115,43 @@ func (eOperation *eOperationImpl) initEParameters() EList[EParameter] {
 func (eOperation *eOperationImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case EOPERATION__ECONTAINING_CLASS:
-        return eOperation.asEOperation().GetEContainingClass()
+        return ToAny(eOperation.asEOperation().GetEContainingClass())
     case EOPERATION__EEXCEPTIONS:
-		list := eOperation.asEOperation().GetEExceptions();
+		list := eOperation.asEOperation().GetEExceptions().(EObjectList[EClassifier]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EClassifier]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case EOPERATION__EPARAMETERS:
-        return eOperation.asEOperation().GetEParameters()
+		return ToAnyList(eOperation.asEOperation().GetEParameters())
     case EOPERATION__OPERATION_ID:
-        return eOperation.asEOperation().GetOperationID()
+        return ToAny(eOperation.asEOperation().GetOperationID())
     default:
         return eOperation.eTypedElementExt.EGetFromID(featureID, resolve)
     }
 }
 
-func (eOperation *eOperationImpl) ESetFromID(featureID int, newValue any) {
+
+func (eOperation *eOperationImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case EOPERATION__EEXCEPTIONS:
+		newList := FromAnyList[EClassifier](value.(EList[any]))	
 		l := eOperation.asEOperation().GetEExceptions()
-        l.Clear()
-        l.AddAll(newValue.(EList[EClassifier]))
+		l.Clear()
+        l.AddAll(newList)
     case EOPERATION__EPARAMETERS:
+		newList := FromAnyList[EParameter](value.(EList[any]))	
 		l := eOperation.asEOperation().GetEParameters()
-        l.Clear()
-        l.AddAll(newValue.(EList[EParameter]))
+		l.Clear()
+        l.AddAll(newList)
     case EOPERATION__OPERATION_ID:
-        eOperation.asEOperation().SetOperationID(newValue.(int))
+		newValue := FromAny[int](value)
+        eOperation.asEOperation().SetOperationID(newValue)
     default:
-        eOperation.eTypedElementExt.ESetFromID(featureID, newValue)
+        eOperation.eTypedElementExt.ESetFromID(featureID, value)
     }
 }
+
 
 func (eOperation *eOperationImpl) EUnsetFromID(featureID int) {
     switch featureID {

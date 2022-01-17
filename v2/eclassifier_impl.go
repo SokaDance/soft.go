@@ -127,32 +127,37 @@ func (eClassifier *eClassifierImpl) initClassifierID() int {
 func (eClassifier *eClassifierImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case ECLASSIFIER__CLASSIFIER_ID:
-        return eClassifier.asEClassifier().GetClassifierID()
+        return ToAny(eClassifier.asEClassifier().GetClassifierID())
     case ECLASSIFIER__DEFAULT_VALUE:
-        return eClassifier.asEClassifier().GetDefaultValue()
+        return ToAny(eClassifier.asEClassifier().GetDefaultValue())
     case ECLASSIFIER__EPACKAGE:
-        return eClassifier.asEClassifier().GetEPackage()
+        return ToAny(eClassifier.asEClassifier().GetEPackage())
     case ECLASSIFIER__INSTANCE_CLASS:
-        return eClassifier.asEClassifier().GetInstanceClass()
+        return ToAny(eClassifier.asEClassifier().GetInstanceClass())
     case ECLASSIFIER__INSTANCE_TYPE_NAME:
-        return eClassifier.asEClassifier().GetInstanceTypeName()
+        return ToAny(eClassifier.asEClassifier().GetInstanceTypeName())
     default:
         return eClassifier.eNamedElementImpl.EGetFromID(featureID, resolve)
     }
 }
 
-func (eClassifier *eClassifierImpl) ESetFromID(featureID int, newValue any) {
+
+func (eClassifier *eClassifierImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case ECLASSIFIER__CLASSIFIER_ID:
-        eClassifier.asEClassifier().SetClassifierID(newValue.(int))
+		newValue := FromAny[int](value)
+        eClassifier.asEClassifier().SetClassifierID(newValue)
     case ECLASSIFIER__INSTANCE_CLASS:
-        eClassifier.asEClassifier().SetInstanceClass(newValue.(reflect.Type))
+		newValue := FromAny[reflect.Type](value)
+        eClassifier.asEClassifier().SetInstanceClass(newValue)
     case ECLASSIFIER__INSTANCE_TYPE_NAME:
-        eClassifier.asEClassifier().SetInstanceTypeName(newValue.(string))
+		newValue := FromAny[string](value)
+        eClassifier.asEClassifier().SetInstanceTypeName(newValue)
     default:
-        eClassifier.eNamedElementImpl.ESetFromID(featureID, newValue)
+        eClassifier.eNamedElementImpl.ESetFromID(featureID, value)
     }
 }
+
 
 func (eClassifier *eClassifierImpl) EUnsetFromID(featureID int) {
     switch featureID {

@@ -141,48 +141,53 @@ func (eAnnotation *eAnnotationImpl) initReferences() EList[EObject] {
 func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case EANNOTATION__CONTENTS:
-        return eAnnotation.asEAnnotation().GetContents()
+		return ToAnyList(eAnnotation.asEAnnotation().GetContents())
     case EANNOTATION__DETAILS:
-        return eAnnotation.asEAnnotation().GetDetails()
+		return ToAnyMap(eAnnotation.asEAnnotation().GetDetails())
     case EANNOTATION__EMODEL_ELEMENT:
-        return eAnnotation.asEAnnotation().GetEModelElement()
+        return ToAny(eAnnotation.asEAnnotation().GetEModelElement())
     case EANNOTATION__REFERENCES:
-		list := eAnnotation.asEAnnotation().GetReferences();
+		list := eAnnotation.asEAnnotation().GetReferences().(EObjectList[EObject]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EObject]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case EANNOTATION__SOURCE:
-        return eAnnotation.asEAnnotation().GetSource()
+        return ToAny(eAnnotation.asEAnnotation().GetSource())
     default:
         return eAnnotation.eModelElementExt.EGetFromID(featureID, resolve)
     }
 }
 
-func (eAnnotation *eAnnotationImpl) ESetFromID(featureID int, newValue any) {
+
+func (eAnnotation *eAnnotationImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case EANNOTATION__CONTENTS:
+		newList := FromAnyList[EObject](value.(EList[any]))	
 		l := eAnnotation.asEAnnotation().GetContents()
-        l.Clear()
-        l.AddAll(newValue.(EList[EObject]))
+		l.Clear()
+        l.AddAll(newList)
     case EANNOTATION__DETAILS:
+		newMap := FromAnyMap[string,string](value.(EMap[any,any]))
 		m := eAnnotation.asEAnnotation().GetDetails()
-        m.Clear()
-        m.AddAll(newValue.(EMap[string,string]))
+		m.Clear()
+		m.AddAll(newMap)
     case EANNOTATION__EMODEL_ELEMENT:
-        eAnnotation.asEAnnotation().SetEModelElement(newValue.(EModelElement))
+		newValue := FromAny[EModelElement](value)
+        eAnnotation.asEAnnotation().SetEModelElement(newValue)
     case EANNOTATION__REFERENCES:
+		newList := FromAnyList[EObject](value.(EList[any]))	
 		l := eAnnotation.asEAnnotation().GetReferences()
-        l.Clear()
-        l.AddAll(newValue.(EList[EObject]))
+		l.Clear()
+        l.AddAll(newList)
     case EANNOTATION__SOURCE:
-        eAnnotation.asEAnnotation().SetSource(newValue.(string))
+		newValue := FromAny[string](value)
+        eAnnotation.asEAnnotation().SetSource(newValue)
     default:
-        eAnnotation.eModelElementExt.ESetFromID(featureID, newValue)
+        eAnnotation.eModelElementExt.ESetFromID(featureID, value)
     }
 }
+
 
 func (eAnnotation *eAnnotationImpl) EUnsetFromID(featureID int) {
     switch featureID {

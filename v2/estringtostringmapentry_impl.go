@@ -78,24 +78,28 @@ func (eStringToStringMapEntry *eStringToStringMapEntryImpl) SetValue( newValue s
 func (eStringToStringMapEntry *eStringToStringMapEntryImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case ESTRING_TO_STRING_MAP_ENTRY__KEY:
-        return eStringToStringMapEntry.asEStringToStringMapEntry().GetKey()
+        return ToAny(eStringToStringMapEntry.asEStringToStringMapEntry().GetKey())
     case ESTRING_TO_STRING_MAP_ENTRY__VALUE:
-        return eStringToStringMapEntry.asEStringToStringMapEntry().GetValue()
+        return ToAny(eStringToStringMapEntry.asEStringToStringMapEntry().GetValue())
     default:
         return eStringToStringMapEntry.CompactEObjectContainer.EGetFromID(featureID, resolve)
     }
 }
 
-func (eStringToStringMapEntry *eStringToStringMapEntryImpl) ESetFromID(featureID int, newValue any) {
+
+func (eStringToStringMapEntry *eStringToStringMapEntryImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case ESTRING_TO_STRING_MAP_ENTRY__KEY:
-        eStringToStringMapEntry.asEStringToStringMapEntry().SetKey(newValue.(string))
+		newValue := FromAny[string](value)
+        eStringToStringMapEntry.asEStringToStringMapEntry().SetKey(newValue)
     case ESTRING_TO_STRING_MAP_ENTRY__VALUE:
-        eStringToStringMapEntry.asEStringToStringMapEntry().SetValue(newValue.(string))
+		newValue := FromAny[string](value)
+        eStringToStringMapEntry.asEStringToStringMapEntry().SetValue(newValue)
     default:
-        eStringToStringMapEntry.CompactEObjectContainer.ESetFromID(featureID, newValue)
+        eStringToStringMapEntry.CompactEObjectContainer.ESetFromID(featureID, value)
     }
 }
+
 
 func (eStringToStringMapEntry *eStringToStringMapEntryImpl) EUnsetFromID(featureID int) {
     switch featureID {

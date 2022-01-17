@@ -213,45 +213,52 @@ func (eGenericType *eGenericTypeImpl) EGetFromID(featureID int, resolve bool) an
     switch featureID {
     case EGENERIC_TYPE__ECLASSIFIER:
 		if resolve {
-			return eGenericType.asEGenericType().GetEClassifier()
+			return ToAny(eGenericType.asEGenericType().GetEClassifier())
 		}
-		return  eGenericType.basicGetEClassifier()
+		return ToAny(eGenericType.basicGetEClassifier())
     case EGENERIC_TYPE__ELOWER_BOUND:
-        return eGenericType.asEGenericType().GetELowerBound()
+        return ToAny(eGenericType.asEGenericType().GetELowerBound())
     case EGENERIC_TYPE__ERAW_TYPE:
 		if resolve {
-			return eGenericType.asEGenericType().GetERawType()
+			return ToAny(eGenericType.asEGenericType().GetERawType())
 		}
-		return  eGenericType.basicGetERawType()
+		return ToAny(eGenericType.basicGetERawType())
     case EGENERIC_TYPE__ETYPE_ARGUMENTS:
-        return eGenericType.asEGenericType().GetETypeArguments()
+		return ToAnyList(eGenericType.asEGenericType().GetETypeArguments())
     case EGENERIC_TYPE__ETYPE_PARAMETER:
-        return eGenericType.asEGenericType().GetETypeParameter()
+        return ToAny(eGenericType.asEGenericType().GetETypeParameter())
     case EGENERIC_TYPE__EUPPER_BOUND:
-        return eGenericType.asEGenericType().GetEUpperBound()
+        return ToAny(eGenericType.asEGenericType().GetEUpperBound())
     default:
         return eGenericType.CompactEObjectContainer.EGetFromID(featureID, resolve)
     }
 }
 
-func (eGenericType *eGenericTypeImpl) ESetFromID(featureID int, newValue any) {
+
+func (eGenericType *eGenericTypeImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case EGENERIC_TYPE__ECLASSIFIER:
-        eGenericType.asEGenericType().SetEClassifier(newValue.(EClassifier))
+		newValue := FromAny[EClassifier](value)
+        eGenericType.asEGenericType().SetEClassifier(newValue)
     case EGENERIC_TYPE__ELOWER_BOUND:
-        eGenericType.asEGenericType().SetELowerBound(newValue.(EGenericType))
+		newValue := FromAny[EGenericType](value)
+        eGenericType.asEGenericType().SetELowerBound(newValue)
     case EGENERIC_TYPE__ETYPE_ARGUMENTS:
+		newList := FromAnyList[EGenericType](value.(EList[any]))	
 		l := eGenericType.asEGenericType().GetETypeArguments()
-        l.Clear()
-        l.AddAll(newValue.(EList[EGenericType]))
+		l.Clear()
+        l.AddAll(newList)
     case EGENERIC_TYPE__ETYPE_PARAMETER:
-        eGenericType.asEGenericType().SetETypeParameter(newValue.(ETypeParameter))
+		newValue := FromAny[ETypeParameter](value)
+        eGenericType.asEGenericType().SetETypeParameter(newValue)
     case EGENERIC_TYPE__EUPPER_BOUND:
-        eGenericType.asEGenericType().SetEUpperBound(newValue.(EGenericType))
+		newValue := FromAny[EGenericType](value)
+        eGenericType.asEGenericType().SetEUpperBound(newValue)
     default:
-        eGenericType.CompactEObjectContainer.ESetFromID(featureID, newValue)
+        eGenericType.CompactEObjectContainer.ESetFromID(featureID, value)
     }
 }
+
 
 func (eGenericType *eGenericTypeImpl) EUnsetFromID(featureID int) {
     switch featureID {

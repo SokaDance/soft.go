@@ -48,11 +48,12 @@ func (eParameter *eParameterImpl) GetEOperation() EOperation {
 func (eParameter *eParameterImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case EPARAMETER__EOPERATION:
-        return eParameter.asEParameter().GetEOperation()
+        return ToAny(eParameter.asEParameter().GetEOperation())
     default:
         return eParameter.eTypedElementExt.EGetFromID(featureID, resolve)
     }
 }
+
 
 func (eParameter *eParameterImpl) EIsSetFromID(featureID int) bool {
     switch featureID {

@@ -298,130 +298,115 @@ func (eClass *eClassImpl) initESuperTypes() EList[EClass] {
 func (eClass *eClassImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case ECLASS__ABSTRACT:
-        return eClass.asEClass().IsAbstract()
+        return ToAny(eClass.asEClass().IsAbstract())
     case ECLASS__EALL_ATTRIBUTES:
-		list := eClass.asEClass().GetEAllAttributes();
+		list := eClass.asEClass().GetEAllAttributes().(EObjectList[EAttribute]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EAttribute]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__EALL_CONTAINMENTS:
-		list := eClass.asEClass().GetEAllContainments();
+		list := eClass.asEClass().GetEAllContainments().(EObjectList[EReference]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EReference]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__EALL_OPERATIONS:
-		list := eClass.asEClass().GetEAllOperations();
+		list := eClass.asEClass().GetEAllOperations().(EObjectList[EOperation]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EOperation]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__EALL_REFERENCES:
-		list := eClass.asEClass().GetEAllReferences();
+		list := eClass.asEClass().GetEAllReferences().(EObjectList[EReference]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EReference]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__EALL_STRUCTURAL_FEATURES:
-		list := eClass.asEClass().GetEAllStructuralFeatures();
+		list := eClass.asEClass().GetEAllStructuralFeatures().(EObjectList[EStructuralFeature]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EStructuralFeature]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__EALL_SUPER_TYPES:
-		list := eClass.asEClass().GetEAllSuperTypes();
+		list := eClass.asEClass().GetEAllSuperTypes().(EObjectList[EClass]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EClass]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__EATTRIBUTES:
-		list := eClass.asEClass().GetEAttributes();
+		list := eClass.asEClass().GetEAttributes().(EObjectList[EAttribute]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EAttribute]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__ECONTAINMENT_FEATURES:
-		list := eClass.asEClass().GetEContainmentFeatures();
+		list := eClass.asEClass().GetEContainmentFeatures().(EObjectList[EStructuralFeature]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EStructuralFeature]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__ECROSS_REFERENCE_FEATURES:
-		list := eClass.asEClass().GetECrossReferenceFeatures();
+		list := eClass.asEClass().GetECrossReferenceFeatures().(EObjectList[EStructuralFeature]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EStructuralFeature]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__EID_ATTRIBUTE:
-        return eClass.asEClass().GetEIDAttribute()
+        return ToAny(eClass.asEClass().GetEIDAttribute())
     case ECLASS__EOPERATIONS:
-        return eClass.asEClass().GetEOperations()
+		return ToAnyList(eClass.asEClass().GetEOperations())
     case ECLASS__EREFERENCES:
-		list := eClass.asEClass().GetEReferences();
+		list := eClass.asEClass().GetEReferences().(EObjectList[EReference]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EReference]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__ESTRUCTURAL_FEATURES:
-        return eClass.asEClass().GetEStructuralFeatures()
+		return ToAnyList(eClass.asEClass().GetEStructuralFeatures())
     case ECLASS__ESUPER_TYPES:
-		list := eClass.asEClass().GetESuperTypes();
+		list := eClass.asEClass().GetESuperTypes().(EObjectList[EClass]);
 		if !resolve {
-			if objects , _ := list.(EObjectList[EClass]); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyObjectList(list)
     case ECLASS__INTERFACE:
-        return eClass.asEClass().IsInterface()
+        return ToAny(eClass.asEClass().IsInterface())
     default:
         return eClass.eClassifierExt.EGetFromID(featureID, resolve)
     }
 }
 
-func (eClass *eClassImpl) ESetFromID(featureID int, newValue any) {
+
+func (eClass *eClassImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case ECLASS__ABSTRACT:
-        eClass.asEClass().SetAbstract(newValue.(bool))
+		newValue := FromAny[bool](value)
+        eClass.asEClass().SetAbstract(newValue)
     case ECLASS__EOPERATIONS:
+		newList := FromAnyList[EOperation](value.(EList[any]))	
 		l := eClass.asEClass().GetEOperations()
-        l.Clear()
-        l.AddAll(newValue.(EList[EOperation]))
+		l.Clear()
+        l.AddAll(newList)
     case ECLASS__ESTRUCTURAL_FEATURES:
+		newList := FromAnyList[EStructuralFeature](value.(EList[any]))	
 		l := eClass.asEClass().GetEStructuralFeatures()
-        l.Clear()
-        l.AddAll(newValue.(EList[EStructuralFeature]))
+		l.Clear()
+        l.AddAll(newList)
     case ECLASS__ESUPER_TYPES:
+		newList := FromAnyList[EClass](value.(EList[any]))	
 		l := eClass.asEClass().GetESuperTypes()
-        l.Clear()
-        l.AddAll(newValue.(EList[EClass]))
+		l.Clear()
+        l.AddAll(newList)
     case ECLASS__INTERFACE:
-        eClass.asEClass().SetInterface(newValue.(bool))
+		newValue := FromAny[bool](value)
+        eClass.asEClass().SetInterface(newValue)
     default:
-        eClass.eClassifierExt.ESetFromID(featureID, newValue)
+        eClass.eClassifierExt.ESetFromID(featureID, value)
     }
 }
+
 
 func (eClass *eClassImpl) EUnsetFromID(featureID int) {
     switch featureID {

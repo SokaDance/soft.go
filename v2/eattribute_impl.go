@@ -71,24 +71,27 @@ func (eAttribute *eAttributeImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case EATTRIBUTE__EATTRIBUTE_TYPE:
 		if resolve {
-			return eAttribute.asEAttribute().GetEAttributeType()
+			return ToAny(eAttribute.asEAttribute().GetEAttributeType())
 		}
-		return  eAttribute.basicGetEAttributeType()
+		return ToAny(eAttribute.basicGetEAttributeType())
     case EATTRIBUTE__ID:
-        return eAttribute.asEAttribute().IsID()
+        return ToAny(eAttribute.asEAttribute().IsID())
     default:
         return eAttribute.eStructuralFeatureExt.EGetFromID(featureID, resolve)
     }
 }
 
-func (eAttribute *eAttributeImpl) ESetFromID(featureID int, newValue any) {
+
+func (eAttribute *eAttributeImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case EATTRIBUTE__ID:
-        eAttribute.asEAttribute().SetID(newValue.(bool))
+		newValue := FromAny[bool](value)
+        eAttribute.asEAttribute().SetID(newValue)
     default:
-        eAttribute.eStructuralFeatureExt.ESetFromID(featureID, newValue)
+        eAttribute.eStructuralFeatureExt.ESetFromID(featureID, value)
     }
 }
+
 
 func (eAttribute *eAttributeImpl) EUnsetFromID(featureID int) {
     switch featureID {

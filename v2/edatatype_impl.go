@@ -61,20 +61,23 @@ func (eDataType *eDataTypeImpl) SetSerializable( newIsSerializable bool ) {
 func (eDataType *eDataTypeImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case EDATA_TYPE__SERIALIZABLE:
-        return eDataType.asEDataType().IsSerializable()
+        return ToAny(eDataType.asEDataType().IsSerializable())
     default:
         return eDataType.eClassifierExt.EGetFromID(featureID, resolve)
     }
 }
 
-func (eDataType *eDataTypeImpl) ESetFromID(featureID int, newValue any) {
+
+func (eDataType *eDataTypeImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case EDATA_TYPE__SERIALIZABLE:
-        eDataType.asEDataType().SetSerializable(newValue.(bool))
+		newValue := FromAny[bool](value)
+        eDataType.asEDataType().SetSerializable(newValue)
     default:
-        eDataType.eClassifierExt.ESetFromID(featureID, newValue)
+        eDataType.eClassifierExt.ESetFromID(featureID, value)
     }
 }
+
 
 func (eDataType *eDataTypeImpl) EUnsetFromID(featureID int) {
     switch featureID {

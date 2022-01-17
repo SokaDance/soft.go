@@ -163,42 +163,49 @@ func (ePackage *ePackageImpl) initESubPackages() EList[EPackage] {
 func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) any {
     switch featureID {
     case EPACKAGE__ECLASSIFIERS:
-        return ePackage.asEPackage().GetEClassifiers()
+		return ToAnyList(ePackage.asEPackage().GetEClassifiers())
     case EPACKAGE__EFACTORY_INSTANCE:
-        return ePackage.asEPackage().GetEFactoryInstance()
+        return ToAny(ePackage.asEPackage().GetEFactoryInstance())
     case EPACKAGE__ESUB_PACKAGES:
-        return ePackage.asEPackage().GetESubPackages()
+		return ToAnyList(ePackage.asEPackage().GetESubPackages())
     case EPACKAGE__ESUPER_PACKAGE:
-        return ePackage.asEPackage().GetESuperPackage()
+        return ToAny(ePackage.asEPackage().GetESuperPackage())
     case EPACKAGE__NS_PREFIX:
-        return ePackage.asEPackage().GetNsPrefix()
+        return ToAny(ePackage.asEPackage().GetNsPrefix())
     case EPACKAGE__NS_URI:
-        return ePackage.asEPackage().GetNsURI()
+        return ToAny(ePackage.asEPackage().GetNsURI())
     default:
         return ePackage.eNamedElementImpl.EGetFromID(featureID, resolve)
     }
 }
 
-func (ePackage *ePackageImpl) ESetFromID(featureID int, newValue any) {
+
+func (ePackage *ePackageImpl) ESetFromID(featureID int, value any) {
     switch featureID {
     case EPACKAGE__ECLASSIFIERS:
+		newList := FromAnyList[EClassifier](value.(EList[any]))	
 		l := ePackage.asEPackage().GetEClassifiers()
-        l.Clear()
-        l.AddAll(newValue.(EList[EClassifier]))
+		l.Clear()
+        l.AddAll(newList)
     case EPACKAGE__EFACTORY_INSTANCE:
-        ePackage.asEPackage().SetEFactoryInstance(newValue.(EFactory))
+		newValue := FromAny[EFactory](value)
+        ePackage.asEPackage().SetEFactoryInstance(newValue)
     case EPACKAGE__ESUB_PACKAGES:
+		newList := FromAnyList[EPackage](value.(EList[any]))	
 		l := ePackage.asEPackage().GetESubPackages()
-        l.Clear()
-        l.AddAll(newValue.(EList[EPackage]))
+		l.Clear()
+        l.AddAll(newList)
     case EPACKAGE__NS_PREFIX:
-        ePackage.asEPackage().SetNsPrefix(newValue.(string))
+		newValue := FromAny[string](value)
+        ePackage.asEPackage().SetNsPrefix(newValue)
     case EPACKAGE__NS_URI:
-        ePackage.asEPackage().SetNsURI(newValue.(string))
+		newValue := FromAny[string](value)
+        ePackage.asEPackage().SetNsURI(newValue)
     default:
-        ePackage.eNamedElementImpl.ESetFromID(featureID, newValue)
+        ePackage.eNamedElementImpl.ESetFromID(featureID, value)
     }
 }
+
 
 func (ePackage *ePackageImpl) EUnsetFromID(featureID int) {
     switch featureID {
