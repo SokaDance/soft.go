@@ -31,3 +31,11 @@ func ToAnyObjectList[T any](l EObjectList[T]) EObjectList[any] {
 func FromAnyObjectList[T any](l EObjectList[any]) EObjectList[T] {
 	return ToObjectList(l, FromAny[T], ToAny[T])
 }
+
+func ToAnyMap[K comparable, V any](m EMap[K, V]) EMap[any, any] {
+	return nil
+}
+
+func FromAnyMap[K comparable, V any](m EMap[any, any]) EMap[K, V] {
+	return nil
+}
