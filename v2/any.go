@@ -12,10 +12,22 @@ func ToAnyCollection[T any](c ECollection[T]) ECollection[any] {
 	return ToCollection(c, ToAny[T], FromAny[T])
 }
 
+func FromAnyCollection[T any](c ECollection[any]) ECollection[T] {
+	return ToCollection(c, FromAny[T], ToAny[T])
+}
+
 func ToAnyList[T any](l EList[T]) EList[any] {
 	return ToList(l, ToAny[T], FromAny[T])
 }
 
+func FromAnyList[T any](l EList[any]) EList[T] {
+	return ToList(l, FromAny[T], ToAny[T])
+}
+
 func ToAnyObjectList[T any](l EObjectList[T]) EObjectList[any] {
 	return ToObjectList(l, ToAny[T], FromAny[T])
+}
+
+func FromAnyObjectList[T any](l EObjectList[any]) EObjectList[T] {
+	return ToObjectList(l, FromAny[T], ToAny[T])
 }
