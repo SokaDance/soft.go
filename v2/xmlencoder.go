@@ -136,7 +136,7 @@ func (s *XMLEncoder) encodeTopObject(eObject EObject) {
 	if s.extendedMetaData != nil {
 		eClass := eObject.EClass()
 		if ePrefixMapFeature := s.extendedMetaData.GetXMLNSPrefixMapFeature(eClass); ePrefixMapFeature != nil {
-			m := eObject.EGet(ePrefixMapFeature).(EMap[string, string])
+			m := FromAnyMap[string, string](eObject.EGet(ePrefixMapFeature).(EMap[any, any]))
 			s.setPrefixToNamespace(m)
 		}
 	}

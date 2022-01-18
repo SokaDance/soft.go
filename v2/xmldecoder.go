@@ -749,7 +749,7 @@ func (l *XMLDecoder) recordSchemaLocations(eObject EObject) {
 	if l.extendedMetaData != nil && eObject != nil {
 		eClass := eObject.EClass()
 		if xmlnsPrefixMapFeature := l.extendedMetaData.GetXMLNSPrefixMapFeature(eClass); xmlnsPrefixMapFeature != nil {
-			m := eObject.EGet(xmlnsPrefixMapFeature).(EMap[string, string])
+			m := FromAnyMap[string, string](eObject.EGet(xmlnsPrefixMapFeature).(EMap[any, any]))
 			for prefix, nsURI := range l.prefixesToURI {
 				m.Put(prefix, nsURI)
 			}
