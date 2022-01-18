@@ -33,9 +33,9 @@ func FromAnyObjectList[T any](l EObjectList[any]) EObjectList[T] {
 }
 
 func ToAnyMap[K comparable, V any](m EMap[K, V]) EMap[any, any] {
-	return nil
+	return ToMap[K,any,V,any](m,ToAny[K],FromAny[K],ToAny[V],FromAny[V])
 }
 
 func FromAnyMap[K comparable, V any](m EMap[any, any]) EMap[K, V] {
-	return nil
+	return ToMap[any,K,any,V](m,FromAny[K],ToAny[K],FromAny[V],ToAny[V])
 }
