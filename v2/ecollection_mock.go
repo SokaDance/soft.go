@@ -94,7 +94,6 @@ func (_m *MockECollection[T]) Iterator() EIterator[T] {
 	return r0
 }
 
-
 // Remove provides a mock function with given fields: _a0
 func (_m *MockECollection[T]) Remove(_a0 T) bool {
 	ret := _m.Called(_a0)
@@ -136,7 +135,6 @@ func (_m *MockECollection[T]) RetainAll(_a0 ECollection[T]) bool {
 
 	return r0
 }
-
 
 // Size provides a mock function with given fields:
 func (_m *MockECollection[T]) Size() int {

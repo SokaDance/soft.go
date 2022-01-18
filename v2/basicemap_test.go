@@ -17,24 +17,24 @@ import (
 )
 
 func TestBasicEMap_Constructor(t *testing.T) {
-	m := NewBasicEMap[string,any]()
+	m := NewBasicEMap[string, any]()
 	assert.NotNil(t, m)
 
-	var mp EMap[string,any] = m
+	var mp EMap[string, any] = m
 	assert.NotNil(t, mp)
 
-	var ml EList[EMapEntry[string,any]] = m
+	var ml EList[EMapEntry[string, any]] = m
 	assert.NotNil(t, ml)
 }
 
 func TestBasicEMap_Put(t *testing.T) {
-	m := NewBasicEMap[int,string]()
+	m := NewBasicEMap[int, string]()
 	m.Put(2, "2")
 	assert.Equal(t, map[int]string{2: "2"}, m.ToMap())
 }
 
 func TestBasicEMap_GetValue(t *testing.T) {
-	m := NewBasicEMap[int,string]()
+	m := NewBasicEMap[int, string]()
 	assert.Equal(t, "", m.GetValue(2))
 
 	m.Put(2, "2")
@@ -42,7 +42,7 @@ func TestBasicEMap_GetValue(t *testing.T) {
 }
 
 func TestBasicEMap_RemoveKey(t *testing.T) {
-	m := NewBasicEMap[int,string]()
+	m := NewBasicEMap[int, string]()
 	m.Put(2, "2")
 
 	assert.Equal(t, "2", m.RemoveKey(2))
@@ -51,7 +51,7 @@ func TestBasicEMap_RemoveKey(t *testing.T) {
 }
 
 func TestBasicEMap_PutOverwrite(t *testing.T) {
-	m := NewBasicEMap[int,string]()
+	m := NewBasicEMap[int, string]()
 	assert.Equal(t, "", m.GetValue(2))
 	m.Put(2, "3")
 	assert.Equal(t, "3", m.GetValue(2))
@@ -61,7 +61,7 @@ func TestBasicEMap_PutOverwrite(t *testing.T) {
 }
 
 func TestBasicEMap_ContainsKey(t *testing.T) {
-	m := NewBasicEMap[int,string]()
+	m := NewBasicEMap[int, string]()
 	assert.False(t, m.ContainsKey(2))
 
 	m.Put(2, "2")
@@ -72,7 +72,7 @@ func TestBasicEMap_ContainsKey(t *testing.T) {
 }
 
 func TestBasicEMap_ContainsValue(t *testing.T) {
-	m := NewBasicEMap[int,string]()
+	m := NewBasicEMap[int, string]()
 	assert.False(t, m.ContainsValue("2"))
 
 	m.Put(2, "2")
@@ -83,8 +83,8 @@ func TestBasicEMap_ContainsValue(t *testing.T) {
 }
 
 func TestBasicEMap_AddEntry(t *testing.T) {
-	m := NewBasicEMap[int,string]()
-	mockEntry := &MockEMapEntry[int,string]{}
+	m := NewBasicEMap[int, string]()
+	mockEntry := &MockEMapEntry[int, string]{}
 	mockEntry.On("GetKey").Once().Return(2)
 	mockEntry.On("GetValue").Once().Return("2")
 	m.Add(mockEntry)
@@ -93,14 +93,14 @@ func TestBasicEMap_AddEntry(t *testing.T) {
 }
 
 func TestBasicEMap_SetEntry(t *testing.T) {
-	m := NewBasicEMap[int,string]()
-	mockEntry := &MockEMapEntry[int,string]{}
+	m := NewBasicEMap[int, string]()
+	mockEntry := &MockEMapEntry[int, string]{}
 	mockEntry.On("GetKey").Once().Return(2)
 	mockEntry.On("GetValue").Once().Return("2")
 	m.Add(mockEntry)
 	mock.AssertExpectationsForObjects(t, mockEntry)
 
-	mockOtherEntry := &MockEMapEntry[int,string]{}
+	mockOtherEntry := &MockEMapEntry[int, string]{}
 	mockEntry.On("GetKey").Once().Return(2)
 	mockOtherEntry.On("GetKey").Once().Return(3)
 	mockOtherEntry.On("GetValue").Once().Return("3")
@@ -110,11 +110,11 @@ func TestBasicEMap_SetEntry(t *testing.T) {
 }
 
 func TestBasicEMap_RemoveEntry(t *testing.T) {
-	m := NewBasicEMap[int,string]()
-	mockEntry1 := &MockEMapEntry[int,string]{}
+	m := NewBasicEMap[int, string]()
+	mockEntry1 := &MockEMapEntry[int, string]{}
 	mockEntry1.On("GetKey").Once().Return(2)
 	mockEntry1.On("GetValue").Once().Return("2")
-	mockEntry2 := &MockEMapEntry[int,string]{}
+	mockEntry2 := &MockEMapEntry[int, string]{}
 	mockEntry2.On("GetKey").Once().Return(3)
 	mockEntry2.On("GetValue").Once().Return("3")
 	m.Add(mockEntry1)
@@ -129,11 +129,11 @@ func TestBasicEMap_RemoveEntry(t *testing.T) {
 }
 
 func TestBasicEMap_Clear(t *testing.T) {
-	m := NewBasicEMap[int,string]()
-	mockEntry1 := &MockEMapEntry[int,string]{}
+	m := NewBasicEMap[int, string]()
+	mockEntry1 := &MockEMapEntry[int, string]{}
 	mockEntry1.On("GetKey").Once().Return(2)
 	mockEntry1.On("GetValue").Once().Return("2")
-	mockEntry2 := &MockEMapEntry[int,string]{}
+	mockEntry2 := &MockEMapEntry[int, string]{}
 	mockEntry2.On("GetKey").Once().Return(3)
 	mockEntry2.On("GetValue").Once().Return("3")
 	m.Add(mockEntry1)
@@ -142,12 +142,12 @@ func TestBasicEMap_Clear(t *testing.T) {
 
 	m.Clear()
 	assert.Equal(t, map[int]string{}, m.ToMap())
-	assert.Equal(t, []EMapEntry[int,string]{}, m.ToArray())
+	assert.Equal(t, []EMapEntry[int, string]{}, m.ToArray())
 	mock.AssertExpectationsForObjects(t, mockEntry1, mockEntry2)
 }
 
 func TestBasicEMap_UpdateEntry(t *testing.T) {
-	m := NewBasicEMap[int,string]()
+	m := NewBasicEMap[int, string]()
 	m.Put(2, "2")
 	e := m.Get(0)
 	e.SetKey(3)

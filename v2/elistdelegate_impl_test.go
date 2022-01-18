@@ -70,3 +70,10 @@ func TestListDelegate_Set(t *testing.T) {
 	l.On("Set", 0, "s").Once().Return("")
 	assert.Equal(t, "", d.Set(0, "s"))
 }
+
+func TestToListWithDelegate(t *testing.T) {
+	l := &MockEList[string]{}
+	l2 := ToAnyList[string](l)
+	l3 := FromAnyList[string](l2)
+	assert.Equal(t, l, l3)
+}

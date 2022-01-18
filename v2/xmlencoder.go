@@ -136,7 +136,7 @@ func (s *XMLEncoder) encodeTopObject(eObject EObject) {
 	if s.extendedMetaData != nil {
 		eClass := eObject.EClass()
 		if ePrefixMapFeature := s.extendedMetaData.GetXMLNSPrefixMapFeature(eClass); ePrefixMapFeature != nil {
-			m := eObject.EGet(ePrefixMapFeature).(EMap[string,string])
+			m := eObject.EGet(ePrefixMapFeature).(EMap[string, string])
 			s.setPrefixToNamespace(m)
 		}
 	}
@@ -730,9 +730,9 @@ func (s *XMLEncoder) getPrefix(ePackage EPackage, mustHavePrefix bool) string {
 	return nsPrefix
 }
 
-func (s *XMLEncoder) setPrefixToNamespace(prefixToNamespaceMap EMap[string,string]) {
+func (s *XMLEncoder) setPrefixToNamespace(prefixToNamespaceMap EMap[string, string]) {
 	for it := prefixToNamespaceMap.Iterator(); it.HasNext(); {
-		entry := it.Next().(EMapEntry[string,string])
+		entry := it.Next().(EMapEntry[string, string])
 		prefix := entry.GetKey()
 		nsURI := entry.GetValue()
 		if ePackage := s.getPackageForSpace(nsURI); ePackage != nil {

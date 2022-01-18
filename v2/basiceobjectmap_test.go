@@ -18,19 +18,19 @@ import (
 
 func TestBasicEObjectMap_Constructor(t *testing.T) {
 	mockClass := &MockEClass{}
-	m := NewBasicEObjectMap[EObject,EObject](mockClass)
+	m := NewBasicEObjectMap[EObject, EObject](mockClass)
 	assert.NotNil(t, m)
 
-	var mp EMap[EObject,EObject] = m
+	var mp EMap[EObject, EObject] = m
 	assert.NotNil(t, mp)
 
-	var ml EList[EMapEntry[EObject,EObject]] = m
+	var ml EList[EMapEntry[EObject, EObject]] = m
 	assert.NotNil(t, ml)
 }
 
 type MockEObjectEMapEntry struct {
 	MockEObject
-	MockEMapEntry[EObject,EObject]
+	MockEMapEntry[EObject, EObject]
 }
 
 func TestBasicEObjectMap_Put(t *testing.T) {
@@ -40,7 +40,7 @@ func TestBasicEObjectMap_Put(t *testing.T) {
 	mockEntry := &MockEObjectEMapEntry{}
 	mockKey := &MockEObject{}
 	mockValue := &MockEObject{}
-	m := NewBasicEObjectMap[EObject,EObject](mockClass)
+	m := NewBasicEObjectMap[EObject, EObject](mockClass)
 
 	mockClass.On("GetEPackage").Once().Return(mockPackage)
 	mockPackage.On("GetEFactoryInstance").Once().Return(mockFactory)
@@ -50,5 +50,5 @@ func TestBasicEObjectMap_Put(t *testing.T) {
 	mockEntry.On("GetKey").Once().Return(mockKey)
 	mockEntry.On("GetValue").Once().Return(mockValue)
 	m.Put(mockKey, mockValue)
-	mock.AssertExpectationsForObjects(t, mockClass, mockPackage, mockFactory, mockEntry, mockKey , mockValue)
+	mock.AssertExpectationsForObjects(t, mockClass, mockPackage, mockFactory, mockEntry, mockKey, mockValue)
 }

@@ -191,7 +191,7 @@ func (e *BinaryEncoder) encodeVersion() {
 func (e *BinaryEncoder) encodeObjects(objects EList[EObject], check checkType) {
 	e.encodeInt(objects.Size())
 	for it := objects.Iterator(); it.HasNext(); {
-		eObject:= it.Next()
+		eObject := it.Next()
 		e.encodeObject(eObject, check)
 	}
 }

@@ -82,15 +82,15 @@ func (list *basicEList[T]) SetInterfaces(interfaces interface{}) {
 }
 
 func (list *basicEList[T]) asAbstractEList() abstractEList[T] {
-	return 	list.interfaces.(abstractEList[T])
+	return list.interfaces.(abstractEList[T])
 }
 
 func (list *basicEList[T]) asEList() EList[T] {
-	return 	list.interfaces.(EList[T])
+	return list.interfaces.(EList[T])
 }
 
 // Remove all elements in collection that already are in list
-func getNonDuplicates[T comparable](l EList[T] ,c ECollection[T]) ECollection[T] {
+func getNonDuplicates[T comparable](l EList[T], c ECollection[T]) ECollection[T] {
 	newList := NewBasicEList([]T{})
 	for it := c.Iterator(); it.HasNext(); {
 		value := it.Next()
@@ -122,7 +122,7 @@ func (list *basicEList[T]) doAdd(e T) {
 // AddAll elements of an array in the current one
 func (list *basicEList[T]) AddAll(collection ECollection[T]) bool {
 	if list.isUnique {
-		collection = getNonDuplicates[T](list,collection)
+		collection = getNonDuplicates[T](list, collection)
 		if collection.Size() == 0 {
 			return false
 		}
@@ -171,7 +171,7 @@ func (list *basicEList[T]) InsertAll(index int, collection ECollection[T]) bool 
 		panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(list.Size()))
 	}
 	if list.isUnique {
-		collection = getNonDuplicates[T](list,collection)
+		collection = getNonDuplicates[T](list, collection)
 		if collection.Size() == 0 {
 			return false
 		}
@@ -272,7 +272,7 @@ func (list *basicEList[T]) RemoveAll(collection ECollection[T]) bool {
 func (list *basicEList[T]) RetainAll(collection ECollection[T]) bool {
 	modified := false
 	for i := list.Size() - 1; i >= 0; {
-		if (!collection.Contains(list.Get(i))) {
+		if !collection.Contains(list.Get(i)) {
 			list.RemoveAt(i)
 			modified = true
 		}
@@ -280,7 +280,6 @@ func (list *basicEList[T]) RetainAll(collection ECollection[T]) bool {
 	}
 	return modified
 }
-
 
 // Get an element of the array
 func (list *basicEList[T]) Get(index int) T {

@@ -94,3 +94,10 @@ func TestCollectionDelegate_Contains(t *testing.T) {
 	l.On("Contains", v).Once().Return(true)
 	assert.True(t, d.Contains(v))
 }
+
+func TestToCollectionWithDelegate(t *testing.T) {
+	l := &MockECollection[string]{}
+	l2 := ToAnyCollection[string](l)
+	l3 := FromAnyCollection[string](l2)
+	assert.Equal(t, l, l3)
+}

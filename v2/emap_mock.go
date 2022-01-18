@@ -9,12 +9,12 @@
 
 package ecore
 
-type MockEMap[K comparable,V any] struct {
-	MockEList[EMapEntry[K,V]]
+type MockEMap[K comparable, V any] struct {
+	MockEList[EMapEntry[K, V]]
 }
 
 // ContainsKey provides a mock function with given fields: key
-func (_m *MockEMap[K,V]) ContainsKey(key K) bool {
+func (_m *MockEMap[K, V]) ContainsKey(key K) bool {
 	ret := _m.Called(key)
 
 	var r0 bool
@@ -28,7 +28,7 @@ func (_m *MockEMap[K,V]) ContainsKey(key K) bool {
 }
 
 // ContainsValue provides a mock function with given fields: value
-func (_m *MockEMap[K,V]) ContainsValue(value V) bool {
+func (_m *MockEMap[K, V]) ContainsValue(value V) bool {
 	ret := _m.Called(value)
 
 	var r0 bool
@@ -42,7 +42,7 @@ func (_m *MockEMap[K,V]) ContainsValue(value V) bool {
 }
 
 // GetValue provides a mock function with given fields: value
-func (_m *MockEMap[K,V]) GetValue(value K) V {
+func (_m *MockEMap[K, V]) GetValue(value K) V {
 	ret := _m.Called(value)
 
 	var r0 V
@@ -58,12 +58,12 @@ func (_m *MockEMap[K,V]) GetValue(value K) V {
 }
 
 // Put provides a mock function with given fields: key, value
-func (_m *MockEMap[K,V]) Put(key K, value V) {
+func (_m *MockEMap[K, V]) Put(key K, value V) {
 	_m.Called(key, value)
 }
 
 // RemoveKey provides a mock function with given fields: key
-func (_m *MockEMap[K,V]) RemoveKey(key K) V {
+func (_m *MockEMap[K, V]) RemoveKey(key K) V {
 	ret := _m.Called(key)
 
 	var r0 V
@@ -79,7 +79,7 @@ func (_m *MockEMap[K,V]) RemoveKey(key K) V {
 }
 
 // ToMap provides a mock function with given fields:
-func (_m *MockEMap[K,V]) ToMap() map[K]V {
+func (_m *MockEMap[K, V]) ToMap() map[K]V {
 	ret := _m.Called()
 
 	var r0 map[K]V

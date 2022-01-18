@@ -137,4 +137,3 @@ func TestMockECollection_Contains(t *testing.T) {
 	assert.True(t, l.Contains(2))
 	mock.AssertExpectationsForObjects(t, l)
 }
-

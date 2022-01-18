@@ -17,7 +17,7 @@ import (
 )
 
 func TestMockEMap_ContainsKey(t *testing.T) {
-	l := &MockEMap[interface{},interface{}]{}
+	l := &MockEMap[interface{}, interface{}]{}
 	l.On("ContainsKey", 1).Once().Return(true)
 	l.On("ContainsKey", 2).Once().Return(func(interface{}) bool {
 		return true
@@ -28,7 +28,7 @@ func TestMockEMap_ContainsKey(t *testing.T) {
 }
 
 func TestMockEMap_ContainsValue(t *testing.T) {
-	l := &MockEMap[interface{},interface{}]{}
+	l := &MockEMap[interface{}, interface{}]{}
 	l.On("ContainsValue", 1).Once().Return(true)
 	l.On("ContainsValue", 2).Once().Return(func(interface{}) bool {
 		return true
@@ -39,7 +39,7 @@ func TestMockEMap_ContainsValue(t *testing.T) {
 }
 
 func TestMockEMap_RemoveKey(t *testing.T) {
-	l := &MockEMap[interface{},interface{}]{}
+	l := &MockEMap[interface{}, interface{}]{}
 	l.On("RemoveKey", 1).Once().Return("1")
 	l.On("RemoveKey", 2).Once().Return(func(interface{}) interface{} {
 		return "2"
@@ -50,14 +50,14 @@ func TestMockEMap_RemoveKey(t *testing.T) {
 }
 
 func TestMockEMap_Put(t *testing.T) {
-	l := &MockEMap[interface{},interface{}]{}
+	l := &MockEMap[interface{}, interface{}]{}
 	l.On("Put", 1, "1")
 	l.Put(1, "1")
 	mock.AssertExpectationsForObjects(t, l)
 }
 
 func TestMockEMap_GetValue(t *testing.T) {
-	l := &MockEMap[interface{},interface{}]{}
+	l := &MockEMap[interface{}, interface{}]{}
 	l.On("GetValue", 1).Once().Return("1")
 	l.On("GetValue", 2).Once().Return(func(interface{}) interface{} {
 		return "2"
@@ -68,7 +68,7 @@ func TestMockEMap_GetValue(t *testing.T) {
 }
 
 func TestMockEMap_ToMap(t *testing.T) {
-	l := &MockEMap[interface{},interface{}]{}
+	l := &MockEMap[interface{}, interface{}]{}
 	m := map[interface{}]interface{}{}
 	l.On("ToMap").Once().Return(m)
 	l.On("ToMap").Once().Return(func() map[interface{}]interface{} {

@@ -23,4 +23,3 @@ type ECollection[T any] interface {
 
 	ToArray() []T
 }
-
