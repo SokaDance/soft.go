@@ -10,7 +10,7 @@
 package ecore
 
 type MockEMap[K comparable, V any] struct {
-	MockEList[EMapEntry[K, V]]
+	MockEList[any]
 }
 
 // ContainsKey provides a mock function with given fields: key
