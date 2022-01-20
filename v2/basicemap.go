@@ -15,12 +15,6 @@ type BasicEMap[K comparable, V comparable] struct {
 	mapData map[K]V
 }
 
-type EBasicMapEntry interface {
-	SetAnyKey(key any)
-
-	SetAnyValue(value any)
-}
-
 type basicEMapList[K comparable, V comparable] struct {
 	basicEList[EMapEntry[K, V]]
 	m *BasicEMap[K, V]

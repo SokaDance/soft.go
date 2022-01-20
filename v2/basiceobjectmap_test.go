@@ -24,7 +24,7 @@ func TestBasicEObjectMap_Constructor(t *testing.T) {
 	var mp EMap[EObject, EObject] = m
 	assert.NotNil(t, mp)
 
-	var ml EList[EMapEntry[EObject, EObject]] = m
+	var ml EList[any] = m
 	assert.NotNil(t, ml)
 }
 
