@@ -42,11 +42,12 @@ func (it *eContentsListIterator[T]) HasNext() bool {
 					value := o.EGetResolve(feature, resolve)
 					if feature.IsMany() {
 						// list of values
-						values := value.(EList[T])
+						anyValues := value.(EList[any])
 						// get unresolved list if object list and not resolved iterator
-						if objectList, _ := value.(EObjectList[T]); objectList != nil && !resolve {
-							values = objectList.GetUnResolvedList()
+						if objectList, _ := value.(EObjectList[any]); objectList != nil && !resolve {
+							anyValues = objectList.GetUnResolvedList()
 						}
+						values := FromAnyList[T](anyValues)
 						if itValues := values.Iterator(); itValues.HasNext() {
 							// we have a value
 							it.values = itValues
@@ -164,7 +165,7 @@ func (l *eContentsList[T]) ToArray() []T {
 	return arr
 }
 
-func (l *eContentsList[T]) GetUnResolvedList() EList[T] {
+func (l *eContentsList[T]) GetUnResolvedList() EObjectList[T] {
 	if l.resolve {
 		return newEContentsList[T](l.o, l.features, false)
 	}
