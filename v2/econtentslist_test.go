@@ -140,8 +140,8 @@ func (suite *EContentsListIteratorTestSuite) TestIteratorSingle() {
 func (suite *EContentsListIteratorTestSuite) TestIteratorManyEmpty() {
 	t := suite.T()
 	it := suite.it
-	mockList := &MockEList[EObject]{}
-	mockIterator := &MockEIterator[EObject]{}
+	mockList := &MockEList[any]{}
+	mockIterator := &MockEIterator[any]{}
 	suite.mockObject.On("EIsSet", suite.mockFeature).Once().Return(true)
 	suite.mockObject.On("EGetResolve", suite.mockFeature, false).Once().Return(mockList)
 	suite.mockFeature.On("IsMany").Once().Return(true)
@@ -158,8 +158,8 @@ func (suite *EContentsListIteratorTestSuite) TestIteratorManyEmpty() {
 func (suite *EContentsListIteratorTestSuite) TestIteratorManyFilled() {
 	t := suite.T()
 	it := suite.it
-	mockList := &MockEList[EObject]{}
-	mockIterator := &MockEIterator[EObject]{}
+	mockList := &MockEList[any]{}
+	mockIterator := &MockEIterator[any]{}
 	mockResult := &MockEObject{}
 	suite.mockObject.On("EIsSet", suite.mockFeature).Once().Return(true)
 	suite.mockObject.On("EGetResolve", suite.mockFeature, false).Once().Return(mockList)
