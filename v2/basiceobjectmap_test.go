@@ -29,9 +29,19 @@ func TestBasicEObjectMap_Constructor(t *testing.T) {
 }
 
 type MockEObjectEMapEntry struct {
+	mock.Mock
 	MockEObject
 	MockEMapEntry[EObject, EObject]
 }
+
+func (m *MockEObjectEMapEntry) SetAnyValue(v any) {
+	m.Called(v)
+}
+
+func (m *MockEObjectEMapEntry) SetAnyKey(k any) {
+	m.Called(k)
+}
+
 
 func TestBasicEObjectMap_Put(t *testing.T) {
 	mockClass := &MockEClass{}
@@ -45,8 +55,8 @@ func TestBasicEObjectMap_Put(t *testing.T) {
 	mockClass.On("GetEPackage").Once().Return(mockPackage)
 	mockPackage.On("GetEFactoryInstance").Once().Return(mockFactory)
 	mockFactory.On("Create", mockClass).Once().Return(mockEntry)
-	mockEntry.On("SetKey", mockKey).Once()
-	mockEntry.On("SetValue", mockValue).Once()
+	mockEntry.On("SetAnyKey", mockKey).Once()
+	mockEntry.On("SetAnyValue", mockValue).Once()
 	mockEntry.On("GetKey").Once().Return(mockKey)
 	mockEntry.On("GetValue").Once().Return(mockValue)
 	m.Put(mockKey, mockValue)

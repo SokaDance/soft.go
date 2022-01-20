@@ -13,8 +13,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/mock"	
 )
 
 func TestBasicEMap_Constructor(t *testing.T) {
@@ -147,11 +146,4 @@ func TestBasicEMap_Clear(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, mockEntry1, mockEntry2)
 }
 
-func TestBasicEMap_UpdateEntry(t *testing.T) {
-	m := NewBasicEMap[int, string]()
-	m.Put(2, "2")
-	e , _ := m.Get(0).(EBasicMapEntry)
-	require.NotNil(t,e)
-	e.SetAnyKey(3)
-	e.SetAnyValue("3")
-}
+
