@@ -37,5 +37,5 @@ func (m *BasicEObjectMap[K, V]) newEntry(key K, value V) EMapEntry[K, V] {
 	eBasicEntry := eEntry.(BasicObjectMapEntry)
 	eBasicEntry.SetAnyKey(key)
 	eBasicEntry.SetAnyValue(value)
-	return eEntry.(EMapEntry[K,V])
+	return eEntry.(EMapEntry[K, V])
 }

@@ -29,9 +29,48 @@ func TestBasicEObjectMap_Constructor(t *testing.T) {
 }
 
 type MockEObjectEMapEntry struct {
-	mock.Mock
 	MockEObject
-	MockEMapEntry[EObject, EObject]
+}
+
+func (m *MockEObjectEMapEntry) GetKey() EObject {
+	ret := m.Called()
+
+	var r0 EObject
+	if rf, ok := ret.Get(0).(func() EObject); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(EObject)
+		}
+	}
+
+	return r0
+}
+
+// GetValue provides a mock function with given fields:
+func (m *MockEObjectEMapEntry) GetValue() EObject {
+	ret := m.Called()
+
+	var r0 EObject
+	if rf, ok := ret.Get(0).(func() EObject); ok {
+		r0 = rf()
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(EObject)
+		}
+	}
+
+	return r0
+}
+
+// SetKey provides a mock function with given fields: _a0
+func (m *MockEObjectEMapEntry) SetKey(_a0 EObject) {
+	m.Called(_a0)
+}
+
+// SetValue provides a mock function with given fields: _a0
+func (m *MockEObjectEMapEntry) SetValue(_a0 EObject) {
+	m.Called(_a0)
 }
 
 func (m *MockEObjectEMapEntry) SetAnyValue(v any) {
@@ -41,7 +80,6 @@ func (m *MockEObjectEMapEntry) SetAnyValue(v any) {
 func (m *MockEObjectEMapEntry) SetAnyKey(k any) {
 	m.Called(k)
 }
-
 
 func TestBasicEObjectMap_Put(t *testing.T) {
 	mockClass := &MockEClass{}
@@ -57,8 +95,8 @@ func TestBasicEObjectMap_Put(t *testing.T) {
 	mockFactory.On("Create", mockClass).Once().Return(mockEntry)
 	mockEntry.On("SetAnyKey", mockKey).Once()
 	mockEntry.On("SetAnyValue", mockValue).Once()
-	mockEntry.On("GetKey").Once().Return(mockKey)
-	mockEntry.On("GetValue").Once().Return(mockValue)
+	mockEntry.On("GetKey").Once().Return(func () EObject{ return mockKey} )
+	mockEntry.On("GetValue").Once().Return(func () EObject{ return mockValue})
 	m.Put(mockKey, mockValue)
 	mock.AssertExpectationsForObjects(t, mockClass, mockPackage, mockFactory, mockEntry, mockKey, mockValue)
 }

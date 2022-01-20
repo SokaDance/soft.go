@@ -13,7 +13,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/mock"	
+	"github.com/stretchr/testify/mock"
 )
 
 func TestBasicEMap_Constructor(t *testing.T) {
@@ -142,8 +142,6 @@ func TestBasicEMap_Clear(t *testing.T) {
 
 	m.Clear()
 	assert.Equal(t, map[int]string{}, m.ToMap())
-	assert.Equal(t, []EMapEntry[int, string]{}, m.ToArray())
+	assert.Equal(t, []any{}, m.ToArray())
 	mock.AssertExpectationsForObjects(t, mockEntry1, mockEntry2)
 }
-
-
