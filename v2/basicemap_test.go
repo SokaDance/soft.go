@@ -14,6 +14,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestBasicEMap_Constructor(t *testing.T) {
@@ -23,7 +24,7 @@ func TestBasicEMap_Constructor(t *testing.T) {
 	var mp EMap[string, any] = m
 	assert.NotNil(t, mp)
 
-	var ml EList[EMapEntry[string, any]] = m
+	var ml EList[any] = m
 	assert.NotNil(t, ml)
 }
 
@@ -149,7 +150,8 @@ func TestBasicEMap_Clear(t *testing.T) {
 func TestBasicEMap_UpdateEntry(t *testing.T) {
 	m := NewBasicEMap[int, string]()
 	m.Put(2, "2")
-	e := m.Get(0)
-	e.SetKey(3)
-	e.SetValue("3")
+	e , _ := m.Get(0).(EBasicMapEntry)
+	require.NotNil(t,e)
+	e.SetAnyKey(3)
+	e.SetAnyValue("3")
 }

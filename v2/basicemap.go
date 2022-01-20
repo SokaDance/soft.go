@@ -10,8 +10,15 @@
 package ecore
 
 type BasicEMap[K comparable, V comparable] struct {
-	*basicEMapList[K, V]
+	EList[any]
+	mapList *basicEMapList[K, V]
 	mapData map[K]V
+}
+
+type EBasicMapEntry interface {
+	SetAnyKey(key any)
+
+	SetAnyValue(value any)
 }
 
 type basicEMapList[K comparable, V comparable] struct {
@@ -52,12 +59,13 @@ func NewBasicEMap[K comparable, V comparable]() *BasicEMap[K, V] {
 }
 
 func (m *BasicEMap[K, V]) Initialize() {
-	m.basicEMapList = newBasicEMapList(m)
+	m.mapList = newBasicEMapList(m)
 	m.mapData = make(map[K]V)
+	m.EList = ToAnyList[EMapEntry[K, V]](m.mapList)
 }
 
 func (m *BasicEMap[K, V]) getEntryForKey(key K) EMapEntry[K, V] {
-	for it := m.Iterator(); it.HasNext(); {
+	for it := m.mapList.Iterator(); it.HasNext(); {
 		e := it.Next()
 		if e.GetKey() == key {
 			return e
@@ -75,33 +83,8 @@ func (m *BasicEMap[K, V]) Put(key K, value V) {
 	if e := m.getEntryForKey(key); e != nil {
 		e.SetValue(value)
 	} else {
-		m.Add(m.newEntry(key, value))
+		m.mapList.Add(newMapEntry(key, value))
 	}
-}
-
-type eMapEntryImpl[K comparable, V any] struct {
-	key   K
-	value V
-}
-
-func (e *eMapEntryImpl[K, V]) GetKey() K {
-	return e.key
-}
-
-func (e *eMapEntryImpl[K, V]) SetKey(key K) {
-	e.key = key
-}
-
-func (e *eMapEntryImpl[K, V]) GetValue() V {
-	return e.value
-}
-
-func (e *eMapEntryImpl[K, V]) SetValue(value V) {
-	e.value = value
-}
-
-func (m *BasicEMap[K, V]) newEntry(key K, value V) EMapEntry[K, V] {
-	return &eMapEntryImpl[K, V]{key: key, value: value}
 }
 
 func (m *BasicEMap[K, V]) RemoveKey(key K) V {
@@ -110,7 +93,7 @@ func (m *BasicEMap[K, V]) RemoveKey(key K) V {
 
 	// remove from list
 	if e := m.getEntryForKey(key); e != nil {
-		m.Remove(e)
+		m.mapList.Remove(e)
 		return e.GetValue()
 	}
 	var zero V
