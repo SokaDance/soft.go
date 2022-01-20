@@ -12,9 +12,7 @@ package ecore
 type EMapEntry[K comparable, V any] interface {
 	GetKey() K
 
-	SetKey(key K)
-
 	GetValue() V
 
-	SetValue(value V)
+	SetValue(V)
 }
