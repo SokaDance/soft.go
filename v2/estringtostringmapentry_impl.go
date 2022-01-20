@@ -36,6 +36,14 @@ func (eStringToStringMapEntry *eStringToStringMapEntryImpl) EStaticFeatureCount(
 	return ESTRING_TO_STRING_MAP_ENTRY_FEATURE_COUNT
 }
 
+func (eStringToStringMapEntry *eStringToStringMapEntryImpl) SetAnyKey(key any) {
+	eStringToStringMapEntry.SetKey(key.(string))
+}
+
+func (eStringToStringMapEntry *eStringToStringMapEntryImpl) SetAnyValue(value any) {
+	eStringToStringMapEntry.SetValue(value.(string))
+}
+
 // GetKey get the value of key
 func (eStringToStringMapEntry *eStringToStringMapEntryImpl) GetKey() string {
 	return eStringToStringMapEntry.key
