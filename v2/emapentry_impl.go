@@ -1,34 +1,26 @@
 package ecore
 
-type eMapEntryImpl[K comparable, V any] struct {
-	key   K
-	value V
+type eMapEntryImpl struct {
+	key   any
+	value any
 }
 
-func (e *eMapEntryImpl[K, V]) GetKey() K {
+func (e *eMapEntryImpl) GetKey() any {
 	return e.key
 }
 
-func (e *eMapEntryImpl[K, V]) SetKey(key K) {
+func (e *eMapEntryImpl) SetKey(key any) {
 	e.key = key
 }
 
-func (e *eMapEntryImpl[K, V]) GetValue() V {
+func (e *eMapEntryImpl) GetValue() any {
 	return e.value
 }
 
-func (e *eMapEntryImpl[K, V]) SetValue(value V) {
+func (e *eMapEntryImpl) SetValue(value any) {
 	e.value = value
 }
 
-func (e *eMapEntryImpl[K, V]) SetAnyKey(key any) {
-	e.key = key.(K)
-}
-
-func (e *eMapEntryImpl[K, V]) SetAnyValue(value any) {
-	e.value = value.(V)
-}
-
-func newMapEntry[K comparable, V any](key K, value V) EMapEntry[K, V] {
-	return &eMapEntryImpl[K, V]{key: key, value: value}
+func newMapEntry(key any, value any) EMapEntry {
+	return &eMapEntryImpl{key: key, value: value}
 }

@@ -9,10 +9,12 @@
 
 package ecore
 
-type EMapEntry[K comparable, V any] interface {
-	GetKey() K
+type EMapEntry interface {
+	GetKey() any
 
-	GetValue() V
+	SetKey(any)
 
-	SetValue(V)
+	GetValue() any
+
+	SetValue(any)
 }

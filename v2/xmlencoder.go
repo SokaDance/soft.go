@@ -732,9 +732,9 @@ func (s *XMLEncoder) getPrefix(ePackage EPackage, mustHavePrefix bool) string {
 
 func (s *XMLEncoder) setPrefixToNamespace(prefixToNamespaceMap EMap[string, string]) {
 	for it := prefixToNamespaceMap.Iterator(); it.HasNext(); {
-		entry := it.Next().(EMapEntry[string, string])
-		prefix := entry.GetKey()
-		nsURI := entry.GetValue()
+		entry := it.Next().(EMapEntry)
+		prefix := entry.GetKey().(string)
+		nsURI := entry.GetValue().(string)
 		if ePackage := s.getPackageForSpace(nsURI); ePackage != nil {
 			s.packages[ePackage] = prefix
 		}

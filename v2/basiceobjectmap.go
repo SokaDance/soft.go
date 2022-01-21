@@ -14,11 +14,6 @@ type BasicEObjectMap[K comparable, V comparable] struct {
 	entryClass EClass
 }
 
-type BasicObjectMapEntry interface {
-	SetAnyKey(key any)
-	SetAnyValue(value any)
-}
-
 func NewBasicEObjectMap[K comparable, V comparable](entryClass EClass) *BasicEObjectMap[K, V] {
 	basicEObjectMap := &BasicEObjectMap[K, V]{}
 	basicEObjectMap.Initialize()
@@ -28,14 +23,13 @@ func NewBasicEObjectMap[K comparable, V comparable](entryClass EClass) *BasicEOb
 
 func (m *BasicEObjectMap[K, V]) Put(key K, value V) {
 	m.mapData[key] = value
-	m.mapList.Add(m.newEntry(key, value))
+	m.Add(m.newEntry(key, value))
 }
 
-func (m *BasicEObjectMap[K, V]) newEntry(key K, value V) EMapEntry[K, V] {
+func (m *BasicEObjectMap[K, V]) newEntry(key K, value V) EMapEntry {
 	eFactory := m.entryClass.GetEPackage().GetEFactoryInstance()
-	eEntry := eFactory.Create(m.entryClass)
-	eBasicEntry := eEntry.(BasicObjectMapEntry)
-	eBasicEntry.SetAnyKey(key)
-	eBasicEntry.SetAnyValue(value)
-	return eEntry.(EMapEntry[K, V])
+	eEntry := eFactory.Create(m.entryClass).(EMapEntry)
+	eEntry.SetKey(key)
+	eEntry.SetValue(value)
+	return eEntry
 }

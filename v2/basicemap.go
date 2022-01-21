@@ -16,33 +16,33 @@ type BasicEMap[K comparable, V comparable] struct {
 }
 
 type basicEMapList[K comparable, V comparable] struct {
-	basicEList[EMapEntry[K, V]]
+	basicEList[EMapEntry]
 	m *BasicEMap[K, V]
 }
 
 func newBasicEMapList[K comparable, V comparable](m *BasicEMap[K, V]) *basicEMapList[K, V] {
 	l := new(basicEMapList[K, V])
 	l.interfaces = l
-	l.data = []EMapEntry[K, V]{}
+	l.data = []EMapEntry{}
 	l.isUnique = true
 	l.m = m
 	return l
 }
 
-func (ml *basicEMapList[K, V]) didAdd(index int, entry EMapEntry[K, V]) {
-	ml.m.mapData[entry.GetKey()] = entry.GetValue()
+func (ml *basicEMapList[K, V]) didAdd(index int, entry EMapEntry) {
+	ml.m.mapData[entry.GetKey().(K)] = entry.GetValue().(V)
 }
 
-func (ml *basicEMapList[K, V]) didSet(index int, newEntry EMapEntry[K, V], oldEntry EMapEntry[K, V]) {
-	delete(ml.m.mapData, oldEntry.GetKey())
-	ml.m.mapData[newEntry.GetKey()] = newEntry.GetValue()
+func (ml *basicEMapList[K, V]) didSet(index int, newEntry EMapEntry, oldEntry EMapEntry) {
+	delete(ml.m.mapData, oldEntry.GetKey().(K))
+	ml.m.mapData[newEntry.GetKey().(K)] = newEntry.GetValue().(V)
 }
 
-func (ml *basicEMapList[K, V]) didRemove(index int, oldEntry EMapEntry[K, V]) {
-	delete(ml.m.mapData, oldEntry.GetKey())
+func (ml *basicEMapList[K, V]) didRemove(index int, oldEntry EMapEntry) {
+	delete(ml.m.mapData, oldEntry.GetKey().(K))
 }
 
-func (ml *basicEMapList[K, V]) didClear(oldObjects []EMapEntry[K, V]) {
+func (ml *basicEMapList[K, V]) didClear(oldObjects []EMapEntry) {
 	ml.m.mapData = make(map[K]V)
 }
 
@@ -55,13 +55,13 @@ func NewBasicEMap[K comparable, V comparable]() *BasicEMap[K, V] {
 func (m *BasicEMap[K, V]) Initialize() {
 	m.mapList = newBasicEMapList(m)
 	m.mapData = make(map[K]V)
-	m.EList = ToAnyList[EMapEntry[K, V]](m.mapList)
+	m.EList = ToAnyList[EMapEntry](m.mapList)
 }
 
-func (m *BasicEMap[K, V]) getEntryForKey(key K) EMapEntry[K, V] {
-	for it := m.mapList.Iterator(); it.HasNext(); {
+func (m *BasicEMap[K, V]) getEntryForKey(key K) EMapEntry {
+	for it := m.mapList.basicEList.Iterator(); it.HasNext(); {
 		e := it.Next()
-		if e.GetKey() == key {
+		if e.GetKey().(K) == key {
 			return e
 		}
 	}
@@ -77,7 +77,7 @@ func (m *BasicEMap[K, V]) Put(key K, value V) {
 	if e := m.getEntryForKey(key); e != nil {
 		e.SetValue(value)
 	} else {
-		m.mapList.Add(newMapEntry(key, value))
+		m.Add(newMapEntry(key, value))
 	}
 }
 
@@ -87,8 +87,8 @@ func (m *BasicEMap[K, V]) RemoveKey(key K) V {
 
 	// remove from list
 	if e := m.getEntryForKey(key); e != nil {
-		m.mapList.Remove(e)
-		return e.GetValue()
+		m.Remove(e)
+		return e.GetValue().(V)
 	}
 	var zero V
 	return zero

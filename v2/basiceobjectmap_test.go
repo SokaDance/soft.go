@@ -30,56 +30,49 @@ func TestBasicEObjectMap_Constructor(t *testing.T) {
 
 type MockEObjectEMapEntry struct {
 	MockEObject
+	MockEMapEntry
 }
 
-func (m *MockEObjectEMapEntry) GetKey() EObject {
-	ret := m.Called()
+// func (m *MockEObjectEMapEntry) GetKey() any {
+// 	ret := m.Called()
 
-	var r0 EObject
-	if rf, ok := ret.Get(0).(func() EObject); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EObject)
-		}
-	}
+// 	var r0 any
+// 	if rf, ok := ret.Get(0).(func() any); ok {
+// 		r0 = rf()
+// 	} else {
+// 		if ret.Get(0) != nil {
+// 			r0 = ret.Get(0)
+// 		}
+// 	}
 
-	return r0
-}
+// 	return r0
+// }
 
-// GetValue provides a mock function with given fields:
-func (m *MockEObjectEMapEntry) GetValue() EObject {
-	ret := m.Called()
+// // GetValue provides a mock function with given fields:
+// func (m *MockEObjectEMapEntry) GetValue() any {
+// 	ret := m.Called()
 
-	var r0 EObject
-	if rf, ok := ret.Get(0).(func() EObject); ok {
-		r0 = rf()
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EObject)
-		}
-	}
+// 	var r0 any
+// 	if rf, ok := ret.Get(0).(func() any); ok {
+// 		r0 = rf()
+// 	} else {
+// 		if ret.Get(0) != nil {
+// 			r0 = ret.Get(0)
+// 		}
+// 	}
 
-	return r0
-}
+// 	return r0
+// }
 
-// SetKey provides a mock function with given fields: _a0
-func (m *MockEObjectEMapEntry) SetKey(_a0 EObject) {
-	m.Called(_a0)
-}
+// // SetKey provides a mock function with given fields: _a0
+// func (m *MockEObjectEMapEntry) SetKey(_a0 any) {
+// 	m.Called(_a0)
+// }
 
-// SetValue provides a mock function with given fields: _a0
-func (m *MockEObjectEMapEntry) SetValue(_a0 EObject) {
-	m.Called(_a0)
-}
-
-func (m *MockEObjectEMapEntry) SetAnyValue(v any) {
-	m.Called(v)
-}
-
-func (m *MockEObjectEMapEntry) SetAnyKey(k any) {
-	m.Called(k)
-}
+// // SetValue provides a mock function with given fields: _a0
+// func (m *MockEObjectEMapEntry) SetValue(_a0 any) {
+// 	m.Called(_a0)
+// }
 
 func TestBasicEObjectMap_Put(t *testing.T) {
 	mockClass := &MockEClass{}
@@ -93,10 +86,10 @@ func TestBasicEObjectMap_Put(t *testing.T) {
 	mockClass.On("GetEPackage").Once().Return(mockPackage)
 	mockPackage.On("GetEFactoryInstance").Once().Return(mockFactory)
 	mockFactory.On("Create", mockClass).Once().Return(mockEntry)
-	mockEntry.On("SetAnyKey", mockKey).Once()
-	mockEntry.On("SetAnyValue", mockValue).Once()
-	mockEntry.On("GetKey").Once().Return(func () EObject{ return mockKey} )
-	mockEntry.On("GetValue").Once().Return(func () EObject{ return mockValue})
+	mockEntry.On("SetKey", mockKey).Once()
+	mockEntry.On("SetValue", mockValue).Once()
+	mockEntry.On("GetKey").Once().Return(mockKey)
+	mockEntry.On("GetValue").Once().Return(mockValue)
 	m.Put(mockKey, mockValue)
 	mock.AssertExpectationsForObjects(t, mockClass, mockPackage, mockFactory, mockEntry, mockKey, mockValue)
 }
