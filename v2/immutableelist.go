@@ -97,10 +97,6 @@ func (l *emptyImmutableEList[T]) ToArray() []T {
 	return []T{}
 }
 
-func (l *emptyImmutableEList[T]) GetUnResolvedList() EList[T] {
-	return l
-}
-
 func NewEmptyImmutableEList[T any]() *emptyImmutableEList[T] {
 	return &emptyImmutableEList[T]{}
 }
@@ -156,8 +152,4 @@ func (l *immutableEList[T]) Iterator() EIterator[T] {
 // ToArray convert to array
 func (l *immutableEList[T]) ToArray() []T {
 	return l.data
-}
-
-func (l *immutableEList[T]) GetUnResolvedList() EList[T] {
-	return l
 }

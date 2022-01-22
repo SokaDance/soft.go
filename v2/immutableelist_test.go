@@ -102,11 +102,6 @@ func TestEmptyImmutableToArray(t *testing.T) {
 	assert.Equal(t, []int{}, a.ToArray())
 }
 
-func TestEmptyImmutableGetUnResolved(t *testing.T) {
-	l := &emptyImmutableEList[int]{}
-	assert.Equal(t, l, l.GetUnResolvedList())
-}
-
 func TestImmutableEListAdd(t *testing.T) {
 	a := NewImmutableEList[int](nil)
 	assert.Panics(t, func() { a.Add(1) })
@@ -199,9 +194,4 @@ func TestImmutableEListIterate(t *testing.T) {
 		i += 2
 	}
 	assert.Equal(t, 8, i)
-}
-
-func TestImmutableEListGetUnResolved(t *testing.T) {
-	l := NewImmutableEList([]int{})
-	assert.Equal(t, l, l.GetUnResolvedList())
 }

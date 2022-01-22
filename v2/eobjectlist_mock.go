@@ -15,15 +15,15 @@ type MockEObjectList[T any] struct {
 }
 
 // GetUnResolvedList provides a mock function with given fields:
-func (_m *MockEObjectList[T]) GetUnResolvedList() EList[T] {
+func (_m *MockEObjectList[T]) GetUnResolvedList() EObjectList[T] {
 	ret := _m.Called()
 
-	var r0 EList[T]
-	if rf, ok := ret.Get(0).(func() EList[T]); ok {
+	var r0 EObjectList[T]
+	if rf, ok := ret.Get(0).(func() EObjectList[T]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EList[T])
+			r0 = ret.Get(0).(EObjectList[T])
 		}
 	}
 

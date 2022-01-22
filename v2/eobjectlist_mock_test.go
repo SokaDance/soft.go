@@ -18,9 +18,9 @@ import (
 
 func TestMockEObjectList_GetUnResolvedList(t *testing.T) {
 	o := &MockEObjectList[EObject]{}
-	l := &MockEList[EObject]{}
+	l := &MockEObjectList[EObject]{}
 	o.On("GetUnResolvedList").Once().Return(l)
-	o.On("GetUnResolvedList").Once().Return(func() EList[EObject] {
+	o.On("GetUnResolvedList").Once().Return(func() EObjectList[EObject] {
 		return l
 	})
 	assert.Equal(t, l, o.GetUnResolvedList())

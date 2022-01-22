@@ -4,16 +4,21 @@ func ToObjectList[T, U any](l EObjectList[T], convertTo func(T) U, convertFrom f
 	if ld, isDelegate := l.(eObjectListDelegate[U, T]); isDelegate {
 		return ld.GetDelegate()
 	} else {
-		r := &eObjectListDelegateImpl[T, U, EObjectList[T]]{}
-		r.delegate = l
+		r := &eObjectListDelegateImpl[T, U, EObjectListConstraint[T]]{}
+		r.delegate = l.(EObjectListConstraint[T])
 		r.convertTo = convertTo
 		r.convertFrom = convertFrom
 		return r
 	}
 }
 
-type eObjectListDelegateImpl[T any, U any, C EObjectList[T]] struct {
-	eListDelegateImpl[T, U, C]
+type EObjectListConstraint[T any] interface {
+	EObjectList[T]
+	ENotifyingList[T]
+}
+
+type eObjectListDelegateImpl[T any, U any, C EObjectListConstraint[T]] struct {
+	eNotifyingListDelegateImpl[T, U, C]
 }
 
 func (l *eObjectListDelegateImpl[T, U, C]) GetDelegate() EObjectList[T] {
