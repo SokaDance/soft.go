@@ -24,6 +24,14 @@ func FromAnyList[T any](l EList[any]) EList[T] {
 	return ToList(l, FromAny[T], ToAny[T])
 }
 
+func ToAnyNotifyingList[T any](l ENotifyingList[T]) ENotifyingList[any] {
+	return ToNotifyingList(l, ToAny[T], FromAny[T])
+}
+
+func FromAnyNotifyingList[T any](l ENotifyingList[any]) ENotifyingList[T] {
+	return ToNotifyingList(l, FromAny[T], ToAny[T])
+}
+
 func ToAnyObjectList[T any](l EObjectList[T]) EObjectList[any] {
 	return ToObjectList(l, ToAny[T], FromAny[T])
 }
