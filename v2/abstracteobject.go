@@ -643,8 +643,9 @@ func (o *AbstractEObject) eDynamicPropertiesInverseAdd(properties EDynamicProper
 			value = o.eDynamicPropertiesCreateList(dynamicFeature)
 			properties.EDynamicSet(dynamicFeatureID, value)
 		}
-		list := value.(ENotifyingList[EObject])
-		return list.AddWithNotification(otherEnd, notifications)
+		anyList := value.(ENotifyingList[any])
+		objectList := FromAnyNotifyingList[EObject](anyList)
+		return objectList.AddWithNotification(otherEnd, notifications)
 	} else if IsContainer(dynamicFeature) {
 		msgs := notifications
 		if o.AsEObjectInternal().EInternalContainer() != nil {
@@ -703,8 +704,9 @@ func (o *AbstractEObject) eDynamicPropertiesInverseRemove(properties EDynamicPro
 	if dynamicFeature.IsMany() {
 		value := properties.EDynamicGet(dynamicFeatureID)
 		if value != nil {
-			list := value.(ENotifyingList[EObject])
-			return list.RemoveWithNotification(otherEnd, notifications)
+			anyList := value.(ENotifyingList[any])
+			objectList := FromAnyNotifyingList[EObject](anyList)
+			return objectList.RemoveWithNotification(otherEnd, notifications)
 		}
 	} else if IsContainer(dynamicFeature) {
 		featureID := o.AsEObject().EClass().GetFeatureID(dynamicFeature)
@@ -846,9 +848,9 @@ func (o *AbstractEObject) EObjectForFragmentSegment(uriSegment string) EObject {
 			pos, _ := strconv.Atoi(uriSegment[index+1:])
 			eFeatureName := uriSegment[1:index]
 			eFeature := o.eStructuralFeature(eFeatureName)
-			list, _ := o.AsEObject().EGetResolve(eFeature, false).(EList[EObject])
+			list, _ := o.AsEObject().EGetResolve(eFeature, false).(EList[any])
 			if list != nil && pos < list.Size() {
-				return list.Get(pos)
+				return list.Get(pos).(EObject)
 			}
 		}
 	}
@@ -865,7 +867,7 @@ func (o *AbstractEObject) EURIFragmentSegment(feature EStructuralFeature, object
 	s += feature.GetName()
 	if feature.IsMany() {
 		v := o.AsEObject().EGetResolve(feature, false)
-		i := v.(EList[EObject]).IndexOf(object)
+		i := v.(EList[any]).IndexOf(object)
 		s += "." + strconv.Itoa(i)
 	}
 	return s
