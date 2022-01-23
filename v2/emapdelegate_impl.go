@@ -106,8 +106,13 @@ func (m *eMapDelegateImpl[KO, KT, VO, VT]) ToArray() []any {
 	return m.delegate.ToArray()
 }
 
-func (m *eMapDelegateImpl[KO, KT, VO, VT]) GetValue(key KT) VT {
-	return m.convertValueTo(m.delegate.GetValue(m.convertKeyFrom(key)))
+func (m *eMapDelegateImpl[KO, KT, VO, VT]) GetValue(key KT) (VT, bool) {
+	if v, ok := m.delegate.GetValue(m.convertKeyFrom(key)); ok {
+		return m.convertValueTo(v), ok
+	} else {
+		var zero VT
+		return zero, false
+	}
 }
 
 func (m *eMapDelegateImpl[KO, KT, VO, VT]) Put(key KT, value VT) {

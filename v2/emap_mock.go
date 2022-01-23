@@ -42,19 +42,20 @@ func (_m *MockEMap[K, V]) ContainsValue(value V) bool {
 }
 
 // GetValue provides a mock function with given fields: value
-func (_m *MockEMap[K, V]) GetValue(value K) V {
+func (_m *MockEMap[K, V]) GetValue(value K) (V, bool) {
 	ret := _m.Called(value)
 
 	var r0 V
-	if rf, ok := ret.Get(0).(func(K) V); ok {
-		r0 = rf(value)
+	var r1 bool
+	if rf, ok := ret.Get(0).(func(K) (V, bool)); ok {
+		r0, r1 = rf(value)
 	} else {
 		if ret.Get(0) != nil {
 			r0 = ret.Get(0).(V)
+			r1 = ret.Get(1).(bool)
 		}
 	}
-
-	return r0
+	return r0, r1
 }
 
 // Put provides a mock function with given fields: key, value

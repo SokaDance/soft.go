@@ -16,6 +16,10 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
+func assertBasicEMapValueGet[K comparable, V comparable](t *testing.T, m *BasicEMap[K, V], k K, v V, exists bool) {
+	assertEMapValueGet[K, V](t, m, k, v, exists)
+}
+
 func TestBasicEMap_Constructor(t *testing.T) {
 	m := NewBasicEMap[string, any]()
 	assert.NotNil(t, m)
@@ -35,10 +39,9 @@ func TestBasicEMap_Put(t *testing.T) {
 
 func TestBasicEMap_GetValue(t *testing.T) {
 	m := NewBasicEMap[int, string]()
-	assert.Equal(t, "", m.GetValue(2))
-
+	assertBasicEMapValueGet(t, m, 2, "", false)
 	m.Put(2, "2")
-	assert.Equal(t, "2", m.GetValue(2))
+	assertBasicEMapValueGet(t, m, 2, "2", true)
 }
 
 func TestBasicEMap_RemoveKey(t *testing.T) {
@@ -46,17 +49,18 @@ func TestBasicEMap_RemoveKey(t *testing.T) {
 	m.Put(2, "2")
 
 	assert.Equal(t, "2", m.RemoveKey(2))
-	assert.Equal(t, "", m.GetValue(2))
+	assertBasicEMapValueGet(t, m, 2, "", false)
 	assert.Equal(t, "", m.RemoveKey(2))
+	assertBasicEMapValueGet(t, m, 2, "", false)
 }
 
 func TestBasicEMap_PutOverwrite(t *testing.T) {
 	m := NewBasicEMap[int, string]()
-	assert.Equal(t, "", m.GetValue(2))
+	assertBasicEMapValueGet(t, m, 2, "", false)
 	m.Put(2, "3")
-	assert.Equal(t, "3", m.GetValue(2))
+	assertBasicEMapValueGet(t, m, 2, "3", true)
 	m.Put(2, "2")
-	assert.Equal(t, "2", m.GetValue(2))
+	assertBasicEMapValueGet(t, m, 2, "2", true)
 	assert.Equalf(t, 1, m.Size(), "Don't store old cell.")
 }
 

@@ -12,7 +12,7 @@ package ecore
 type EMap[K comparable, V any] interface {
 	EList[any]
 
-	GetValue(key K) V
+	GetValue(key K) (V, bool)
 
 	Put(key K, value V)
 

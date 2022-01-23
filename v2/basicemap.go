@@ -68,8 +68,9 @@ func (m *BasicEMap[K, V]) getEntryForKey(key K) EMapEntry {
 	return nil
 }
 
-func (m *BasicEMap[K, V]) GetValue(key K) V {
-	return m.mapData[key]
+func (m *BasicEMap[K, V]) GetValue(key K) (v V, exists bool) {
+	v, exists = m.mapData[key]
+	return
 }
 
 func (m *BasicEMap[K, V]) Put(key K, value V) {

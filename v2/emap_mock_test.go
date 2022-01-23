@@ -58,12 +58,20 @@ func TestMockEMap_Put(t *testing.T) {
 
 func TestMockEMap_GetValue(t *testing.T) {
 	l := &MockEMap[any, any]{}
-	l.On("GetValue", 1).Once().Return("1")
-	l.On("GetValue", 2).Once().Return(func(any) any {
-		return "2"
+	l.On("GetValue", 1).Once().Return("1", true)
+	l.On("GetValue", 2).Once().Return(func(any) (any, bool) {
+		return nil, false
 	})
-	assert.Equal(t, "1", l.GetValue(1))
-	assert.Equal(t, "2", l.GetValue(2))
+	{
+		v, ok := l.GetValue(1)
+		assert.Equal(t, "1", v)
+		assert.True(t, ok)
+	}
+	{
+		v, ok := l.GetValue(2)
+		assert.Nil(t, v)
+		assert.False(t, ok)
+	}
 	mock.AssertExpectationsForObjects(t, l)
 }
 
