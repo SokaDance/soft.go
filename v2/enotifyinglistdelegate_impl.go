@@ -33,13 +33,13 @@ func (l *eNotifyingListDelegateImpl[T, U, C]) GetFeatureID() int {
 }
 
 func (l *eNotifyingListDelegateImpl[T, U, C]) AddWithNotification(object U, notifications ENotificationChain) ENotificationChain {
-	return l.delegate.AddWithNotification(l.convertFrom(object),notifications)
+	return l.delegate.AddWithNotification(l.convertFrom(object), notifications)
 }
 
 func (l *eNotifyingListDelegateImpl[T, U, C]) RemoveWithNotification(object U, notifications ENotificationChain) ENotificationChain {
-	return l.delegate.RemoveWithNotification(l.convertFrom(object),notifications)
+	return l.delegate.RemoveWithNotification(l.convertFrom(object), notifications)
 }
 
 func (l *eNotifyingListDelegateImpl[T, U, C]) SetWithNotification(index int, object U, notifications ENotificationChain) ENotificationChain {
-	return l.delegate.SetWithNotification(index,l.convertFrom(object),notifications)
+	return l.delegate.SetWithNotification(index, l.convertFrom(object), notifications)
 }

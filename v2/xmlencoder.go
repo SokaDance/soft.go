@@ -116,7 +116,7 @@ func (s *XMLEncoder) Encode() {
 	if contents.Empty() {
 		return
 	}
-	s.encodeTopObject(contents.Get(0).(EObject))
+	s.encodeTopObject(contents.Get(0))
 }
 
 func (s *XMLEncoder) EncodeObject(eObject EObject) (err error) {
@@ -179,7 +179,7 @@ func (s *XMLEncoder) getRootFeature(eClassifier EClassifier) EStructuralFeature 
 		for eClassifier != nil {
 			if eClass := s.extendedMetaData.GetDocumentRoot(eClassifier.GetEPackage()); eClass != nil {
 				for it := eClass.GetEStructuralFeatures().Iterator(); it.HasNext(); {
-					eFeature := it.Next().(EStructuralFeature)
+					eFeature := it.Next()
 					if eFeature.GetEType() == eClassifier && eFeature.IsChangeable() {
 						return eFeature
 					}
@@ -231,7 +231,7 @@ func (s *XMLEncoder) saveFeatures(eObject EObject, attributesOnly bool) bool {
 	i := 0
 	for it := eAllFeatures.Iterator(); it.HasNext(); i++ {
 		// current feature
-		eFeature := it.Next().(EStructuralFeature)
+		eFeature := it.Next()
 		// compute feature kind
 		kind, ok := s.featureKinds[eFeature]
 		if !ok {
@@ -321,7 +321,7 @@ func (s *XMLEncoder) saveFeatures(eObject EObject, attributesOnly bool) bool {
 		return false
 	}
 	for i := 0; i < elementCount; i++ {
-		eFeature := eAllFeatures.Get(elementFeatures[i]).(EStructuralFeature)
+		eFeature := eAllFeatures.Get(elementFeatures[i])
 		kind := s.featureKinds[eFeature]
 		switch kind {
 		case xsfkDataTypeSingleNillable:
