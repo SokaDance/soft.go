@@ -113,7 +113,7 @@ func (eOperation *eOperationImpl) EGetFromID(featureID int, resolve bool) any {
 		}
 		return ToAnyObjectList(list)
 	case EOPERATION__EPARAMETERS:
-		return ToAnyList(eOperation.asEOperation().GetEParameters())
+		return ToAnyObjectList(eOperation.asEOperation().GetEParameters().(EObjectList[EParameter]))
 	case EOPERATION__OPERATION_ID:
 		return ToAny(eOperation.asEOperation().GetOperationID())
 	default:

@@ -130,7 +130,7 @@ func (eAnnotation *eAnnotationImpl) initReferences() EList[EObject] {
 func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EANNOTATION__CONTENTS:
-		return ToAnyList(eAnnotation.asEAnnotation().GetContents())
+		return ToAnyObjectList(eAnnotation.asEAnnotation().GetContents().(EObjectList[EObject]))
 	case EANNOTATION__DETAILS:
 		return ToAnyMap(eAnnotation.asEAnnotation().GetDetails())
 	case EANNOTATION__EMODEL_ELEMENT:

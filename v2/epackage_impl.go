@@ -152,11 +152,11 @@ func (ePackage *ePackageImpl) initESubPackages() EList[EPackage] {
 func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		return ToAnyList(ePackage.asEPackage().GetEClassifiers())
+		return ToAnyObjectList(ePackage.asEPackage().GetEClassifiers().(EObjectList[EClassifier]))
 	case EPACKAGE__EFACTORY_INSTANCE:
 		return ToAny(ePackage.asEPackage().GetEFactoryInstance())
 	case EPACKAGE__ESUB_PACKAGES:
-		return ToAnyList(ePackage.asEPackage().GetESubPackages())
+		return ToAnyObjectList(ePackage.asEPackage().GetESubPackages().(EObjectList[EPackage]))
 	case EPACKAGE__ESUPER_PACKAGE:
 		return ToAny(ePackage.asEPackage().GetESuperPackage())
 	case EPACKAGE__NS_PREFIX:

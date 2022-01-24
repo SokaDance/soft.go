@@ -212,7 +212,7 @@ func (eGenericType *eGenericTypeImpl) EGetFromID(featureID int, resolve bool) an
 		}
 		return ToAny(eGenericType.basicGetERawType())
 	case EGENERIC_TYPE__ETYPE_ARGUMENTS:
-		return ToAnyList(eGenericType.asEGenericType().GetETypeArguments())
+		return ToAnyObjectList(eGenericType.asEGenericType().GetETypeArguments().(EObjectList[EGenericType]))
 	case EGENERIC_TYPE__ETYPE_PARAMETER:
 		return ToAny(eGenericType.asEGenericType().GetETypeParameter())
 	case EGENERIC_TYPE__EUPPER_BOUND:

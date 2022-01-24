@@ -70,7 +70,7 @@ func (eEnum *eEnumImpl) initELiterals() EList[EEnumLiteral] {
 func (eEnum *eEnumImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EENUM__ELITERALS:
-		return ToAnyList(eEnum.asEEnum().GetELiterals())
+		return ToAnyObjectList(eEnum.asEEnum().GetELiterals().(EObjectList[EEnumLiteral]))
 	default:
 		return eEnum.eDataTypeExt.EGetFromID(featureID, resolve)
 	}

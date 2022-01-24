@@ -355,7 +355,7 @@ func (eClass *eClassImpl) EGetFromID(featureID int, resolve bool) any {
 	case ECLASS__EID_ATTRIBUTE:
 		return ToAny(eClass.asEClass().GetEIDAttribute())
 	case ECLASS__EOPERATIONS:
-		return ToAnyList(eClass.asEClass().GetEOperations())
+		return ToAnyObjectList(eClass.asEClass().GetEOperations().(EObjectList[EOperation]))
 	case ECLASS__EREFERENCES:
 		list := eClass.asEClass().GetEReferences().(EObjectList[EReference])
 		if !resolve {
@@ -363,7 +363,7 @@ func (eClass *eClassImpl) EGetFromID(featureID int, resolve bool) any {
 		}
 		return ToAnyObjectList(list)
 	case ECLASS__ESTRUCTURAL_FEATURES:
-		return ToAnyList(eClass.asEClass().GetEStructuralFeatures())
+		return ToAnyObjectList(eClass.asEClass().GetEStructuralFeatures().(EObjectList[EStructuralFeature]))
 	case ECLASS__ESUPER_TYPES:
 		list := eClass.asEClass().GetESuperTypes().(EObjectList[EClass])
 		if !resolve {
