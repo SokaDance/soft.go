@@ -258,7 +258,7 @@ func TestXMLEncoderSimpleXMLRootObjects(t *testing.T) {
 
 	// save it now
 	var strbuff strings.Builder
-	eResource.SaveWithWriter(&strbuff, map[string]interface{}{XML_OPTION_ROOT_OBJECTS: NewImmutableEList([]interface{}{eBook})})
+	eResource.SaveWithWriter(&strbuff, map[string]interface{}{XML_OPTION_ROOT_OBJECTS: NewImmutableEList([]EObject{eBook})})
 
 	bytes, err := ioutil.ReadFile("testdata/book.simple.xml")
 	assert.Nil(t, err)
