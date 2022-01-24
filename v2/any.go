@@ -2,7 +2,13 @@ package ecore
 
 func ToAny[T any](t T) any { return t }
 
-func FromAny[T any](a any) T { return a.(T) }
+func FromAny[T any](a any) T {
+	if a == nil {
+		var zero T
+		return zero
+	}
+	return a.(T)
+}
 
 func ToAnyArray[T any](c ECollection[T]) []any {
 	return ToArray(c, ToAny[T])
