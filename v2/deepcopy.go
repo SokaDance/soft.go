@@ -30,7 +30,7 @@ func (dC *deepCopy) copy(eObject EObject) EObject {
 			dC.objects[eObject] = copyEObject
 			eClass := eObject.EClass()
 			for it := eClass.GetEAllStructuralFeatures().Iterator(); it.HasNext(); {
-				eFeature := it.Next().(EStructuralFeature)
+				eFeature := it.Next()
 				if eFeature.IsChangeable() && !eFeature.IsDerived() {
 					if eAttribute, _ := eFeature.(EAttribute); eAttribute != nil {
 						dC.copyAttribute(eAttribute, eObject, copyEObject)
@@ -80,7 +80,7 @@ func (dC *deepCopy) copyContainment(eReference EReference, eObject EObject, copy
 		value := eObject.EGetResolve(eReference, dC.resolve)
 		if eReference.IsMany() {
 			list := FromAnyList[EObject](value)
-			copyEObject.ESet(eReference, dC.copyAll(list))
+			copyEObject.ESet(eReference, ToAnyList(dC.copyAll(list)))
 		} else {
 			object := FromAny[EObject](value)
 			copyEObject.ESet(eReference, dC.copy(object))
@@ -91,7 +91,7 @@ func (dC *deepCopy) copyContainment(eReference EReference, eObject EObject, copy
 func (dC *deepCopy) copyReferences() {
 	for eObject, copyEObject := range dC.objects {
 		for it := eObject.EClass().GetEReferences().Iterator(); it.HasNext(); {
-			eReference := it.Next().(EReference)
+			eReference := it.Next()
 			if eReference.IsChangeable() && !eReference.IsDerived() && !eReference.IsContainment() && !eReference.IsContainer() {
 				dC.copyReference(eReference, eObject, copyEObject)
 			}
