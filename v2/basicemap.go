@@ -55,7 +55,7 @@ func NewBasicEMap[K comparable, V comparable]() *BasicEMap[K, V] {
 func (m *BasicEMap[K, V]) Initialize() {
 	m.mapList = newBasicEMapList(m)
 	m.mapData = make(map[K]V)
-	m.EList = ToList[EMapEntry, any](m.mapList, ToAny[EMapEntry], FromAny[EMapEntry])
+	m.EList = ToList[EMapEntry](m.mapList, ToAny[EMapEntry], FromAny[EMapEntry])
 }
 
 func (m *BasicEMap[K, V]) getEntryForKey(key K) EMapEntry {
