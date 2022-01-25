@@ -10,46 +10,52 @@ func FromAny[T any](a any) T {
 	return a.(T)
 }
 
-func ToAnyArray[T any](c ECollection[T]) []any {
-	return ToArray(c, ToAny[T])
+func ToAnyList[T any](l EList[T]) any {
+	switch c := any(l).(type) {
+	case EList[any]:
+		return c
+	case EObjectList[T]:
+		return ToObjectList(c, ToAny[T], FromAny[T])
+	case ENotifyingList[T]:
+		return ToNotifyingList(c, ToAny[T], FromAny[T])
+	case EList[T]:
+		return ToList(c, ToAny[T], FromAny[T])
+	default:
+		return nil
+	}
 }
 
-func ToAnyCollection[T any](c ECollection[T]) ECollection[any] {
-	return ToCollection(c, ToAny[T], FromAny[T])
+func FromAnyList[T any](v any) EList[T] {
+	switch c := v.(type) {
+	case EList[T]:
+		return c
+	case EObjectList[any]:
+		return ToObjectList(c, FromAny[T], ToAny[T])
+	case ENotifyingList[any]:
+		return ToNotifyingList(c, FromAny[T], ToAny[T])
+	case EList[any]:
+		return ToList(c, FromAny[T], ToAny[T])
+	default:
+		return nil
+	}
 }
 
-func FromAnyCollection[T any](c ECollection[any]) ECollection[T] {
-	return ToCollection(c, FromAny[T], ToAny[T])
+func ToAnyMap[K comparable, V any](m EMap[K, V]) any {
+	switch c := any(m).(type) {
+	case EMap[any, any]:
+		return c
+	default:
+		return ToMap(m, ToAny[K], FromAny[K], ToAny[V], FromAny[V])
+	}
 }
 
-func ToAnyList[T any](l EList[T]) EList[any] {
-	return ToList(l, ToAny[T], FromAny[T])
-}
-
-func FromAnyList[T any](l EList[any]) EList[T] {
-	return ToList(l, FromAny[T], ToAny[T])
-}
-
-func ToAnyNotifyingList[T any](l ENotifyingList[T]) ENotifyingList[any] {
-	return ToNotifyingList(l, ToAny[T], FromAny[T])
-}
-
-func FromAnyNotifyingList[T any](l ENotifyingList[any]) ENotifyingList[T] {
-	return ToNotifyingList(l, FromAny[T], ToAny[T])
-}
-
-func ToAnyObjectList[T any](l EObjectList[T]) EObjectList[any] {
-	return ToObjectList(l, ToAny[T], FromAny[T])
-}
-
-func FromAnyObjectList[T any](l EObjectList[any]) EObjectList[T] {
-	return ToObjectList(l, FromAny[T], ToAny[T])
-}
-
-func ToAnyMap[K comparable, V any](m EMap[K, V]) EMap[any, any] {
-	return ToMap[K, any, V, any](m, ToAny[K], FromAny[K], ToAny[V], FromAny[V])
-}
-
-func FromAnyMap[K comparable, V any](m EMap[any, any]) EMap[K, V] {
-	return ToMap[any, K, any, V](m, FromAny[K], ToAny[K], FromAny[V], ToAny[V])
+func FromAnyMap[K comparable, V any](v any) EMap[K, V] {
+	switch m := v.(type) {
+	case EMap[any, any]:
+		return ToMap(m, FromAny[K], ToAny[K], FromAny[V], ToAny[V])
+	case EMap[K, V]:
+		return m
+	default:
+		return nil
+	}
 }

@@ -140,10 +140,10 @@ func TestEAnnotationSourceSet(t *testing.T) {
 func TestEAnnotationEGetFromID(t *testing.T) {
 	o := newEAnnotationImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetContents(), FromAnyObjectList[EObject](o.EGetFromID(EANNOTATION__CONTENTS, true).(EObjectList[any])))
-	assert.Equal(t, o.GetDetails(), FromAnyMap[string, string](o.EGetFromID(EANNOTATION__DETAILS, true).(EMap[any, any])))
-	assert.Equal(t, o.GetReferences(), FromAnyObjectList[EObject](o.EGetFromID(EANNOTATION__REFERENCES, true).(EObjectList[any])))
-	assert.Equal(t, o.GetReferences().(EObjectList[EObject]).GetUnResolvedList(), FromAnyObjectList[EObject](o.EGetFromID(EANNOTATION__REFERENCES, false).(EObjectList[any])))
+	assert.Equal(t, o.GetContents(), FromAnyList[EObject](o.EGetFromID(EANNOTATION__CONTENTS, true)))
+	assert.Equal(t, o.GetDetails(), FromAnyMap[string, string](o.EGetFromID(EANNOTATION__DETAILS, true)))
+	assert.Equal(t, o.GetReferences(), FromAnyList[EObject](o.EGetFromID(EANNOTATION__REFERENCES, true)))
+	assert.Equal(t, o.GetReferences().(EObjectList[EObject]).GetUnResolvedList(), FromAnyList[EObject](o.EGetFromID(EANNOTATION__REFERENCES, false)))
 }
 
 func TestEAnnotationESetFromID(t *testing.T) {

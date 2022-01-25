@@ -143,8 +143,8 @@ func TestEReferenceEGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__CONTAINER, true) })
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__CONTAINER, false) })
-	assert.Equal(t, o.GetEKeys(), FromAnyObjectList[EAttribute](o.EGetFromID(EREFERENCE__EKEYS, true).(EObjectList[any])))
-	assert.Equal(t, o.GetEKeys().(EObjectList[EAttribute]).GetUnResolvedList(), FromAnyObjectList[EAttribute](o.EGetFromID(EREFERENCE__EKEYS, false).(EObjectList[any])))
+	assert.Equal(t, o.GetEKeys(), FromAnyList[EAttribute](o.EGetFromID(EREFERENCE__EKEYS, true)))
+	assert.Equal(t, o.GetEKeys().(EObjectList[EAttribute]).GetUnResolvedList(), FromAnyList[EAttribute](o.EGetFromID(EREFERENCE__EKEYS, false)))
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__EREFERENCE_TYPE, true) })
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__EREFERENCE_TYPE, false) })
 }

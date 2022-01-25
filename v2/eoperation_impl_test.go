@@ -89,9 +89,9 @@ func TestEOperationIsOverrideOfOperation(t *testing.T) {
 func TestEOperationEGetFromID(t *testing.T) {
 	o := newEOperationImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEExceptions(), FromAnyObjectList[EClassifier](o.EGetFromID(EOPERATION__EEXCEPTIONS, true).(EObjectList[any])))
-	assert.Equal(t, o.GetEExceptions().(EObjectList[EClassifier]).GetUnResolvedList(), FromAnyObjectList[EClassifier](o.EGetFromID(EOPERATION__EEXCEPTIONS, false).(EObjectList[any])))
-	assert.Equal(t, o.GetEParameters(), FromAnyObjectList[EParameter](o.EGetFromID(EOPERATION__EPARAMETERS, true).(EObjectList[any])))
+	assert.Equal(t, o.GetEExceptions(), FromAnyList[EClassifier](o.EGetFromID(EOPERATION__EEXCEPTIONS, true)))
+	assert.Equal(t, o.GetEExceptions().(EObjectList[EClassifier]).GetUnResolvedList(), FromAnyList[EClassifier](o.EGetFromID(EOPERATION__EEXCEPTIONS, false)))
+	assert.Equal(t, o.GetEParameters(), FromAnyList[EParameter](o.EGetFromID(EOPERATION__EPARAMETERS, true)))
 }
 
 func TestEOperationESetFromID(t *testing.T) {

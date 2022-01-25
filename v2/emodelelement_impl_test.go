@@ -42,7 +42,7 @@ func TestEModelElementGetEAnnotationOperation(t *testing.T) {
 func TestEModelElementEGetFromID(t *testing.T) {
 	o := newEModelElementImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEAnnotations(), FromAnyObjectList[EAnnotation](o.EGetFromID(EMODEL_ELEMENT__EANNOTATIONS, true).(EObjectList[any])))
+	assert.Equal(t, o.GetEAnnotations(), FromAnyList[EAnnotation](o.EGetFromID(EMODEL_ELEMENT__EANNOTATIONS, true)))
 }
 
 func TestEModelElementESetFromID(t *testing.T) {

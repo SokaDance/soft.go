@@ -303,73 +303,73 @@ func (eClass *eClassImpl) EGetFromID(featureID int, resolve bool) any {
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EAttribute](list)
 	case ECLASS__EALL_CONTAINMENTS:
 		list := eClass.asEClass().GetEAllContainments().(EObjectList[EReference])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EReference](list)
 	case ECLASS__EALL_OPERATIONS:
 		list := eClass.asEClass().GetEAllOperations().(EObjectList[EOperation])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EOperation](list)
 	case ECLASS__EALL_REFERENCES:
 		list := eClass.asEClass().GetEAllReferences().(EObjectList[EReference])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EReference](list)
 	case ECLASS__EALL_STRUCTURAL_FEATURES:
 		list := eClass.asEClass().GetEAllStructuralFeatures().(EObjectList[EStructuralFeature])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EStructuralFeature](list)
 	case ECLASS__EALL_SUPER_TYPES:
 		list := eClass.asEClass().GetEAllSuperTypes().(EObjectList[EClass])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EClass](list)
 	case ECLASS__EATTRIBUTES:
 		list := eClass.asEClass().GetEAttributes().(EObjectList[EAttribute])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EAttribute](list)
 	case ECLASS__ECONTAINMENT_FEATURES:
 		list := eClass.asEClass().GetEContainmentFeatures().(EObjectList[EStructuralFeature])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EStructuralFeature](list)
 	case ECLASS__ECROSS_REFERENCE_FEATURES:
 		list := eClass.asEClass().GetECrossReferenceFeatures().(EObjectList[EStructuralFeature])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EStructuralFeature](list)
 	case ECLASS__EID_ATTRIBUTE:
 		return ToAny(eClass.asEClass().GetEIDAttribute())
 	case ECLASS__EOPERATIONS:
-		return ToAnyObjectList(eClass.asEClass().GetEOperations().(EObjectList[EOperation]))
+		return ToAnyList(eClass.asEClass().GetEOperations())
 	case ECLASS__EREFERENCES:
 		list := eClass.asEClass().GetEReferences().(EObjectList[EReference])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EReference](list)
 	case ECLASS__ESTRUCTURAL_FEATURES:
-		return ToAnyObjectList(eClass.asEClass().GetEStructuralFeatures().(EObjectList[EStructuralFeature]))
+		return ToAnyList(eClass.asEClass().GetEStructuralFeatures())
 	case ECLASS__ESUPER_TYPES:
 		list := eClass.asEClass().GetESuperTypes().(EObjectList[EClass])
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EClass](list)
 	case ECLASS__INTERFACE:
 		return ToAny(eClass.asEClass().IsInterface())
 	default:
@@ -383,17 +383,17 @@ func (eClass *eClassImpl) ESetFromID(featureID int, value any) {
 		newValue := FromAny[bool](value)
 		eClass.asEClass().SetAbstract(newValue)
 	case ECLASS__EOPERATIONS:
-		newList := FromAnyList[EOperation](value.(EList[any]))
+		newList := FromAnyList[EOperation](value)
 		l := eClass.asEClass().GetEOperations()
 		l.Clear()
 		l.AddAll(newList)
 	case ECLASS__ESTRUCTURAL_FEATURES:
-		newList := FromAnyList[EStructuralFeature](value.(EList[any]))
+		newList := FromAnyList[EStructuralFeature](value)
 		l := eClass.asEClass().GetEStructuralFeatures()
 		l.Clear()
 		l.AddAll(newList)
 	case ECLASS__ESUPER_TYPES:
-		newList := FromAnyList[EClass](value.(EList[any]))
+		newList := FromAnyList[EClass](value)
 		l := eClass.asEClass().GetESuperTypes()
 		l.Clear()
 		l.AddAll(newList)

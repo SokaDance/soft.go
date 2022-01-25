@@ -50,7 +50,7 @@ func TestEEnumGetEEnumLiteralByValueOperation(t *testing.T) {
 func TestEEnumEGetFromID(t *testing.T) {
 	o := newEEnumImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetELiterals(), FromAnyObjectList[EEnumLiteral](o.EGetFromID(EENUM__ELITERALS, true).(EObjectList[any])))
+	assert.Equal(t, o.GetELiterals(), FromAnyList[EEnumLiteral](o.EGetFromID(EENUM__ELITERALS, true)))
 }
 
 func TestEEnumESetFromID(t *testing.T) {

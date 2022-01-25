@@ -157,8 +157,8 @@ func TestEPackageGetEClassifierOperation(t *testing.T) {
 func TestEPackageEGetFromID(t *testing.T) {
 	o := newEPackageImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEClassifiers(), FromAnyObjectList[EClassifier](o.EGetFromID(EPACKAGE__ECLASSIFIERS, true).(EObjectList[any])))
-	assert.Equal(t, o.GetESubPackages(), FromAnyObjectList[EPackage](o.EGetFromID(EPACKAGE__ESUB_PACKAGES, true).(EObjectList[any])))
+	assert.Equal(t, o.GetEClassifiers(), FromAnyList[EClassifier](o.EGetFromID(EPACKAGE__ECLASSIFIERS, true)))
+	assert.Equal(t, o.GetESubPackages(), FromAnyList[EPackage](o.EGetFromID(EPACKAGE__ESUB_PACKAGES, true)))
 }
 
 func TestEPackageESetFromID(t *testing.T) {

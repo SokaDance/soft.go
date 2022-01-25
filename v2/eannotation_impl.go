@@ -130,7 +130,7 @@ func (eAnnotation *eAnnotationImpl) initReferences() EList[EObject] {
 func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EANNOTATION__CONTENTS:
-		return ToAnyObjectList(eAnnotation.asEAnnotation().GetContents().(EObjectList[EObject]))
+		return ToAnyList(eAnnotation.asEAnnotation().GetContents())
 	case EANNOTATION__DETAILS:
 		return ToAnyMap(eAnnotation.asEAnnotation().GetDetails())
 	case EANNOTATION__EMODEL_ELEMENT:
@@ -140,7 +140,7 @@ func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) any 
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EObject](list)
 	case EANNOTATION__SOURCE:
 		return ToAny(eAnnotation.asEAnnotation().GetSource())
 	default:
@@ -151,12 +151,12 @@ func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) any 
 func (eAnnotation *eAnnotationImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EANNOTATION__CONTENTS:
-		newList := FromAnyList[EObject](value.(EList[any]))
+		newList := FromAnyList[EObject](value)
 		l := eAnnotation.asEAnnotation().GetContents()
 		l.Clear()
 		l.AddAll(newList)
 	case EANNOTATION__DETAILS:
-		newMap := FromAnyMap[string, string](value.(EMap[any, any]))
+		newMap := FromAnyMap[string, string](value)
 		m := eAnnotation.asEAnnotation().GetDetails()
 		m.Clear()
 		m.AddAll(newMap)
@@ -164,7 +164,7 @@ func (eAnnotation *eAnnotationImpl) ESetFromID(featureID int, value any) {
 		newValue := FromAny[EModelElement](value)
 		eAnnotation.asEAnnotation().SetEModelElement(newValue)
 	case EANNOTATION__REFERENCES:
-		newList := FromAnyList[EObject](value.(EList[any]))
+		newList := FromAnyList[EObject](value)
 		l := eAnnotation.asEAnnotation().GetReferences()
 		l.Clear()
 		l.AddAll(newList)

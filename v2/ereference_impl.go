@@ -138,7 +138,7 @@ func (eReference *eReferenceImpl) EGetFromID(featureID int, resolve bool) any {
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EAttribute](list)
 	case EREFERENCE__EOPPOSITE:
 		if resolve {
 			return ToAny(eReference.asEReference().GetEOpposite())
@@ -162,7 +162,7 @@ func (eReference *eReferenceImpl) ESetFromID(featureID int, value any) {
 		newValue := FromAny[bool](value)
 		eReference.asEReference().SetContainment(newValue)
 	case EREFERENCE__EKEYS:
-		newList := FromAnyList[EAttribute](value.(EList[any]))
+		newList := FromAnyList[EAttribute](value)
 		l := eReference.asEReference().GetEKeys()
 		l.Clear()
 		l.AddAll(newList)

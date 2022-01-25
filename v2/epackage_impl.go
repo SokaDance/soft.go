@@ -152,11 +152,11 @@ func (ePackage *ePackageImpl) initESubPackages() EList[EPackage] {
 func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		return ToAnyObjectList(ePackage.asEPackage().GetEClassifiers().(EObjectList[EClassifier]))
+		return ToAnyList(ePackage.asEPackage().GetEClassifiers())
 	case EPACKAGE__EFACTORY_INSTANCE:
 		return ToAny(ePackage.asEPackage().GetEFactoryInstance())
 	case EPACKAGE__ESUB_PACKAGES:
-		return ToAnyObjectList(ePackage.asEPackage().GetESubPackages().(EObjectList[EPackage]))
+		return ToAnyList(ePackage.asEPackage().GetESubPackages())
 	case EPACKAGE__ESUPER_PACKAGE:
 		return ToAny(ePackage.asEPackage().GetESuperPackage())
 	case EPACKAGE__NS_PREFIX:
@@ -171,7 +171,7 @@ func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) any {
 func (ePackage *ePackageImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		newList := FromAnyList[EClassifier](value.(EList[any]))
+		newList := FromAnyList[EClassifier](value)
 		l := ePackage.asEPackage().GetEClassifiers()
 		l.Clear()
 		l.AddAll(newList)
@@ -179,7 +179,7 @@ func (ePackage *ePackageImpl) ESetFromID(featureID int, value any) {
 		newValue := FromAny[EFactory](value)
 		ePackage.asEPackage().SetEFactoryInstance(newValue)
 	case EPACKAGE__ESUB_PACKAGES:
-		newList := FromAnyList[EPackage](value.(EList[any]))
+		newList := FromAnyList[EPackage](value)
 		l := ePackage.asEPackage().GetESubPackages()
 		l.Clear()
 		l.AddAll(newList)

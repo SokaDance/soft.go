@@ -60,7 +60,7 @@ func (eModelElement *eModelElementImpl) initEAnnotations() EList[EAnnotation] {
 func (eModelElement *eModelElementImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EMODEL_ELEMENT__EANNOTATIONS:
-		return ToAnyObjectList(eModelElement.asEModelElement().GetEAnnotations().(EObjectList[EAnnotation]))
+		return ToAnyList(eModelElement.asEModelElement().GetEAnnotations())
 	default:
 		return eModelElement.CompactEObjectContainer.EGetFromID(featureID, resolve)
 	}
@@ -69,7 +69,7 @@ func (eModelElement *eModelElementImpl) EGetFromID(featureID int, resolve bool) 
 func (eModelElement *eModelElementImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EMODEL_ELEMENT__EANNOTATIONS:
-		newList := FromAnyList[EAnnotation](value.(EList[any]))
+		newList := FromAnyList[EAnnotation](value)
 		l := eModelElement.asEModelElement().GetEAnnotations()
 		l.Clear()
 		l.AddAll(newList)

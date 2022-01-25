@@ -55,7 +55,7 @@ func (eTypeParameter *eTypeParameterImpl) initEBounds() EList[EGenericType] {
 func (eTypeParameter *eTypeParameterImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case ETYPE_PARAMETER__EBOUNDS:
-		return ToAnyObjectList(eTypeParameter.asETypeParameter().GetEBounds().(EObjectList[EGenericType]))
+		return ToAnyList(eTypeParameter.asETypeParameter().GetEBounds())
 	default:
 		return eTypeParameter.eNamedElementImpl.EGetFromID(featureID, resolve)
 	}
@@ -64,7 +64,7 @@ func (eTypeParameter *eTypeParameterImpl) EGetFromID(featureID int, resolve bool
 func (eTypeParameter *eTypeParameterImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case ETYPE_PARAMETER__EBOUNDS:
-		newList := FromAnyList[EGenericType](value.(EList[any]))
+		newList := FromAnyList[EGenericType](value)
 		l := eTypeParameter.asETypeParameter().GetEBounds()
 		l.Clear()
 		l.AddAll(newList)

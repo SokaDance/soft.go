@@ -111,9 +111,9 @@ func (eOperation *eOperationImpl) EGetFromID(featureID int, resolve bool) any {
 		if !resolve {
 			list = list.GetUnResolvedList()
 		}
-		return ToAnyObjectList(list)
+		return ToAnyList[EClassifier](list)
 	case EOPERATION__EPARAMETERS:
-		return ToAnyObjectList(eOperation.asEOperation().GetEParameters().(EObjectList[EParameter]))
+		return ToAnyList(eOperation.asEOperation().GetEParameters())
 	case EOPERATION__OPERATION_ID:
 		return ToAny(eOperation.asEOperation().GetOperationID())
 	default:
@@ -124,12 +124,12 @@ func (eOperation *eOperationImpl) EGetFromID(featureID int, resolve bool) any {
 func (eOperation *eOperationImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EOPERATION__EEXCEPTIONS:
-		newList := FromAnyList[EClassifier](value.(EList[any]))
+		newList := FromAnyList[EClassifier](value)
 		l := eOperation.asEOperation().GetEExceptions()
 		l.Clear()
 		l.AddAll(newList)
 	case EOPERATION__EPARAMETERS:
-		newList := FromAnyList[EParameter](value.(EList[any]))
+		newList := FromAnyList[EParameter](value)
 		l := eOperation.asEOperation().GetEParameters()
 		l.Clear()
 		l.AddAll(newList)

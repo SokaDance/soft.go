@@ -37,7 +37,7 @@ func TestETypeParameterEBoundsGet(t *testing.T) {
 func TestETypeParameterEGetFromID(t *testing.T) {
 	o := newETypeParameterImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEBounds(), FromAnyObjectList[EGenericType](o.EGetFromID(ETYPE_PARAMETER__EBOUNDS, true).(EObjectList[any])))
+	assert.Equal(t, o.GetEBounds(), FromAnyList[EGenericType](o.EGetFromID(ETYPE_PARAMETER__EBOUNDS, true)))
 }
 
 func TestETypeParameterESetFromID(t *testing.T) {

@@ -212,7 +212,7 @@ func (eGenericType *eGenericTypeImpl) EGetFromID(featureID int, resolve bool) an
 		}
 		return ToAny(eGenericType.basicGetERawType())
 	case EGENERIC_TYPE__ETYPE_ARGUMENTS:
-		return ToAnyObjectList(eGenericType.asEGenericType().GetETypeArguments().(EObjectList[EGenericType]))
+		return ToAnyList(eGenericType.asEGenericType().GetETypeArguments())
 	case EGENERIC_TYPE__ETYPE_PARAMETER:
 		return ToAny(eGenericType.asEGenericType().GetETypeParameter())
 	case EGENERIC_TYPE__EUPPER_BOUND:
@@ -231,7 +231,7 @@ func (eGenericType *eGenericTypeImpl) ESetFromID(featureID int, value any) {
 		newValue := FromAny[EGenericType](value)
 		eGenericType.asEGenericType().SetELowerBound(newValue)
 	case EGENERIC_TYPE__ETYPE_ARGUMENTS:
-		newList := FromAnyList[EGenericType](value.(EList[any]))
+		newList := FromAnyList[EGenericType](value)
 		l := eGenericType.asEGenericType().GetETypeArguments()
 		l.Clear()
 		l.AddAll(newList)

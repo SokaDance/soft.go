@@ -265,7 +265,7 @@ func TestEGenericTypeIsInstanceOperation(t *testing.T) {
 func TestEGenericTypeEGetFromID(t *testing.T) {
 	o := newEGenericTypeImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetETypeArguments(), FromAnyObjectList[EGenericType](o.EGetFromID(EGENERIC_TYPE__ETYPE_ARGUMENTS, true).(EObjectList[any])))
+	assert.Equal(t, o.GetETypeArguments(), FromAnyList[EGenericType](o.EGetFromID(EGENERIC_TYPE__ETYPE_ARGUMENTS, true)))
 }
 
 func TestEGenericTypeESetFromID(t *testing.T) {
