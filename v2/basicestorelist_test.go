@@ -308,7 +308,7 @@ func TestBasicEStoreList_Move(t *testing.T) {
 	list := NewBasicEStoreList(mockOwner, mockFeature, mockStore)
 
 	assert.Panics(t, func() {
-		list.Move(-1, 1)
+		list.MoveIndex(-1, 1)
 	})
 	mock.AssertExpectationsForObjects(t, mockOwner, mockFeature, mockStore, mockObject)
 
@@ -319,7 +319,7 @@ func TestBasicEStoreList_Move(t *testing.T) {
 	mockOwner.On("ENotify", mock.MatchedBy(func(n ENotification) bool {
 		return n.GetNotifier() == mockOwner && n.GetFeature() == mockFeature && n.GetEventType() == MOVE
 	})).Once()
-	list.Move(0, 1)
+	list.MoveIndex(0, 1)
 	mock.AssertExpectationsForObjects(t, mockOwner, mockFeature, mockStore, mockObject)
 }
 
