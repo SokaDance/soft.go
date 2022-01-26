@@ -251,9 +251,9 @@ func (d *BinaryDecoder) decodeObject() EObject {
 	}
 }
 
-func (d *BinaryDecoder) decodeObjects(list EList[any]) {
+func (d *BinaryDecoder) decodeObjects(list EList[EObject]) {
 	size := d.decodeInt()
-	objects := make([]interface{}, size)
+	objects := make([]EObject, size)
 	for i := 0; i < size; i++ {
 		objects[i] = d.decodeObject()
 	}
@@ -266,7 +266,7 @@ func (d *BinaryDecoder) decodeObjects(list EList[any]) {
 	} else {
 		indices := make([]int, existingSize)
 		duplicateCount := 0
-		existingObjects := make([]interface{}, existingSize)
+		existingObjects := make([]EObject, existingSize)
 		copy(existingObjects, list.ToArray())
 	LOOP:
 		for i := 0; i < size; i++ {
@@ -322,7 +322,7 @@ func (d *BinaryDecoder) decodeFeatureValue(eObject EObjectInternal, featureData 
 	case bfkObjectContainmentList:
 		fallthrough
 	case bfkObjectContainmentListProxy:
-		l := eObject.EGetFromID(featureData.featureID, false).(EList[any])
+		l := FromAnyList[EObject](eObject.EGetFromID(featureData.featureID, false))
 		d.decodeObjects(l)
 	case bfkData:
 		valueStr := d.decodeString()
@@ -336,7 +336,7 @@ func (d *BinaryDecoder) decodeFeatureValue(eObject EObjectInternal, featureData 
 			value := featureData.eFactory.CreateFromString(featureData.eDataType, valueStr)
 			values = append(values, value)
 		}
-		l := eObject.EGetResolve(featureData.eFeature, false).(EList[any])
+		l := FromAnyList[any](eObject.EGetResolve(featureData.eFeature, false))
 		l.AddAll(NewBasicEList(values))
 	case bfkEnum:
 		var valueStr string

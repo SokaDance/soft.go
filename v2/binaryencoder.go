@@ -277,26 +277,26 @@ func (e *BinaryEncoder) encodeFeatureValue(eObject EObjectInternal, featureID in
 		case bfkObject:
 			fallthrough
 		case bfkObjectContainment:
-			e.encodeObject(value.(EObject), checkNothing)
+			e.encodeObject(FromAny[EObject](value), checkNothing)
 		case bfkObjectContainerProxy:
-			e.encodeObject(value.(EObject), checkResource)
+			e.encodeObject(FromAny[EObject](value), checkResource)
 		case bfkObjectContainmentProxy:
-			e.encodeObject(value.(EObject), checkDirectResource)
+			e.encodeObject(FromAny[EObject](value), checkDirectResource)
 		case bfkObjectProxy:
-			e.encodeObject(value.(EObject), checkResource)
+			e.encodeObject(FromAny[EObject](value), checkResource)
 		case bfkObjectList:
 			fallthrough
 		case bfkObjectContainmentList:
-			e.encodeObjects(value.(EList[EObject]), checkNothing)
+			e.encodeObjects(FromAnyList[EObject](value), checkNothing)
 		case bfkObjectContainmentListProxy:
-			e.encodeObjects(value.(EList[EObject]), checkDirectResource)
+			e.encodeObjects(FromAnyList[EObject](value), checkDirectResource)
 		case bfkObjectListProxy:
-			e.encodeObjects(value.(EList[EObject]), checkResource)
+			e.encodeObjects(FromAnyList[EObject](value), checkResource)
 		case bfkData:
 			valueStr := featureData.factory.ConvertToString(featureData.dataType, value)
 			e.encodeString(valueStr)
 		case bfkDataList:
-			l := value.(EList[any])
+			l := FromAnyList[any](value)
 			e.encodeInt(l.Size())
 			for it := l.Iterator(); it.HasNext(); {
 				value := it.Next()
