@@ -326,7 +326,6 @@ func (list *BasicEStoreList) RemoveAll(collection ECollection[any]) bool {
 
 func (list *BasicEStoreList) RetainAll(collection ECollection[any]) bool {
 	panic("to be implemented")
-	return false
 }
 
 func (list *BasicEStoreList) Size() int {
