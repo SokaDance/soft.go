@@ -20,15 +20,15 @@ func (_m *MockEResource) Detached(object EObject) {
 }
 
 // GetAllContents provides a mock function with given fields:
-func (_m *MockEResource) GetAllContents() EIterator {
+func (_m *MockEResource) GetAllContents() EIterator[EObject] {
 	ret := _m.Called()
 
-	var r0 EIterator
-	if rf, ok := ret.Get(0).(func() EIterator); ok {
+	var r0 EIterator[EObject]
+	if rf, ok := ret.Get(0).(func() EIterator[EObject]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EIterator)
+			r0 = ret.Get(0).(EIterator[EObject])
 		}
 	}
 
@@ -36,15 +36,15 @@ func (_m *MockEResource) GetAllContents() EIterator {
 }
 
 // GetContents provides a mock function with given fields:
-func (_m *MockEResource) GetContents() EList {
+func (_m *MockEResource) GetContents() EList[EObject] {
 	ret := _m.Called()
 
-	var r0 EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r0 EList[EObject]
+	if rf, ok := ret.Get(0).(func() EList[EObject]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EList)
+			r0 = ret.Get(0).(EList[EObject])
 		}
 	}
 
@@ -68,15 +68,15 @@ func (_m *MockEResource) GetEObject(_a0 string) EObject {
 }
 
 // GetErrors provides a mock function with given fields:
-func (_m *MockEResource) GetErrors() EList {
+func (_m *MockEResource) GetErrors() EList[EDiagnostic] {
 	ret := _m.Called()
 
-	var r0 EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r0 EList[EDiagnostic]
+	if rf, ok := ret.Get(0).(func() EList[EDiagnostic]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EList)
+			r0 = ret.Get(0).(EList[EDiagnostic])
 		}
 	}
 
@@ -146,15 +146,15 @@ func (_m *MockEResource) GetURIFragment(_a0 EObject) string {
 }
 
 // GetWarnings provides a mock function with given fields:
-func (_m *MockEResource) GetWarnings() EList {
+func (_m *MockEResource) GetWarnings() EList[EDiagnostic] {
 	ret := _m.Called()
 
-	var r0 EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r0 EList[EDiagnostic]
+	if rf, ok := ret.Get(0).(func() EList[EDiagnostic]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EList)
+			r0 = ret.Get(0).(EList[EDiagnostic])
 		}
 	}
 

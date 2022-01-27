@@ -21,53 +21,6 @@ type AbstractEObject struct {
 	AbstractENotifier
 }
 
-type EDynamicProperties interface {
-	EDynamicGet(dynamicFeatureID int) interface{}
-	EDynamicSet(dynamicFeatureID int, newValue interface{})
-	EDynamicUnset(dynamicFeatureID int)
-}
-
-// EObjectInternal ...
-type EObjectInternal interface {
-	EObject
-
-	EDynamicProperties() EDynamicProperties
-
-	EStaticClass() EClass
-	EStaticFeatureCount() int
-
-	EInternalContainer() EObject
-	EInternalContainerFeatureID() int
-	EInternalResource() EResource
-	ESetInternalContainer(container EObject, containerFeatureID int)
-	ESetInternalResource(resource EResource)
-
-	ESetResource(resource EResource, notifications ENotificationChain) ENotificationChain
-
-	EInverseAdd(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain
-	EInverseRemove(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain
-
-	EFeatureID(feature EStructuralFeature) int
-	EDerivedFeatureID(container EObject, featureID int) int
-	EOperationID(operation EOperation) int
-	EDerivedOperationID(container EObject, operationID int) int
-	EGetFromID(featureID int, resolve bool) interface{}
-	ESetFromID(featureID int, newValue interface{})
-	EUnsetFromID(featureID int)
-	EIsSetFromID(featureID int) bool
-	EInvokeFromID(operationID int, arguments EList) interface{}
-
-	EBasicInverseAdd(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain
-	EBasicInverseRemove(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain
-
-	EObjectForFragmentSegment(string) EObject
-	EURIFragmentSegment(EStructuralFeature, EObject) string
-
-	EProxyURI() *URI
-	ESetProxyURI(uri *URI)
-	EResolveProxy(proxy EObject) EObject
-}
-
 // AsEObject ...
 func (o *AbstractEObject) AsEObject() EObject {
 	return o.interfaces.(EObject)
@@ -140,7 +93,7 @@ func (o *AbstractEObject) ESetResource(newResource EResource, n ENotificationCha
 	oldResource := o.AsEObjectInternal().EInternalResource()
 	// When setting the resource to nil we assume that detach has already been called in the resource implementation
 	if oldResource != nil && newResource != nil {
-		list := oldResource.GetContents().(ENotifyingList)
+		list := oldResource.GetContents().(ENotifyingList[EObject])
 		notifications = list.RemoveWithNotification(o.AsEObject(), notifications)
 		oldResource.Detached(o.AsEObject())
 	}
@@ -210,7 +163,7 @@ func eContainmentFeature(o EObject, container EObject, containerFeatureID int) E
 }
 
 // EAllContents ...
-func (o *AbstractEObject) EAllContents() EIterator {
+func (o *AbstractEObject) EAllContents() EIterator[EObject] {
 	return newEAllContentsIterator(o.AsEObject())
 }
 
@@ -346,14 +299,14 @@ func (o *AbstractEObject) eDynamicPropertiesGet(properties EDynamicProperties, d
 	return nil
 }
 
-func (o *AbstractEObject) eDynamicPropertiesCreateMap(feature EStructuralFeature) EMap {
+func (o *AbstractEObject) eDynamicPropertiesCreateMap(feature EStructuralFeature) EMap[any, any] {
 	eClass := feature.GetEType().(EClass)
-	return NewBasicEObjectMap(eClass)
+	return NewBasicEObjectMap[any, any](eClass)
 }
 
-func (o *AbstractEObject) eDynamicPropertiesCreateList(feature EStructuralFeature) EList {
+func (o *AbstractEObject) eDynamicPropertiesCreateList(feature EStructuralFeature) EList[any] {
 	if attribute, isAttribute := feature.(EAttribute); isAttribute {
-		return NewBasicEDataTypeList(o.AsEObjectInternal(), attribute.GetFeatureID(), attribute.IsUnique())
+		return NewBasicEDataTypeList[any](o.AsEObjectInternal(), attribute.GetFeatureID(), attribute.IsUnique())
 	} else if ref, isRef := feature.(EReference); isRef {
 		inverse := false
 		opposite := false
@@ -379,7 +332,7 @@ func (o *AbstractEObject) eDynamicPropertiesCreateList(feature EStructuralFeatur
 				opposite = false
 			}
 		}
-		return NewBasicEObjectList(o.AsEObjectInternal(), ref.GetFeatureID(), reverseID, containment, inverse, opposite, ref.EIsProxy(), ref.IsUnsettable())
+		return NewBasicEObjectList[any](o.AsEObjectInternal(), ref.GetFeatureID(), reverseID, containment, inverse, opposite, ref.EIsProxy(), ref.IsUnsettable())
 	}
 	return nil
 }
@@ -626,7 +579,7 @@ func (o *AbstractEObject) eDynamicPropertiesUnset(properties EDynamicProperties,
 }
 
 // EInvoke ...
-func (o *AbstractEObject) EInvoke(operation EOperation, arguments EList) interface{} {
+func (o *AbstractEObject) EInvoke(operation EOperation, arguments EList[any]) any {
 	operationID := o.AsEObjectInternal().EOperationID(operation)
 	if operationID >= 0 {
 		return o.AsEObjectInternal().EInvokeFromID(operationID, arguments)
@@ -635,7 +588,7 @@ func (o *AbstractEObject) EInvoke(operation EOperation, arguments EList) interfa
 }
 
 // EInvokeFromID ...
-func (o *AbstractEObject) EInvokeFromID(operationID int, arguments EList) interface{} {
+func (o *AbstractEObject) EInvokeFromID(operationID int, arguments EList[any]) any {
 	operation := o.AsEObject().EClass().GetEOperation(operationID)
 	if operation == nil {
 		panic("Invalid operationID: " + strconv.Itoa(operationID))
@@ -690,8 +643,8 @@ func (o *AbstractEObject) eDynamicPropertiesInverseAdd(properties EDynamicProper
 			value = o.eDynamicPropertiesCreateList(dynamicFeature)
 			properties.EDynamicSet(dynamicFeatureID, value)
 		}
-		list := value.(ENotifyingList)
-		return list.AddWithNotification(otherEnd, notifications)
+		objectList := FromAnyList[EObject](value).(ENotifyingList[EObject])
+		return objectList.AddWithNotification(otherEnd, notifications)
 	} else if IsContainer(dynamicFeature) {
 		msgs := notifications
 		if o.AsEObjectInternal().EInternalContainer() != nil {
@@ -750,8 +703,8 @@ func (o *AbstractEObject) eDynamicPropertiesInverseRemove(properties EDynamicPro
 	if dynamicFeature.IsMany() {
 		value := properties.EDynamicGet(dynamicFeatureID)
 		if value != nil {
-			list := value.(ENotifyingList)
-			return list.RemoveWithNotification(otherEnd, notifications)
+			objectList := FromAnyList[EObject](value).(ENotifyingList[EObject])
+			return objectList.RemoveWithNotification(otherEnd, notifications)
 		}
 	} else if IsContainer(dynamicFeature) {
 		featureID := o.AsEObject().EClass().GetFeatureID(dynamicFeature)
@@ -787,7 +740,7 @@ func (o *AbstractEObject) EBasicSetContainer(newContainer EObject, newContainerF
 	var newResource EResource
 	if oldResource != nil {
 		if newContainerInternal != nil && !eContainmentFeature(o.AsEObject(), newContainerInternal, newContainerFeatureID).IsResolveProxies() {
-			list := oldResource.GetContents().(ENotifyingList)
+			list := oldResource.GetContents().(ENotifyingList[EObject])
 			notifications = list.RemoveWithNotification(o.AsEObject(), notifications)
 			objInternal.ESetInternalResource(nil)
 			newResource = newContainerInternal.EResource()
@@ -893,7 +846,7 @@ func (o *AbstractEObject) EObjectForFragmentSegment(uriSegment string) EObject {
 			pos, _ := strconv.Atoi(uriSegment[index+1:])
 			eFeatureName := uriSegment[1:index]
 			eFeature := o.eStructuralFeature(eFeatureName)
-			list, _ := o.AsEObject().EGetResolve(eFeature, false).(EList)
+			list, _ := o.AsEObject().EGetResolve(eFeature, false).(EList[any])
 			if list != nil && pos < list.Size() {
 				return list.Get(pos).(EObject)
 			}
@@ -912,7 +865,7 @@ func (o *AbstractEObject) EURIFragmentSegment(feature EStructuralFeature, object
 	s += feature.GetName()
 	if feature.IsMany() {
 		v := o.AsEObject().EGetResolve(feature, false)
-		i := v.(EList).IndexOf(object)
+		i := v.(EList[any]).IndexOf(object)
 		s += "." + strconv.Itoa(i)
 	}
 	return s

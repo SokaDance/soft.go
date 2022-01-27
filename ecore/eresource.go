@@ -27,8 +27,8 @@ type EResource interface {
 	GetURI() *URI
 	SetURI(*URI)
 
-	GetContents() EList
-	GetAllContents() EIterator
+	GetContents() EList[EObject]
+	GetAllContents() EIterator[EObject]
 
 	GetEObject(string) EObject
 	GetURIFragment(EObject) string
@@ -40,17 +40,17 @@ type EResource interface {
 	IsLoaded() bool
 
 	Load()
-	LoadWithOptions(options map[string]interface{})
-	LoadWithReader(r io.Reader, options map[string]interface{})
+	LoadWithOptions(options map[string]any)
+	LoadWithReader(r io.Reader, options map[string]any)
 
 	Unload()
 
 	Save()
-	SaveWithOptions(options map[string]interface{})
-	SaveWithWriter(w io.Writer, options map[string]interface{})
+	SaveWithOptions(options map[string]any)
+	SaveWithWriter(w io.Writer, options map[string]any)
 
-	GetErrors() EList
-	GetWarnings() EList
+	GetErrors() EList[EDiagnostic]
+	GetWarnings() EList[EDiagnostic]
 
 	SetObjectIDManager(EObjectIDManager)
 	GetObjectIDManager() EObjectIDManager

@@ -24,7 +24,7 @@ func discardMockEFactory() {
 // TestMockEFactoryGetEPackage tests method GetEPackage
 func TestMockEFactoryGetEPackage(t *testing.T) {
 	o := &MockEFactory{}
-	r := new(MockEPackage)
+	r := &MockEPackage{}
 	o.On("GetEPackage").Once().Return(r)
 	o.On("GetEPackage").Once().Return(func() EPackage {
 		return r
@@ -37,7 +37,7 @@ func TestMockEFactoryGetEPackage(t *testing.T) {
 // TestMockEFactorySetEPackage tests method SetEPackage
 func TestMockEFactorySetEPackage(t *testing.T) {
 	o := &MockEFactory{}
-	v := new(MockEPackage)
+	v := &MockEPackage{}
 	o.On("SetEPackage", v).Once()
 	o.SetEPackage(v)
 	o.AssertExpectations(t)
@@ -46,9 +46,9 @@ func TestMockEFactorySetEPackage(t *testing.T) {
 // TestMockEFactoryConvertToString tests method ConvertToString
 func TestMockEFactoryConvertToString(t *testing.T) {
 	o := &MockEFactory{}
-	eDataType := new(MockEDataType)
-	instanceValue := interface{}(nil)
-	r := string("Test String")
+	eDataType := &MockEDataType{}
+	instanceValue := any(nil)
+	r := "Test String"
 	o.On("ConvertToString", eDataType, instanceValue).Return(r).Once()
 	o.On("ConvertToString", eDataType, instanceValue).Return(func() string {
 		return r
@@ -61,8 +61,8 @@ func TestMockEFactoryConvertToString(t *testing.T) {
 // TestMockEFactoryCreate tests method Create
 func TestMockEFactoryCreate(t *testing.T) {
 	o := &MockEFactory{}
-	eClass := new(MockEClass)
-	r := new(MockEObjectInternal)
+	eClass := &MockEClass{}
+	r := &MockEObjectInternal{}
 	o.On("Create", eClass).Return(r).Once()
 	o.On("Create", eClass).Return(func() EObject {
 		return r
@@ -75,11 +75,11 @@ func TestMockEFactoryCreate(t *testing.T) {
 // TestMockEFactoryCreateFromString tests method CreateFromString
 func TestMockEFactoryCreateFromString(t *testing.T) {
 	o := &MockEFactory{}
-	eDataType := new(MockEDataType)
-	literalValue := string("Test String")
-	r := interface{}(nil)
+	eDataType := &MockEDataType{}
+	literalValue := "Test String"
+	r := any(nil)
 	o.On("CreateFromString", eDataType, literalValue).Return(r).Once()
-	o.On("CreateFromString", eDataType, literalValue).Return(func() interface{} {
+	o.On("CreateFromString", eDataType, literalValue).Return(func() any {
 		return r
 	}).Once()
 	assert.Equal(t, r, o.CreateFromString(eDataType, literalValue))

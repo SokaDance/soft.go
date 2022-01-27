@@ -153,44 +153,49 @@ func (eTypedElement *eTypedElementImpl) SetUpperBound(newUpperBound int) {
 	}
 }
 
-func (eTypedElement *eTypedElementImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eTypedElement *eTypedElementImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case ETYPED_ELEMENT__ETYPE:
 		if resolve {
-			return eTypedElement.asETypedElement().GetEType()
+			return ToAny(eTypedElement.asETypedElement().GetEType())
 		}
-		return eTypedElement.basicGetEType()
+		return ToAny(eTypedElement.basicGetEType())
 	case ETYPED_ELEMENT__LOWER_BOUND:
-		return eTypedElement.asETypedElement().GetLowerBound()
+		return ToAny(eTypedElement.asETypedElement().GetLowerBound())
 	case ETYPED_ELEMENT__MANY:
-		return eTypedElement.asETypedElement().IsMany()
+		return ToAny(eTypedElement.asETypedElement().IsMany())
 	case ETYPED_ELEMENT__ORDERED:
-		return eTypedElement.asETypedElement().IsOrdered()
+		return ToAny(eTypedElement.asETypedElement().IsOrdered())
 	case ETYPED_ELEMENT__REQUIRED:
-		return eTypedElement.asETypedElement().IsRequired()
+		return ToAny(eTypedElement.asETypedElement().IsRequired())
 	case ETYPED_ELEMENT__UNIQUE:
-		return eTypedElement.asETypedElement().IsUnique()
+		return ToAny(eTypedElement.asETypedElement().IsUnique())
 	case ETYPED_ELEMENT__UPPER_BOUND:
-		return eTypedElement.asETypedElement().GetUpperBound()
+		return ToAny(eTypedElement.asETypedElement().GetUpperBound())
 	default:
 		return eTypedElement.eNamedElementImpl.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eTypedElement *eTypedElementImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eTypedElement *eTypedElementImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case ETYPED_ELEMENT__ETYPE:
-		eTypedElement.asETypedElement().SetEType(newValue.(EClassifier))
+		newValue := FromAny[EClassifier](value)
+		eTypedElement.asETypedElement().SetEType(newValue)
 	case ETYPED_ELEMENT__LOWER_BOUND:
-		eTypedElement.asETypedElement().SetLowerBound(newValue.(int))
+		newValue := FromAny[int](value)
+		eTypedElement.asETypedElement().SetLowerBound(newValue)
 	case ETYPED_ELEMENT__ORDERED:
-		eTypedElement.asETypedElement().SetOrdered(newValue.(bool))
+		newValue := FromAny[bool](value)
+		eTypedElement.asETypedElement().SetOrdered(newValue)
 	case ETYPED_ELEMENT__UNIQUE:
-		eTypedElement.asETypedElement().SetUnique(newValue.(bool))
+		newValue := FromAny[bool](value)
+		eTypedElement.asETypedElement().SetUnique(newValue)
 	case ETYPED_ELEMENT__UPPER_BOUND:
-		eTypedElement.asETypedElement().SetUpperBound(newValue.(int))
+		newValue := FromAny[int](value)
+		eTypedElement.asETypedElement().SetUpperBound(newValue)
 	default:
-		eTypedElement.eNamedElementImpl.ESetFromID(featureID, newValue)
+		eTypedElement.eNamedElementImpl.ESetFromID(featureID, value)
 	}
 }
 

@@ -57,21 +57,22 @@ func (eNamedElement *eNamedElementImpl) SetName(newName string) {
 	}
 }
 
-func (eNamedElement *eNamedElementImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eNamedElement *eNamedElementImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case ENAMED_ELEMENT__NAME:
-		return eNamedElement.asENamedElement().GetName()
+		return ToAny(eNamedElement.asENamedElement().GetName())
 	default:
 		return eNamedElement.eModelElementExt.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eNamedElement *eNamedElementImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eNamedElement *eNamedElementImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case ENAMED_ELEMENT__NAME:
-		eNamedElement.asENamedElement().SetName(newValue.(string))
+		newValue := FromAny[string](value)
+		eNamedElement.asENamedElement().SetName(newValue)
 	default:
-		eNamedElement.eModelElementExt.ESetFromID(featureID, newValue)
+		eNamedElement.eModelElementExt.ESetFromID(featureID, value)
 	}
 }
 

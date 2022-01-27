@@ -132,8 +132,8 @@ func (eModelElement *eModelElementExt) EURIFragmentSegment(feature EStructuralFe
 	if eNamedElement != nil {
 		name := eNamedElement.GetName()
 		count := 0
-		for it := eModelElement.EContents().(EObjectList).GetUnResolvedList().Iterator(); it.HasNext(); {
-			otherEObject := it.Next().(EObject)
+		for it := eModelElement.EContents().(EObjectList[EObject]).GetUnResolvedList().Iterator(); it.HasNext(); {
+			otherEObject := it.Next()
 			if otherEObject == object {
 				break
 			}

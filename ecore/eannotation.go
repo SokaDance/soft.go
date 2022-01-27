@@ -18,14 +18,14 @@ type EAnnotation interface {
 	GetSource() string
 	SetSource(string)
 
-	GetDetails() EMap
+	GetDetails() EMap[string, string]
 
 	GetEModelElement() EModelElement
 	SetEModelElement(EModelElement)
 
-	GetContents() EList
+	GetContents() EList[EObject]
 
-	GetReferences() EList
+	GetReferences() EList[EObject]
 
 	// Start of user code EAnnotation
 	// End of user code

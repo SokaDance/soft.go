@@ -11,15 +11,15 @@ package ecore
 
 type basicEObjectImplProperties struct {
 	proxyURI        *URI
-	contents        *eContentsList
-	crossReferences *eContentsList
+	contents        *eContentsList[EObject]
+	crossReferences *eContentsList[EObject]
 }
 
 type BasicEObjectImpl struct {
 	AbstractEObject
 	deliver            bool
 	proxy              bool
-	adapters           EList
+	adapters           EList[EAdapter]
 	resource           EResource
 	container          EObject
 	containerFeatureID int
@@ -46,7 +46,7 @@ func (o *BasicEObjectImpl) ESetDeliver(deliver bool) {
 	o.deliver = deliver
 }
 
-func (o *BasicEObjectImpl) EAdapters() EList {
+func (o *BasicEObjectImpl) EAdapters() EList[EAdapter] {
 	if o.adapters == nil {
 		o.adapters = newNotifierAdapterList(&o.AbstractENotifier)
 	}
@@ -57,7 +57,7 @@ func (o *BasicEObjectImpl) EBasicHasAdapters() bool {
 	return o.adapters != nil
 }
 
-func (o *BasicEObjectImpl) EBasicAdapters() EList {
+func (o *BasicEObjectImpl) EBasicAdapters() EList[EAdapter] {
 	return o.adapters
 }
 
@@ -82,21 +82,21 @@ func (o *BasicEObjectImpl) ESetProxyURI(uri *URI) {
 }
 
 // EContents ...
-func (o *BasicEObjectImpl) EContents() EList {
+func (o *BasicEObjectImpl) EContents() EList[EObject] {
 	properties := o.getObjectProperties()
 	if properties.contents == nil {
 		eObject := o.AsEObject()
-		properties.contents = newEContentsList(eObject, eObject.EClass().GetEContainmentFeatures(), true)
+		properties.contents = newEContentsList[EObject](eObject, eObject.EClass().GetEContainmentFeatures(), true)
 	}
 	return properties.contents
 }
 
 // ECrossReferences ...
-func (o *BasicEObjectImpl) ECrossReferences() EList {
+func (o *BasicEObjectImpl) ECrossReferences() EList[EObject] {
 	properties := o.getObjectProperties()
 	if properties.crossReferences == nil {
 		eObject := o.AsEObject()
-		properties.crossReferences = newEContentsList(eObject, eObject.EClass().GetECrossReferenceFeatures(), true)
+		properties.crossReferences = newEContentsList[EObject](eObject, eObject.EClass().GetECrossReferenceFeatures(), true)
 	}
 	return properties.crossReferences
 }

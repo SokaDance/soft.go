@@ -36,7 +36,7 @@ func (eObject *EObjectImpl) EStaticFeatureCount() int {
 	return EOBJECT_FEATURE_COUNT
 }
 
-func (eObject *EObjectImpl) EInvokeFromID(operationID int, arguments EList) interface{} {
+func (eObject *EObjectImpl) EInvokeFromID(operationID int, arguments EList[any]) any {
 	switch operationID {
 	case EOBJECT__EALL_CONTENTS:
 		return eObject.asEObject().EAllContents()
@@ -57,7 +57,7 @@ func (eObject *EObjectImpl) EInvokeFromID(operationID int, arguments EList) inte
 	case EOBJECT__EGET_ESTRUCTURALFEATURE_EBOOLEAN:
 		return eObject.asEObject().EGetResolve(arguments.Get(0).(EStructuralFeature), arguments.Get(1).(bool))
 	case EOBJECT__EINVOKE_EOPERATION_EELIST:
-		return eObject.asEObject().EInvoke(arguments.Get(0).(EOperation), arguments.Get(1).(EList))
+		return eObject.asEObject().EInvoke(arguments.Get(0).(EOperation), arguments.Get(1).(EList[any]))
 	case EOBJECT__EIS_PROXY:
 		return eObject.asEObject().EIsProxy()
 	case EOBJECT__EIS_SET_ESTRUCTURALFEATURE:

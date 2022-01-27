@@ -16,15 +16,15 @@ type MockEPackage struct {
 }
 
 // GetEClassifiers get the value of eClassifiers
-func (ePackage *MockEPackage) GetEClassifiers() EList {
+func (ePackage *MockEPackage) GetEClassifiers() EList[EClassifier] {
 	ret := ePackage.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EClassifier]
+	if rf, ok := ret.Get(0).(func() EList[EClassifier]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EClassifier])
 		}
 	}
 
@@ -53,15 +53,15 @@ func (ePackage *MockEPackage) SetEFactoryInstance(newEFactoryInstance EFactory) 
 }
 
 // GetESubPackages get the value of eSubPackages
-func (ePackage *MockEPackage) GetESubPackages() EList {
+func (ePackage *MockEPackage) GetESubPackages() EList[EPackage] {
 	ret := ePackage.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EPackage]
+	if rf, ok := ret.Get(0).(func() EList[EPackage]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EPackage])
 		}
 	}
 

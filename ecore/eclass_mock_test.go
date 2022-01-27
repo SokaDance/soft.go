@@ -24,7 +24,7 @@ func discardMockEClass() {
 // TestMockEClassIsAbstract tests method IsAbstract
 func TestMockEClassIsAbstract(t *testing.T) {
 	o := &MockEClass{}
-	r := bool(true)
+	r := true
 	o.On("IsAbstract").Once().Return(r)
 	o.On("IsAbstract").Once().Return(func() bool {
 		return r
@@ -37,7 +37,7 @@ func TestMockEClassIsAbstract(t *testing.T) {
 // TestMockEClassSetAbstract tests method SetAbstract
 func TestMockEClassSetAbstract(t *testing.T) {
 	o := &MockEClass{}
-	v := bool(true)
+	v := true
 	o.On("SetAbstract", v).Once()
 	o.SetAbstract(v)
 	o.AssertExpectations(t)
@@ -46,10 +46,10 @@ func TestMockEClassSetAbstract(t *testing.T) {
 // TestMockEClassGetEAllAttributes tests method GetEAllAttributes
 func TestMockEClassGetEAllAttributes(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EAttribute]{}
 	// return a value
 	o.On("GetEAllAttributes").Once().Return(l)
-	o.On("GetEAllAttributes").Once().Return(func() EList {
+	o.On("GetEAllAttributes").Once().Return(func() EList[EAttribute] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAllAttributes())
@@ -60,10 +60,10 @@ func TestMockEClassGetEAllAttributes(t *testing.T) {
 // TestMockEClassGetEAllContainments tests method GetEAllContainments
 func TestMockEClassGetEAllContainments(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EReference]{}
 	// return a value
 	o.On("GetEAllContainments").Once().Return(l)
-	o.On("GetEAllContainments").Once().Return(func() EList {
+	o.On("GetEAllContainments").Once().Return(func() EList[EReference] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAllContainments())
@@ -74,10 +74,10 @@ func TestMockEClassGetEAllContainments(t *testing.T) {
 // TestMockEClassGetEAllOperations tests method GetEAllOperations
 func TestMockEClassGetEAllOperations(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EOperation]{}
 	// return a value
 	o.On("GetEAllOperations").Once().Return(l)
-	o.On("GetEAllOperations").Once().Return(func() EList {
+	o.On("GetEAllOperations").Once().Return(func() EList[EOperation] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAllOperations())
@@ -88,10 +88,10 @@ func TestMockEClassGetEAllOperations(t *testing.T) {
 // TestMockEClassGetEAllReferences tests method GetEAllReferences
 func TestMockEClassGetEAllReferences(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EReference]{}
 	// return a value
 	o.On("GetEAllReferences").Once().Return(l)
-	o.On("GetEAllReferences").Once().Return(func() EList {
+	o.On("GetEAllReferences").Once().Return(func() EList[EReference] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAllReferences())
@@ -102,10 +102,10 @@ func TestMockEClassGetEAllReferences(t *testing.T) {
 // TestMockEClassGetEAllStructuralFeatures tests method GetEAllStructuralFeatures
 func TestMockEClassGetEAllStructuralFeatures(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EStructuralFeature]{}
 	// return a value
 	o.On("GetEAllStructuralFeatures").Once().Return(l)
-	o.On("GetEAllStructuralFeatures").Once().Return(func() EList {
+	o.On("GetEAllStructuralFeatures").Once().Return(func() EList[EStructuralFeature] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAllStructuralFeatures())
@@ -116,10 +116,10 @@ func TestMockEClassGetEAllStructuralFeatures(t *testing.T) {
 // TestMockEClassGetEAllSuperTypes tests method GetEAllSuperTypes
 func TestMockEClassGetEAllSuperTypes(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EClass]{}
 	// return a value
 	o.On("GetEAllSuperTypes").Once().Return(l)
-	o.On("GetEAllSuperTypes").Once().Return(func() EList {
+	o.On("GetEAllSuperTypes").Once().Return(func() EList[EClass] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAllSuperTypes())
@@ -130,10 +130,10 @@ func TestMockEClassGetEAllSuperTypes(t *testing.T) {
 // TestMockEClassGetEAttributes tests method GetEAttributes
 func TestMockEClassGetEAttributes(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EAttribute]{}
 	// return a value
 	o.On("GetEAttributes").Once().Return(l)
-	o.On("GetEAttributes").Once().Return(func() EList {
+	o.On("GetEAttributes").Once().Return(func() EList[EAttribute] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAttributes())
@@ -144,10 +144,10 @@ func TestMockEClassGetEAttributes(t *testing.T) {
 // TestMockEClassGetEContainmentFeatures tests method GetEContainmentFeatures
 func TestMockEClassGetEContainmentFeatures(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EStructuralFeature]{}
 	// return a value
 	o.On("GetEContainmentFeatures").Once().Return(l)
-	o.On("GetEContainmentFeatures").Once().Return(func() EList {
+	o.On("GetEContainmentFeatures").Once().Return(func() EList[EStructuralFeature] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEContainmentFeatures())
@@ -158,10 +158,10 @@ func TestMockEClassGetEContainmentFeatures(t *testing.T) {
 // TestMockEClassGetECrossReferenceFeatures tests method GetECrossReferenceFeatures
 func TestMockEClassGetECrossReferenceFeatures(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EStructuralFeature]{}
 	// return a value
 	o.On("GetECrossReferenceFeatures").Once().Return(l)
-	o.On("GetECrossReferenceFeatures").Once().Return(func() EList {
+	o.On("GetECrossReferenceFeatures").Once().Return(func() EList[EStructuralFeature] {
 		return l
 	})
 	assert.Equal(t, l, o.GetECrossReferenceFeatures())
@@ -172,7 +172,7 @@ func TestMockEClassGetECrossReferenceFeatures(t *testing.T) {
 // TestMockEClassGetEIDAttribute tests method GetEIDAttribute
 func TestMockEClassGetEIDAttribute(t *testing.T) {
 	o := &MockEClass{}
-	r := new(MockEAttribute)
+	r := &MockEAttribute{}
 	o.On("GetEIDAttribute").Once().Return(r)
 	o.On("GetEIDAttribute").Once().Return(func() EAttribute {
 		return r
@@ -185,10 +185,10 @@ func TestMockEClassGetEIDAttribute(t *testing.T) {
 // TestMockEClassGetEOperations tests method GetEOperations
 func TestMockEClassGetEOperations(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EOperation]{}
 	// return a value
 	o.On("GetEOperations").Once().Return(l)
-	o.On("GetEOperations").Once().Return(func() EList {
+	o.On("GetEOperations").Once().Return(func() EList[EOperation] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEOperations())
@@ -199,10 +199,10 @@ func TestMockEClassGetEOperations(t *testing.T) {
 // TestMockEClassGetEReferences tests method GetEReferences
 func TestMockEClassGetEReferences(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EReference]{}
 	// return a value
 	o.On("GetEReferences").Once().Return(l)
-	o.On("GetEReferences").Once().Return(func() EList {
+	o.On("GetEReferences").Once().Return(func() EList[EReference] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEReferences())
@@ -213,10 +213,10 @@ func TestMockEClassGetEReferences(t *testing.T) {
 // TestMockEClassGetEStructuralFeatures tests method GetEStructuralFeatures
 func TestMockEClassGetEStructuralFeatures(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EStructuralFeature]{}
 	// return a value
 	o.On("GetEStructuralFeatures").Once().Return(l)
-	o.On("GetEStructuralFeatures").Once().Return(func() EList {
+	o.On("GetEStructuralFeatures").Once().Return(func() EList[EStructuralFeature] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEStructuralFeatures())
@@ -227,10 +227,10 @@ func TestMockEClassGetEStructuralFeatures(t *testing.T) {
 // TestMockEClassGetESuperTypes tests method GetESuperTypes
 func TestMockEClassGetESuperTypes(t *testing.T) {
 	o := &MockEClass{}
-	l := &MockEList{}
+	l := &MockEList[EClass]{}
 	// return a value
 	o.On("GetESuperTypes").Once().Return(l)
-	o.On("GetESuperTypes").Once().Return(func() EList {
+	o.On("GetESuperTypes").Once().Return(func() EList[EClass] {
 		return l
 	})
 	assert.Equal(t, l, o.GetESuperTypes())
@@ -241,7 +241,7 @@ func TestMockEClassGetESuperTypes(t *testing.T) {
 // TestMockEClassIsInterface tests method IsInterface
 func TestMockEClassIsInterface(t *testing.T) {
 	o := &MockEClass{}
-	r := bool(true)
+	r := true
 	o.On("IsInterface").Once().Return(r)
 	o.On("IsInterface").Once().Return(func() bool {
 		return r
@@ -254,7 +254,7 @@ func TestMockEClassIsInterface(t *testing.T) {
 // TestMockEClassSetInterface tests method SetInterface
 func TestMockEClassSetInterface(t *testing.T) {
 	o := &MockEClass{}
-	v := bool(true)
+	v := true
 	o.On("SetInterface", v).Once()
 	o.SetInterface(v)
 	o.AssertExpectations(t)
@@ -264,7 +264,7 @@ func TestMockEClassSetInterface(t *testing.T) {
 func TestMockEClassGetEOperation(t *testing.T) {
 	o := &MockEClass{}
 	operationID := int(45)
-	r := new(MockEOperation)
+	r := &MockEOperation{}
 	o.On("GetEOperation", operationID).Return(r).Once()
 	o.On("GetEOperation", operationID).Return(func() EOperation {
 		return r
@@ -278,7 +278,7 @@ func TestMockEClassGetEOperation(t *testing.T) {
 func TestMockEClassGetEStructuralFeature(t *testing.T) {
 	o := &MockEClass{}
 	featureID := int(45)
-	r := new(MockEStructuralFeature)
+	r := &MockEStructuralFeature{}
 	o.On("GetEStructuralFeature", featureID).Return(r).Once()
 	o.On("GetEStructuralFeature", featureID).Return(func() EStructuralFeature {
 		return r
@@ -291,8 +291,8 @@ func TestMockEClassGetEStructuralFeature(t *testing.T) {
 // TestMockEClassGetEStructuralFeatureFromName tests method GetEStructuralFeatureFromName
 func TestMockEClassGetEStructuralFeatureFromName(t *testing.T) {
 	o := &MockEClass{}
-	featureName := string("Test String")
-	r := new(MockEStructuralFeature)
+	featureName := "Test String"
+	r := &MockEStructuralFeature{}
 	o.On("GetEStructuralFeatureFromName", featureName).Return(r).Once()
 	o.On("GetEStructuralFeatureFromName", featureName).Return(func() EStructuralFeature {
 		return r
@@ -318,7 +318,7 @@ func TestMockEClassGetFeatureCount(t *testing.T) {
 // TestMockEClassGetFeatureID tests method GetFeatureID
 func TestMockEClassGetFeatureID(t *testing.T) {
 	o := &MockEClass{}
-	feature := new(MockEStructuralFeature)
+	feature := &MockEStructuralFeature{}
 	r := int(45)
 	o.On("GetFeatureID", feature).Return(r).Once()
 	o.On("GetFeatureID", feature).Return(func() int {
@@ -332,8 +332,8 @@ func TestMockEClassGetFeatureID(t *testing.T) {
 // TestMockEClassGetFeatureType tests method GetFeatureType
 func TestMockEClassGetFeatureType(t *testing.T) {
 	o := &MockEClass{}
-	feature := new(MockEStructuralFeature)
-	r := new(MockEClassifier)
+	feature := &MockEStructuralFeature{}
+	r := &MockEClassifier{}
 	o.On("GetFeatureType", feature).Return(r).Once()
 	o.On("GetFeatureType", feature).Return(func() EClassifier {
 		return r
@@ -359,7 +359,7 @@ func TestMockEClassGetOperationCount(t *testing.T) {
 // TestMockEClassGetOperationID tests method GetOperationID
 func TestMockEClassGetOperationID(t *testing.T) {
 	o := &MockEClass{}
-	operation := new(MockEOperation)
+	operation := &MockEOperation{}
 	r := int(45)
 	o.On("GetOperationID", operation).Return(r).Once()
 	o.On("GetOperationID", operation).Return(func() int {
@@ -373,8 +373,8 @@ func TestMockEClassGetOperationID(t *testing.T) {
 // TestMockEClassGetOverride tests method GetOverride
 func TestMockEClassGetOverride(t *testing.T) {
 	o := &MockEClass{}
-	operation := new(MockEOperation)
-	r := new(MockEOperation)
+	operation := &MockEOperation{}
+	r := &MockEOperation{}
 	o.On("GetOverride", operation).Return(r).Once()
 	o.On("GetOverride", operation).Return(func() EOperation {
 		return r
@@ -387,8 +387,8 @@ func TestMockEClassGetOverride(t *testing.T) {
 // TestMockEClassIsSuperTypeOf tests method IsSuperTypeOf
 func TestMockEClassIsSuperTypeOf(t *testing.T) {
 	o := &MockEClass{}
-	someClass := new(MockEClass)
-	r := bool(true)
+	someClass := &MockEClass{}
+	r := true
 	o.On("IsSuperTypeOf", someClass).Return(r).Once()
 	o.On("IsSuperTypeOf", someClass).Return(func() bool {
 		return r

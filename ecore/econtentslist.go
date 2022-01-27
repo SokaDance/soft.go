@@ -1,21 +1,21 @@
 package ecore
 
-type eContentsList struct {
-	emptyImmutableEList
+type eContentsList[T EObjectConstraints] struct {
+	emptyImmutableEList[T]
 	o        EObject
-	features EList
+	features EList[EStructuralFeature]
 	resolve  bool
 }
 
-type eContentsListIterator struct {
-	l             *eContentsList
+type eContentsListIterator[T EObjectConstraints] struct {
+	l             *eContentsList[T]
 	prepared      int
-	next          interface{}
+	next          T
 	featureCursor int
-	values        EIterator
+	values        EIterator[T]
 }
 
-func (it *eContentsListIterator) Next() interface{} {
+func (it *eContentsListIterator[T]) Next() T {
 	if it.prepared > 1 || it.HasNext() {
 		it.prepared = 0
 		return it.next
@@ -23,7 +23,7 @@ func (it *eContentsListIterator) Next() interface{} {
 	panic("not such element")
 }
 
-func (it *eContentsListIterator) HasNext() bool {
+func (it *eContentsListIterator[T]) HasNext() bool {
 	switch it.prepared {
 	case 2:
 		return true
@@ -42,11 +42,12 @@ func (it *eContentsListIterator) HasNext() bool {
 					value := o.EGetResolve(feature, resolve)
 					if feature.IsMany() {
 						// list of values
-						values := value.(EList)
+						anyValues := value.(EList[any])
 						// get unresolved list if object list and not resolved iterator
-						if objectList, _ := value.(EObjectList); objectList != nil && !resolve {
-							values = objectList.GetUnResolvedList()
+						if objectList, _ := value.(EObjectList[any]); objectList != nil && !resolve {
+							anyValues = objectList.GetUnResolvedList()
 						}
+						values := FromAnyList[T](anyValues)
 						if itValues := values.Iterator(); itValues.HasNext() {
 							// we have a value
 							it.values = itValues
@@ -57,14 +58,13 @@ func (it *eContentsListIterator) HasNext() bool {
 					} else if value != nil {
 						// we have a value
 						it.values = nil
-						it.next = value
+						it.next = value.(T)
 						it.prepared = 2
 						return true
 					}
 				}
 			}
 			it.values = nil
-			it.next = nil
 			it.prepared = 1
 			return false
 		} else {
@@ -75,8 +75,8 @@ func (it *eContentsListIterator) HasNext() bool {
 	}
 }
 
-func newEContentsList(o EObject, features EList, resolve bool) *eContentsList {
-	return &eContentsList{
+func newEContentsList[T EObjectConstraints](o EObject, features EList[EStructuralFeature], resolve bool) *eContentsList[T] {
+	return &eContentsList[T]{
 		o:        o,
 		features: features,
 		resolve:  resolve,
@@ -84,8 +84,8 @@ func newEContentsList(o EObject, features EList, resolve bool) *eContentsList {
 }
 
 // Get an element of the array
-func (l *eContentsList) Get(index int) interface{} {
-	it := l.features.Iterator()
+func (l *eContentsList[T]) Get(index int) T {
+	it := l.Iterator()
 	for i := 0; i < index; i++ {
 		it.Next()
 	}
@@ -93,14 +93,14 @@ func (l *eContentsList) Get(index int) interface{} {
 }
 
 // Size count the number of element in the array
-func (l *eContentsList) Size() int {
+func (l *eContentsList[T]) Size() int {
 	size := 0
 	for it := l.features.Iterator(); it.HasNext(); {
 		eFeature := it.Next().(EStructuralFeature)
 		if l.o.EIsSet(eFeature) {
 			value := l.o.EGetResolve(eFeature, false)
 			if eFeature.IsMany() {
-				list := value.(EList)
+				list := value.(EList[T])
 				size += list.Size()
 			} else if value != nil {
 				size++
@@ -111,13 +111,13 @@ func (l *eContentsList) Size() int {
 }
 
 // Empty return true if the array contains 0 element
-func (l *eContentsList) Empty() bool {
+func (l *eContentsList[T]) Empty() bool {
 	for it := l.features.Iterator(); it.HasNext(); {
 		eFeature := it.Next().(EStructuralFeature)
 		if l.o.EIsSet(eFeature) {
 			value := l.o.EGetResolve(eFeature, false)
 			if eFeature.IsMany() {
-				list := value.(EList)
+				list := value.(EList[T])
 				if !list.Empty() {
 					return false
 				}
@@ -130,7 +130,7 @@ func (l *eContentsList) Empty() bool {
 }
 
 // Contains return if an array contains or not an element
-func (l *eContentsList) Contains(elem interface{}) bool {
+func (l *eContentsList[T]) Contains(elem T) bool {
 	for it := l.Iterator(); it.HasNext(); {
 		if e := it.Next(); e == elem {
 			return true
@@ -140,7 +140,7 @@ func (l *eContentsList) Contains(elem interface{}) bool {
 }
 
 // IndexOf return the index on an element in an array, else return -1
-func (l *eContentsList) IndexOf(elem interface{}) int {
+func (l *eContentsList[T]) IndexOf(elem T) int {
 	index := 0
 	for it := l.Iterator(); it.HasNext(); {
 		if e := it.Next(); e == elem {
@@ -152,22 +152,22 @@ func (l *eContentsList) IndexOf(elem interface{}) int {
 }
 
 // Iterator through the array
-func (l *eContentsList) Iterator() EIterator {
-	return &eContentsListIterator{l: l}
+func (l *eContentsList[T]) Iterator() EIterator[T] {
+	return &eContentsListIterator[T]{l: l}
 }
 
 // ToArray convert to array
-func (l *eContentsList) ToArray() []interface{} {
-	arr := []interface{}{}
+func (l *eContentsList[T]) ToArray() []T {
+	arr := []T{}
 	for it := l.Iterator(); it.HasNext(); {
 		arr = append(arr, it.Next())
 	}
 	return arr
 }
 
-func (l *eContentsList) GetUnResolvedList() EList {
+func (l *eContentsList[T]) GetUnResolvedList() EObjectList[T] {
 	if l.resolve {
-		return newEContentsList(l.o, l.features, false)
+		return newEContentsList[T](l.o, l.features, false)
 	}
 	return l
 }

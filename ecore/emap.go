@@ -9,18 +9,18 @@
 
 package ecore
 
-type EMap interface {
-	EList
+type EMap[K comparable, V any] interface {
+	EList[any]
 
-	GetValue(value interface{}) interface{}
+	GetValue(key K) (V, bool)
 
-	Put(key interface{}, value interface{})
+	Put(key K, value V)
 
-	RemoveKey(key interface{}) interface{}
+	RemoveKey(key K) V
 
-	ContainsValue(value interface{}) bool
+	ContainsValue(value V) bool
 
-	ContainsKey(key interface{}) bool
+	ContainsKey(key K) bool
 
-	ToMap() map[interface{}]interface{}
+	ToMap() map[K]V
 }

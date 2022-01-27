@@ -464,7 +464,7 @@ func (l *XMLDecoder) setFeatureValue(eObject EObject,
 		eClassifier := eFeature.GetEType()
 		eDataType := eClassifier.(EDataType)
 		eFactory := eDataType.GetEPackage().GetEFactoryInstance()
-		eList := eObject.EGetResolve(eFeature, false).(EList)
+		eList := eObject.EGetResolve(eFeature, false).(EList[any])
 		if position == -2 {
 		} else if value == nil {
 			eList.Add(nil)
@@ -474,7 +474,7 @@ func (l *XMLDecoder) setFeatureValue(eObject EObject,
 	case xlfkManyAdd:
 		fallthrough
 	case xlfkManyMove:
-		eList := eObject.EGetResolve(eFeature, false).(EList)
+		eList := eObject.EGetResolve(eFeature, false).(EList[any])
 		if position == -1 {
 			eList.Add(value)
 		} else if position == -2 {
@@ -484,7 +484,7 @@ func (l *XMLDecoder) setFeatureValue(eObject EObject,
 			if index == -1 {
 				eList.Insert(position, value)
 			} else {
-				eList.Move(position, index)
+				eList.MoveIndex(position, index)
 			}
 		} else if kind == xlfkManyAdd {
 			eList.Add(value)
@@ -684,7 +684,7 @@ func (l *XMLDecoder) handleReferences() {
 					var proxyHolder EObject
 					if eReference.IsMany() {
 						value := eProxy.EGet(eReference)
-						list := value.(EList)
+						list := value.(EList[any])
 						proxyHolder = list.Get(0).(EObject)
 					} else {
 						value := eProxy.EGet(eReference)
@@ -693,11 +693,11 @@ func (l *XMLDecoder) handleReferences() {
 
 					if eOpposite.IsMany() {
 						value := proxyHolder.EGetResolve(eOpposite, false)
-						holderContents := value.(EList)
+						holderContents := value.(EList[any])
 						resolvedIndex := holderContents.IndexOf(resolvedObject)
 						if resolvedIndex != -1 {
 							proxyIndex := holderContents.IndexOf(eProxy)
-							holderContents.Move(proxyIndex, resolvedIndex)
+							holderContents.MoveIndex(proxyIndex, resolvedIndex)
 							if proxyIndex > resolvedIndex {
 								holderContents.Remove(proxyIndex - 1)
 							} else {
@@ -710,7 +710,7 @@ func (l *XMLDecoder) handleReferences() {
 					replace := false
 					if eReference.IsMany() {
 						value := resolvedObject.EGet(eReference)
-						list := value.(EList)
+						list := value.(EList[any])
 						replace = !list.Contains(proxyHolder)
 					} else {
 						value := resolvedObject.EGet(eReference)
@@ -721,7 +721,7 @@ func (l *XMLDecoder) handleReferences() {
 					if replace {
 						if eOpposite.IsMany() {
 							value := proxyHolder.EGetResolve(eOpposite, false)
-							list := value.(EList)
+							list := value.(EList[any])
 							ndx := list.IndexOf(eProxy)
 							list.Set(ndx, resolvedObject)
 						} else {
@@ -749,7 +749,7 @@ func (l *XMLDecoder) recordSchemaLocations(eObject EObject) {
 	if l.extendedMetaData != nil && eObject != nil {
 		eClass := eObject.EClass()
 		if xmlnsPrefixMapFeature := l.extendedMetaData.GetXMLNSPrefixMapFeature(eClass); xmlnsPrefixMapFeature != nil {
-			m := eObject.EGet(xmlnsPrefixMapFeature).(EMap)
+			m := FromAnyMap[string, string](eObject.EGet(xmlnsPrefixMapFeature).(EMap[any, any]))
 			for prefix, nsURI := range l.prefixesToURI {
 				m.Put(prefix, nsURI)
 			}

@@ -24,10 +24,10 @@ func discardMockEAnnotation() {
 // TestMockEAnnotationGetContents tests method GetContents
 func TestMockEAnnotationGetContents(t *testing.T) {
 	o := &MockEAnnotation{}
-	l := &MockEList{}
+	l := &MockEList[EObject]{}
 	// return a value
 	o.On("GetContents").Once().Return(l)
-	o.On("GetContents").Once().Return(func() EList {
+	o.On("GetContents").Once().Return(func() EList[EObject] {
 		return l
 	})
 	assert.Equal(t, l, o.GetContents())
@@ -38,10 +38,10 @@ func TestMockEAnnotationGetContents(t *testing.T) {
 // TestMockEAnnotationGetDetails tests method GetDetails
 func TestMockEAnnotationGetDetails(t *testing.T) {
 	o := &MockEAnnotation{}
-	l := &MockEMap{}
+	l := &MockEMap[string, string]{}
 	// return a value
 	o.On("GetDetails").Once().Return(l)
-	o.On("GetDetails").Once().Return(func() EMap {
+	o.On("GetDetails").Once().Return(func() EMap[string, string] {
 		return l
 	})
 	assert.Equal(t, l, o.GetDetails())
@@ -52,7 +52,7 @@ func TestMockEAnnotationGetDetails(t *testing.T) {
 // TestMockEAnnotationGetEModelElement tests method GetEModelElement
 func TestMockEAnnotationGetEModelElement(t *testing.T) {
 	o := &MockEAnnotation{}
-	r := new(MockEModelElement)
+	r := &MockEModelElement{}
 	o.On("GetEModelElement").Once().Return(r)
 	o.On("GetEModelElement").Once().Return(func() EModelElement {
 		return r
@@ -65,7 +65,7 @@ func TestMockEAnnotationGetEModelElement(t *testing.T) {
 // TestMockEAnnotationSetEModelElement tests method SetEModelElement
 func TestMockEAnnotationSetEModelElement(t *testing.T) {
 	o := &MockEAnnotation{}
-	v := new(MockEModelElement)
+	v := &MockEModelElement{}
 	o.On("SetEModelElement", v).Once()
 	o.SetEModelElement(v)
 	o.AssertExpectations(t)
@@ -74,10 +74,10 @@ func TestMockEAnnotationSetEModelElement(t *testing.T) {
 // TestMockEAnnotationGetReferences tests method GetReferences
 func TestMockEAnnotationGetReferences(t *testing.T) {
 	o := &MockEAnnotation{}
-	l := &MockEList{}
+	l := &MockEList[EObject]{}
 	// return a value
 	o.On("GetReferences").Once().Return(l)
-	o.On("GetReferences").Once().Return(func() EList {
+	o.On("GetReferences").Once().Return(func() EList[EObject] {
 		return l
 	})
 	assert.Equal(t, l, o.GetReferences())
@@ -88,7 +88,7 @@ func TestMockEAnnotationGetReferences(t *testing.T) {
 // TestMockEAnnotationGetSource tests method GetSource
 func TestMockEAnnotationGetSource(t *testing.T) {
 	o := &MockEAnnotation{}
-	r := string("Test String")
+	r := "Test String"
 	o.On("GetSource").Once().Return(r)
 	o.On("GetSource").Once().Return(func() string {
 		return r
@@ -101,7 +101,7 @@ func TestMockEAnnotationGetSource(t *testing.T) {
 // TestMockEAnnotationSetSource tests method SetSource
 func TestMockEAnnotationSetSource(t *testing.T) {
 	o := &MockEAnnotation{}
-	v := string("Test String")
+	v := "Test String"
 	o.On("SetSource", v).Once()
 	o.SetSource(v)
 	o.AssertExpectations(t)

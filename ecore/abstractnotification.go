@@ -12,8 +12,8 @@ package ecore
 type AbstractNotification struct {
 	interfaces interface{}
 	eventType  EventType
-	oldValue   interface{}
-	newValue   interface{}
+	oldValue   any
+	newValue   any
 	position   int
 	next       ENotificationChain
 }
@@ -21,8 +21,8 @@ type AbstractNotification struct {
 func (notif *AbstractNotification) Initialize(
 	interfaces interface{},
 	eventType EventType,
-	oldValue interface{},
-	newValue interface{},
+	oldValue any,
+	newValue any,
 	position int) {
 	notif.interfaces = interfaces
 	notif.eventType = eventType
@@ -70,15 +70,15 @@ func (notif *AbstractNotification) Merge(eOther ENotification) bool {
 				originalPosition := notif.GetPosition()
 				notificationPosition := eOther.GetPosition()
 				notif.eventType = REMOVE_MANY
-				var removedValues []interface{}
+				var removedValues []any
 				if originalPosition <= notificationPosition {
-					removedValues = []interface{}{notif.oldValue, eOther.GetOldValue()}
+					removedValues = []any{notif.oldValue, eOther.GetOldValue()}
 					notif.position = originalPosition
-					notif.newValue = []interface{}{originalPosition, notificationPosition + 1}
+					notif.newValue = []any{originalPosition, notificationPosition + 1}
 				} else {
-					removedValues = []interface{}{eOther.GetOldValue(), notif.oldValue}
+					removedValues = []any{eOther.GetOldValue(), notif.oldValue}
 					notif.position = notificationPosition
-					notif.newValue = []interface{}{notificationPosition, originalPosition}
+					notif.newValue = []any{notificationPosition, originalPosition}
 				}
 				notif.oldValue = removedValues
 				return true
@@ -90,8 +90,8 @@ func (notif *AbstractNotification) Merge(eOther ENotification) bool {
 			if eNotif.GetNotifier() == eOther.GetNotifier() &&
 				eNotif.GetFeatureID() == eOther.GetFeatureID() {
 				notificationPosition := eOther.GetPosition()
-				positions := notif.newValue.([]interface{})
-				newPositions := []interface{}{}
+				positions := notif.newValue.([]any)
+				newPositions := []any{}
 
 				index := 0
 				for index < len(positions) {
@@ -105,7 +105,7 @@ func (notif *AbstractNotification) Merge(eOther ENotification) bool {
 					}
 				}
 
-				oldValue := notif.oldValue.([]interface{})
+				oldValue := notif.oldValue.([]any)
 
 				oldValue = append(oldValue, nil)
 				copy(oldValue[index+1:], oldValue[index:])

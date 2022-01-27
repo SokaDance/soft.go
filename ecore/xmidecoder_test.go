@@ -115,7 +115,7 @@ func TestXMIDecoderLibraryNoRoot(t *testing.T) {
 	assert.False(t, eWriter.GetEAnnotations().Empty())
 	eAnnotation := eWriter.GetEAnnotation("http://net.masagroup/soft/2019/GenGo")
 	assert.NotNil(t, eAnnotation)
-	assert.Equal(t, "true", eAnnotation.GetDetails().GetValue("extension"))
+	assertEMapValueGet(t, eAnnotation.GetDetails(), "extension", "true", true)
 }
 
 func TestXMIDecoderLibraryComplex(t *testing.T) {

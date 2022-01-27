@@ -18,9 +18,9 @@ import (
 
 func TestMockENotifierEAdapters(t *testing.T) {
 	n := &MockENotifier{}
-	a := &MockEList{}
+	a := &MockEList[EAdapter]{}
 	n.On("EAdapters").Return(a).Once()
-	n.On("EAdapters").Return(func() EList {
+	n.On("EAdapters").Return(func() EList[EAdapter] {
 		return a
 	}).Once()
 	assert.Equal(t, a, n.EAdapters())

@@ -9,13 +9,13 @@
 
 package ecore
 
-type listIterator struct {
+type eListIterator[T any] struct {
 	cursor int
-	list   EList
+	list   EList[T]
 }
 
 // Next return the current value of the iterator
-func (it *listIterator) Next() interface{} {
+func (it *eListIterator[T]) Next() T {
 	i := it.cursor
 	if i >= it.list.Size() {
 		panic("Not such an element")
@@ -25,6 +25,6 @@ func (it *listIterator) Next() interface{} {
 }
 
 // HasNext make the iterator go further in the array
-func (it *listIterator) HasNext() bool {
+func (it *eListIterator[T]) HasNext() bool {
 	return it.cursor < it.list.Size()
 }

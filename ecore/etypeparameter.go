@@ -15,7 +15,7 @@ package ecore
 type ETypeParameter interface {
 	ENamedElement
 
-	GetEBounds() EList
+	GetEBounds() EList[EGenericType]
 
 	// Start of user code ETypeParameter
 	// End of user code

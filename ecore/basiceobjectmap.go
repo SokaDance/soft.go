@@ -9,24 +9,24 @@
 
 package ecore
 
-type BasicEObjectMap struct {
-	BasicEMap
+type BasicEObjectMap[K comparable, V comparable] struct {
+	BasicEMap[K, V]
 	entryClass EClass
 }
 
-func NewBasicEObjectMap(entryClass EClass) *BasicEObjectMap {
-	basicEObjectMap := &BasicEObjectMap{}
+func NewBasicEObjectMap[K comparable, V comparable](entryClass EClass) *BasicEObjectMap[K, V] {
+	basicEObjectMap := &BasicEObjectMap[K, V]{}
 	basicEObjectMap.Initialize()
 	basicEObjectMap.entryClass = entryClass
 	return basicEObjectMap
 }
 
-func (m *BasicEObjectMap) Put(key interface{}, value interface{}) {
+func (m *BasicEObjectMap[K, V]) Put(key K, value V) {
 	m.mapData[key] = value
 	m.Add(m.newEntry(key, value))
 }
 
-func (m *BasicEObjectMap) newEntry(key interface{}, value interface{}) EMapEntry {
+func (m *BasicEObjectMap[K, V]) newEntry(key K, value V) EMapEntry {
 	eFactory := m.entryClass.GetEPackage().GetEFactoryInstance()
 	eEntry := eFactory.Create(m.entryClass).(EMapEntry)
 	eEntry.SetKey(key)

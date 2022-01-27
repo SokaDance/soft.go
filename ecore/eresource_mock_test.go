@@ -53,9 +53,9 @@ func TestMockEResourceSetURI(t *testing.T) {
 // TestMockEResourceGetContents tests method GetContents
 func TestMockEResourceGetContents(t *testing.T) {
 	r := &MockEResource{}
-	c := &MockEList{}
+	c := &MockEList[EObject]{}
 	r.On("GetContents").Return(c).Once()
-	r.On("GetContents").Return(func() EList {
+	r.On("GetContents").Return(func() EList[EObject] {
 		return c
 	}).Once()
 	assert.Equal(t, c, r.GetContents())
@@ -66,9 +66,9 @@ func TestMockEResourceGetContents(t *testing.T) {
 // TestMockEResourceGetAllContents tests method GetAllContents
 func TestMockEResourceGetAllContents(t *testing.T) {
 	r := &MockEResource{}
-	i := &MockEIterator{}
+	i := &MockEIterator[EObject]{}
 	r.On("GetAllContents").Return(i).Once()
-	r.On("GetAllContents").Return(func() EIterator {
+	r.On("GetAllContents").Return(func() EIterator[EObject] {
 		return i
 	}).Once()
 	assert.Equal(t, i, r.GetAllContents())
@@ -181,9 +181,9 @@ func TestMockEResourceSaveWithReader(t *testing.T) {
 // TestMockEResourceGetErrors tests method GetErrors
 func TestMockEResourceGetErrors(t *testing.T) {
 	r := &MockEResource{}
-	c := &MockEList{}
+	c := &MockEList[EDiagnostic]{}
 	r.On("GetErrors").Return(c).Once()
-	r.On("GetErrors").Return(func() EList {
+	r.On("GetErrors").Return(func() EList[EDiagnostic] {
 		return c
 	}).Once()
 	assert.Equal(t, c, r.GetErrors())
@@ -194,9 +194,9 @@ func TestMockEResourceGetErrors(t *testing.T) {
 // TestMockEResourceGetWarnings tests method GetWarnings
 func TestMockEResourceGetWarnings(t *testing.T) {
 	r := &MockEResource{}
-	c := &MockEList{}
+	c := &MockEList[EDiagnostic]{}
 	r.On("GetWarnings").Return(c).Once()
-	r.On("GetWarnings").Return(func() EList {
+	r.On("GetWarnings").Return(func() EList[EDiagnostic] {
 		return c
 	}).Once()
 	assert.Equal(t, c, r.GetWarnings())

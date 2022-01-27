@@ -1,14 +1,14 @@
 package ecore
 
 type resourcesList struct {
-	BasicENotifyingList
+	BasicENotifyingList[EResource]
 	resourceSet *EResourceSetImpl
 }
 
 func newResourcesList(resourceSet *EResourceSetImpl) *resourcesList {
 	l := new(resourcesList)
 	l.interfaces = l
-	l.data = []interface{}{}
+	l.data = []EResource{}
 	l.isUnique = true
 	l.resourceSet = resourceSet
 	return l
@@ -22,14 +22,14 @@ func (l *resourcesList) GetFeatureID() int {
 	return RESOURCE_SET__RESOURCES
 }
 
-func (l *resourcesList) inverseAdd(object interface{}, notifications ENotificationChain) ENotificationChain {
+func (l *resourcesList) inverseAdd(object EResource, notifications ENotificationChain) ENotificationChain {
 	eResource := object.(EResourceInternal)
 	n := notifications
 	n = eResource.BasicSetResourceSet(l.resourceSet.AsEResourceSet(), n)
 	return n
 }
 
-func (l *resourcesList) inverseRemove(object interface{}, notifications ENotificationChain) ENotificationChain {
+func (l *resourcesList) inverseRemove(object EResource, notifications ENotificationChain) ENotificationChain {
 	eResource := object.(EResourceInternal)
 	n := notifications
 	n = eResource.BasicSetResourceSet(nil, n)
@@ -39,7 +39,7 @@ func (l *resourcesList) inverseRemove(object interface{}, notifications ENotific
 //EResourceSetImpl ...
 type EResourceSetImpl struct {
 	ENotifierImpl
-	resources             EList
+	resources             EList[EResource]
 	uriConverter          EURIConverter
 	uriResourceMap        map[*URI]EResource
 	resourceCodecRegistry EResourceCodecRegistry
@@ -62,7 +62,7 @@ func (r *EResourceSetImpl) AsEResourceSet() EResourceSet {
 	return r.interfaces.(EResourceSet)
 }
 
-func (r *EResourceSetImpl) GetResources() EList {
+func (r *EResourceSetImpl) GetResources() EList[EResource] {
 	return r.resources
 }
 

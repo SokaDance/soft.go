@@ -18,7 +18,7 @@ import (
 
 func TestMockEObjectInternal_EDynamicProperties(t *testing.T) {
 	o := &MockEObjectInternal{}
-	p := &MockEObjectProperties{}
+	p := &MockEDynamicProperties{}
 	// return a value
 	o.On("EDynamicProperties").Once().Return(p)
 	o.On("EDynamicProperties").Once().Return(func() EDynamicProperties {
@@ -217,7 +217,7 @@ func TestMockEObjectInternal_EGetFromID(t *testing.T) {
 
 	// return a value
 	o.On("EGetFromID", 1, false).Once().Return(obj)
-	o.On("EGetFromID", 1, true).Once().Return(func(featureID int, resolve bool) interface{} {
+	o.On("EGetFromID", 1, true).Once().Return(func(featureID int, resolve bool) any {
 		return obj
 	})
 	assert.Equal(t, obj, o.EGetFromID(1, false))
@@ -262,10 +262,10 @@ func TestMockEObjectInternal_EUnsetFromID(t *testing.T) {
 func TestMockEObjectInternal_EInvokeFromID(t *testing.T) {
 	o := &MockEObjectInternal{}
 	obj := &MockEObject{}
-	args := &MockEList{}
+	args := &MockEList[any]{}
 	// return a value
 	o.On("EInvokeFromID", 1, args).Once().Return(obj)
-	o.On("EInvokeFromID", 1, args).Once().Return(func(operationID int, arguments EList) interface{} {
+	o.On("EInvokeFromID", 1, args).Once().Return(func(operationID int, arguments EList[any]) any {
 		return obj
 	})
 	assert.Equal(t, obj, o.EInvokeFromID(1, args))

@@ -43,14 +43,14 @@ func TestEDataTypeSerializableGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(true), o.IsSerializable())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isSerializable = v
 	assert.Equal(t, v, o.IsSerializable())
 }
 
 func TestEDataTypeSerializableSet(t *testing.T) {
 	o := newEDataTypeImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -62,14 +62,13 @@ func TestEDataTypeSerializableSet(t *testing.T) {
 func TestEDataTypeEGetFromID(t *testing.T) {
 	o := newEDataTypeImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.IsSerializable(), o.EGetFromID(EDATA_TYPE__SERIALIZABLE, true))
 }
 
 func TestEDataTypeESetFromID(t *testing.T) {
 	o := newEDataTypeImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(EDATA_TYPE__SERIALIZABLE, v)
 		assert.Equal(t, v, o.EGetFromID(EDATA_TYPE__SERIALIZABLE, false))
 	}

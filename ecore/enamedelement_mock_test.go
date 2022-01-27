@@ -24,7 +24,7 @@ func discardMockENamedElement() {
 // TestMockENamedElementGetName tests method GetName
 func TestMockENamedElementGetName(t *testing.T) {
 	o := &MockENamedElement{}
-	r := string("Test String")
+	r := "Test String"
 	o.On("GetName").Once().Return(r)
 	o.On("GetName").Once().Return(func() string {
 		return r
@@ -37,7 +37,7 @@ func TestMockENamedElementGetName(t *testing.T) {
 // TestMockENamedElementSetName tests method SetName
 func TestMockENamedElementSetName(t *testing.T) {
 	o := &MockENamedElement{}
-	v := string("Test String")
+	v := "Test String"
 	o.On("SetName", v).Once()
 	o.SetName(v)
 	o.AssertExpectations(t)

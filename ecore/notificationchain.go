@@ -11,12 +11,12 @@ package ecore
 
 // notificationChain is an implementation of ENotificationChain interface
 type notificationChain struct {
-	notifications *basicEList
+	notifications *basicEList[ENotification]
 }
 
 // NewNotificationChain ...
 func NewNotificationChain() *notificationChain {
-	return &notificationChain{notifications: NewEmptyBasicEList()}
+	return &notificationChain{notifications: NewEmptyBasicEList[ENotification]()}
 }
 
 // Add Adds a notification to the chain.
@@ -25,7 +25,7 @@ func (chain *notificationChain) Add(newNotif ENotification) bool {
 		return false
 	}
 	for it := chain.notifications.Iterator(); it.HasNext(); {
-		if it.Next().(ENotification).Merge(newNotif) {
+		if it.Next().Merge(newNotif) {
 			return false
 		}
 	}
@@ -36,10 +36,10 @@ func (chain *notificationChain) Add(newNotif ENotification) bool {
 // Dispatch Dispatches each notification to the appropriate notifier via notifier.ENotify method
 func (chain *notificationChain) Dispatch() {
 	for it := chain.notifications.Iterator(); it.HasNext(); {
-		value := it.Next().(ENotification)
-		notifier := value.GetNotifier()
-		if notifier != nil && value.GetEventType() != -1 {
-			notifier.ENotify(value)
+		notification := it.Next()
+		notifier := notification.GetNotifier()
+		if notifier != nil && notification.GetEventType() != -1 {
+			notifier.ENotify(notification)
 		}
 	}
 }

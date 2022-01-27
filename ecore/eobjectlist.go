@@ -10,8 +10,8 @@
 package ecore
 
 // EObjectList is a list of EObject
-type EObjectList interface {
-	EList
+type EObjectList[T any] interface {
+	EList[T]
 
-	GetUnResolvedList() EList
+	GetUnResolvedList() EObjectList[T]
 }

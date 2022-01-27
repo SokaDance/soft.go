@@ -18,20 +18,20 @@ import (
 )
 
 func TestBasicNotifyingListAccessors(t *testing.T) {
-	l := newBasicENotifyingListFromData([]interface{}{})
+	l := newBasicENotifyingListFromData([]any{})
 	assert.Equal(t, nil, l.GetFeature())
 	assert.Equal(t, -1, l.GetFeatureID())
 	assert.Equal(t, nil, l.GetNotifier())
 }
 
 type eNotifyingListTest struct {
-	*BasicENotifyingList
+	*BasicENotifyingList[any]
 	mockNotifier *MockENotifier
 	mockFeature  *MockEStructuralFeature
 	mockAdapter  *MockEAdapter
 }
 
-func newNotifyingListTestFn(factory func() *BasicENotifyingList) *eNotifyingListTest {
+func newNotifyingListTestFn(factory func() *BasicENotifyingList[any]) *eNotifyingListTest {
 	l := new(eNotifyingListTest)
 	l.BasicENotifyingList = factory()
 	l.mockNotifier = new(MockENotifier)
@@ -39,16 +39,16 @@ func newNotifyingListTestFn(factory func() *BasicENotifyingList) *eNotifyingList
 	l.mockAdapter = new(MockEAdapter)
 	l.interfaces = l
 	l.mockNotifier.On("EDeliver").Return(true)
-	l.mockNotifier.On("EAdapters").Return(NewImmutableEList([]interface{}{l.mockAdapter}))
+	l.mockNotifier.On("EAdapters").Return(NewImmutableEList([]EAdapter{l.mockAdapter}))
 	return l
 }
 
 func newNotifyingListTest() *eNotifyingListTest {
-	return newNotifyingListTestFn(NewBasicENotifyingList)
+	return newNotifyingListTestFn(NewBasicENotifyingList[any])
 }
 
-func newNotifyingListTestFromData(data []interface{}) *eNotifyingListTest {
-	return newNotifyingListTestFn(func() *BasicENotifyingList { return newBasicENotifyingListFromData(data) })
+func newNotifyingListTestFromData(data []any) *eNotifyingListTest {
+	return newNotifyingListTestFn(func() *BasicENotifyingList[any] { return newBasicENotifyingListFromData(data) })
 }
 
 func (list *eNotifyingListTest) GetNotifier() ENotifier {

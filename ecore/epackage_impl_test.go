@@ -49,7 +49,7 @@ func TestEPackageEFactoryInstanceGet(t *testing.T) {
 	assert.Nil(t, o.GetEFactoryInstance())
 
 	// get initialized value
-	v := new(MockEFactory)
+	v := &MockEFactory{}
 	o.eFactoryInstance = v
 	assert.Equal(t, v, o.GetEFactoryInstance())
 }
@@ -64,14 +64,14 @@ func TestEPackageEFactoryInstanceSet(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, mockAdapter)
 
 	// first value
-	mockValue1 := new(MockEFactory)
+	mockValue1 := &MockEFactory{}
 	mockValue1.On("EInverseAdd", o, EFACTORY__EPACKAGE, nil).Return(nil).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
 	o.SetEFactoryInstance(mockValue1)
 	mock.AssertExpectationsForObjects(t, mockAdapter, mockValue1)
 
 	// second value
-	mockValue2 := new(MockEFactory)
+	mockValue2 := &MockEFactory{}
 	mockValue1.On("EInverseRemove", o, EFACTORY__EPACKAGE, nil).Return(nil).Once()
 	mockValue2.On("EInverseAdd", o, EFACTORY__EPACKAGE, nil).Return(nil).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -88,7 +88,7 @@ func TestEPackageEFactoryInstanceBasicSet(t *testing.T) {
 	o.EAdapters().Add(mockAdapter)
 	mock.AssertExpectationsForObjects(t, mockAdapter)
 
-	mockValue := new(MockEFactory)
+	mockValue := &MockEFactory{}
 	mockNotifications := new(MockENotificationChain)
 	mockNotifications.On("Add", mock.MatchedBy(func(notification ENotification) bool {
 		return notification.GetEventType() == SET && notification.GetFeatureID() == EPACKAGE__EFACTORY_INSTANCE
@@ -108,7 +108,7 @@ func TestEPackageESuperPackageGet(t *testing.T) {
 	assert.Nil(t, o.GetESuperPackage())
 
 	// set a mock container
-	v := new(MockEPackage)
+	v := &MockEPackage{}
 	o.ESetInternalContainer(v, EPACKAGE__ESUPER_PACKAGE)
 
 	// no proxy
@@ -121,14 +121,14 @@ func TestEPackageNsPrefixGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, string(""), o.GetNsPrefix())
 	// get initialized value
-	v := string("Test String")
+	v := "Test String"
 	o.nsPrefix = v
 	assert.Equal(t, v, o.GetNsPrefix())
 }
 
 func TestEPackageNsPrefixSet(t *testing.T) {
 	o := newEPackageImpl()
-	v := string("Test String")
+	v := "Test String"
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -142,14 +142,14 @@ func TestEPackageNsURIGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, string(""), o.GetNsURI())
 	// get initialized value
-	v := string("Test String")
+	v := "Test String"
 	o.nsURI = v
 	assert.Equal(t, v, o.GetNsURI())
 }
 
 func TestEPackageNsURISet(t *testing.T) {
 	o := newEPackageImpl()
-	v := string("Test String")
+	v := "Test String"
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -166,14 +166,8 @@ func TestEPackageGetEClassifierOperation(t *testing.T) {
 func TestEPackageEGetFromID(t *testing.T) {
 	o := newEPackageImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEClassifiers(), o.EGetFromID(EPACKAGE__ECLASSIFIERS, true))
-	assert.Equal(t, o.GetEClassifiers().(EObjectList).GetUnResolvedList(), o.EGetFromID(EPACKAGE__ECLASSIFIERS, false))
-	assert.Equal(t, o.GetEFactoryInstance(), o.EGetFromID(EPACKAGE__EFACTORY_INSTANCE, true))
-	assert.Equal(t, o.GetESubPackages(), o.EGetFromID(EPACKAGE__ESUB_PACKAGES, true))
-	assert.Equal(t, o.GetESubPackages().(EObjectList).GetUnResolvedList(), o.EGetFromID(EPACKAGE__ESUB_PACKAGES, false))
-	assert.Equal(t, o.GetESuperPackage(), o.EGetFromID(EPACKAGE__ESUPER_PACKAGE, true))
-	assert.Equal(t, o.GetNsPrefix(), o.EGetFromID(EPACKAGE__NS_PREFIX, true))
-	assert.Equal(t, o.GetNsURI(), o.EGetFromID(EPACKAGE__NS_URI, true))
+	assert.Equal(t, o.GetEClassifiers(), FromAnyList[EClassifier](o.EGetFromID(EPACKAGE__ECLASSIFIERS, true)))
+	assert.Equal(t, o.GetESubPackages(), FromAnyList[EPackage](o.EGetFromID(EPACKAGE__ESUB_PACKAGES, true)))
 }
 
 func TestEPackageESetFromID(t *testing.T) {
@@ -181,19 +175,24 @@ func TestEPackageESetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
 		// list with a value
-		mockValue := new(MockEClassifier)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EClassifier]{}
+		mockValue := &MockEClassifier{}
+		mockIterator := &MockEIterator[EClassifier]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EInverseAdd", o, ECLASSIFIER__EPACKAGE, mock.Anything).Return(nil).Once()
 
 		// set list with new contents
-		o.ESetFromID(EPACKAGE__ECLASSIFIERS, l)
+		o.ESetFromID(EPACKAGE__ECLASSIFIERS, ToAnyList[EClassifier](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetEClassifiers().Size())
 		assert.Equal(t, mockValue, o.GetEClassifiers().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 	{
-		mockValue := new(MockEFactory)
+		mockValue := &MockEFactory{}
 		mockValue.On("EInverseAdd", o, EFACTORY__EPACKAGE, nil).Return(nil).Once()
 		o.ESetFromID(EPACKAGE__EFACTORY_INSTANCE, mockValue)
 		assert.Equal(t, mockValue, o.EGetFromID(EPACKAGE__EFACTORY_INSTANCE, false))
@@ -201,24 +200,29 @@ func TestEPackageESetFromID(t *testing.T) {
 	}
 	{
 		// list with a value
-		mockValue := new(MockEPackage)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EPackage]{}
+		mockValue := &MockEPackage{}
+		mockIterator := &MockEIterator[EPackage]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EInverseAdd", o, EPACKAGE__ESUPER_PACKAGE, mock.Anything).Return(nil).Once()
 
 		// set list with new contents
-		o.ESetFromID(EPACKAGE__ESUB_PACKAGES, l)
+		o.ESetFromID(EPACKAGE__ESUB_PACKAGES, ToAnyList[EPackage](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetESubPackages().Size())
 		assert.Equal(t, mockValue, o.GetESubPackages().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 	{
-		v := string("Test String")
+		v := "Test String"
 		o.ESetFromID(EPACKAGE__NS_PREFIX, v)
 		assert.Equal(t, v, o.EGetFromID(EPACKAGE__NS_PREFIX, false))
 	}
 	{
-		v := string("Test String")
+		v := "Test String"
 		o.ESetFromID(EPACKAGE__NS_URI, v)
 		assert.Equal(t, v, o.EGetFromID(EPACKAGE__NS_URI, false))
 	}
@@ -243,7 +247,7 @@ func TestEPackageEUnsetFromID(t *testing.T) {
 		o.EUnsetFromID(EPACKAGE__ECLASSIFIERS)
 		v := o.EGetFromID(EPACKAGE__ECLASSIFIERS, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 	{
@@ -254,7 +258,7 @@ func TestEPackageEUnsetFromID(t *testing.T) {
 		o.EUnsetFromID(EPACKAGE__ESUB_PACKAGES)
 		v := o.EGetFromID(EPACKAGE__ESUB_PACKAGES, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 	{
@@ -283,40 +287,40 @@ func TestEPackageEBasicInverseAdd(t *testing.T) {
 		assert.Equal(t, mockNotifications, o.EBasicInverseAdd(mockObject, -1, mockNotifications))
 	}
 	{
-		mockObject := new(MockEClassifier)
+		mockObject := &MockEClassifier{}
 		o.EBasicInverseAdd(mockObject, EPACKAGE__ECLASSIFIERS, nil)
 		l := o.GetEClassifiers()
 		assert.True(t, l.Contains(mockObject))
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}
 	{
-		mockObject := new(MockEFactory)
+		mockObject := &MockEFactory{}
 		o.EBasicInverseAdd(mockObject, EPACKAGE__EFACTORY_INSTANCE, nil)
 		assert.Equal(t, mockObject, o.GetEFactoryInstance())
 		mock.AssertExpectationsForObjects(t, mockObject)
 
-		mockObject2 := new(MockEFactory)
+		mockObject2 := &MockEFactory{}
 		mockObject.On("EInverseRemove", o, EOPPOSITE_FEATURE_BASE-EPACKAGE__EFACTORY_INSTANCE, nil).Return(nil).Once()
 		o.EBasicInverseAdd(mockObject2, EPACKAGE__EFACTORY_INSTANCE, nil)
 		assert.Equal(t, mockObject2, o.GetEFactoryInstance())
 		mock.AssertExpectationsForObjects(t, mockObject2)
 	}
 	{
-		mockObject := new(MockEPackage)
+		mockObject := &MockEPackage{}
 		o.EBasicInverseAdd(mockObject, EPACKAGE__ESUB_PACKAGES, nil)
 		l := o.GetESubPackages()
 		assert.True(t, l.Contains(mockObject))
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}
 	{
-		mockObject := new(MockEPackage)
+		mockObject := &MockEPackage{}
 		mockObject.On("EResource").Return(nil).Once()
 		mockObject.On("EIsProxy").Return(false).Once()
 		o.EBasicInverseAdd(mockObject, EPACKAGE__ESUPER_PACKAGE, nil)
 		assert.Equal(t, mockObject, o.GetESuperPackage())
 		mock.AssertExpectationsForObjects(t, mockObject)
 
-		mockOther := new(MockEPackage)
+		mockOther := &MockEPackage{}
 		mockOther.On("EResource").Return(nil).Once()
 		mockOther.On("EIsProxy").Return(false).Once()
 		mockObject.On("EResource").Return(nil).Once()
@@ -337,7 +341,7 @@ func TestEPackageEBasicInverseRemove(t *testing.T) {
 	}
 	{
 		// initialize list with a mock object
-		mockObject := new(MockEClassifier)
+		mockObject := &MockEClassifier{}
 		mockObject.On("EInverseAdd", o, ECLASSIFIER__EPACKAGE, mock.Anything).Return(nil).Once()
 
 		l := o.GetEClassifiers()
@@ -351,13 +355,13 @@ func TestEPackageEBasicInverseRemove(t *testing.T) {
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}
 	{
-		mockObject := new(MockEFactory)
+		mockObject := &MockEFactory{}
 		o.EBasicInverseRemove(mockObject, EPACKAGE__EFACTORY_INSTANCE, nil)
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}
 	{
 		// initialize list with a mock object
-		mockObject := new(MockEPackage)
+		mockObject := &MockEPackage{}
 		mockObject.On("EInverseAdd", o, EPACKAGE__ESUPER_PACKAGE, mock.Anything).Return(nil).Once()
 
 		l := o.GetESubPackages()
@@ -371,7 +375,7 @@ func TestEPackageEBasicInverseRemove(t *testing.T) {
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}
 	{
-		mockObject := new(MockEPackage)
+		mockObject := &MockEPackage{}
 		o.EBasicInverseRemove(mockObject, EPACKAGE__ESUPER_PACKAGE, nil)
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}

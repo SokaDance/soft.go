@@ -57,7 +57,7 @@ func (eClassifier *eClassifierImpl) EStaticFeatureCount() int {
 }
 
 // IsInstance default implementation
-func (eClassifier *eClassifierImpl) IsInstance(interface{}) bool {
+func (eClassifier *eClassifierImpl) IsInstance(any) bool {
 	panic("IsInstance not implemented")
 }
 
@@ -79,7 +79,7 @@ func (eClassifier *eClassifierImpl) SetClassifierID(newClassifierID int) {
 }
 
 // GetDefaultValue get the value of defaultValue
-func (eClassifier *eClassifierImpl) GetDefaultValue() interface{} {
+func (eClassifier *eClassifierImpl) GetDefaultValue() any {
 	panic("GetDefaultValue not implemented")
 }
 
@@ -123,33 +123,36 @@ func (eClassifier *eClassifierImpl) initClassifierID() int {
 	return -1
 }
 
-func (eClassifier *eClassifierImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eClassifier *eClassifierImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case ECLASSIFIER__CLASSIFIER_ID:
-		return eClassifier.asEClassifier().GetClassifierID()
+		return ToAny(eClassifier.asEClassifier().GetClassifierID())
 	case ECLASSIFIER__DEFAULT_VALUE:
-		return eClassifier.asEClassifier().GetDefaultValue()
+		return ToAny(eClassifier.asEClassifier().GetDefaultValue())
 	case ECLASSIFIER__EPACKAGE:
-		return eClassifier.asEClassifier().GetEPackage()
+		return ToAny(eClassifier.asEClassifier().GetEPackage())
 	case ECLASSIFIER__INSTANCE_CLASS:
-		return eClassifier.asEClassifier().GetInstanceClass()
+		return ToAny(eClassifier.asEClassifier().GetInstanceClass())
 	case ECLASSIFIER__INSTANCE_TYPE_NAME:
-		return eClassifier.asEClassifier().GetInstanceTypeName()
+		return ToAny(eClassifier.asEClassifier().GetInstanceTypeName())
 	default:
 		return eClassifier.eNamedElementImpl.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eClassifier *eClassifierImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eClassifier *eClassifierImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case ECLASSIFIER__CLASSIFIER_ID:
-		eClassifier.asEClassifier().SetClassifierID(newValue.(int))
+		newValue := FromAny[int](value)
+		eClassifier.asEClassifier().SetClassifierID(newValue)
 	case ECLASSIFIER__INSTANCE_CLASS:
-		eClassifier.asEClassifier().SetInstanceClass(newValue.(reflect.Type))
+		newValue := FromAny[reflect.Type](value)
+		eClassifier.asEClassifier().SetInstanceClass(newValue)
 	case ECLASSIFIER__INSTANCE_TYPE_NAME:
-		eClassifier.asEClassifier().SetInstanceTypeName(newValue.(string))
+		newValue := FromAny[string](value)
+		eClassifier.asEClassifier().SetInstanceTypeName(newValue)
 	default:
-		eClassifier.eNamedElementImpl.ESetFromID(featureID, newValue)
+		eClassifier.eNamedElementImpl.ESetFromID(featureID, value)
 	}
 }
 
@@ -183,7 +186,7 @@ func (eClassifier *eClassifierImpl) EIsSetFromID(featureID int) bool {
 	}
 }
 
-func (eClassifier *eClassifierImpl) EInvokeFromID(operationID int, arguments EList) interface{} {
+func (eClassifier *eClassifierImpl) EInvokeFromID(operationID int, arguments EList[any]) any {
 	switch operationID {
 	case ECLASSIFIER__IS_INSTANCE_EJAVAOBJECT:
 		return eClassifier.asEClassifier().IsInstance(arguments.Get(0))

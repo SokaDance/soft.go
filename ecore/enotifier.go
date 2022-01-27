@@ -11,7 +11,7 @@ package ecore
 
 // ENotifier ...
 type ENotifier interface {
-	EAdapters() EList
+	EAdapters() EList[EAdapter]
 
 	EDeliver() bool
 

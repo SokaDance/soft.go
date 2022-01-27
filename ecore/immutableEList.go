@@ -11,108 +11,108 @@ package ecore
 
 import "strconv"
 
-type emptyImmutableEList struct {
+type emptyImmutableEList[T any] struct {
 }
 
-func (l *emptyImmutableEList) Add(elem interface{}) bool {
+func (l *emptyImmutableEList[T]) Add(t T) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) AddAll(list EList) bool {
+func (l *emptyImmutableEList[T]) AddAll(c ECollection[T]) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) Insert(index int, elem interface{}) bool {
+func (l *emptyImmutableEList[T]) Insert(index int, t T) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) InsertAll(index int, list EList) bool {
+func (l *emptyImmutableEList[T]) InsertAll(index int, c ECollection[T]) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) MoveObject(newIndex int, elem interface{}) {
+func (l *emptyImmutableEList[T]) MoveObject(newIndex int, t T) {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) Move(oldIndex, newIndex int) interface{} {
+func (l *emptyImmutableEList[T]) MoveIndex(oldIndex, newIndex int) T {
 	panic("Immutable list can't be modified")
 }
 
 // Get an element of the array
-func (l *emptyImmutableEList) Get(index int) interface{} {
+func (l *emptyImmutableEList[T]) Get(index int) T {
 	panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(l.Size()))
 }
 
-func (l *emptyImmutableEList) Set(index int, elem interface{}) interface{} {
+func (l *emptyImmutableEList[T]) Set(index int, t T) T {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) RemoveAt(index int) interface{} {
+func (l *emptyImmutableEList[T]) RemoveAt(index int) T {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) Remove(elem interface{}) bool {
+func (l *emptyImmutableEList[T]) Remove(t T) bool {
 	panic("Immutable list can't be modified")
 }
 
-func (l *emptyImmutableEList) RemoveAll(collection EList) bool {
+func (l *emptyImmutableEList[T]) RemoveAll(c ECollection[T]) bool {
+	panic("Immutable list can't be modified")
+}
+
+func (l *emptyImmutableEList[T]) RetainAll(c ECollection[T]) bool {
 	panic("Immutable list can't be modified")
 }
 
 // Size count the number of element in the array
-func (l *emptyImmutableEList) Size() int {
+func (l *emptyImmutableEList[T]) Size() int {
 	return 0
 }
 
-func (l *emptyImmutableEList) Clear() {
+func (l *emptyImmutableEList[T]) Clear() {
 	panic("Immutable list can't be modified")
 }
 
 // Empty return true if the array contains 0 element
-func (l *emptyImmutableEList) Empty() bool {
+func (l *emptyImmutableEList[T]) Empty() bool {
 	return true
 }
 
 // Contains return if an array contains or not an element
-func (l *emptyImmutableEList) Contains(elem interface{}) bool {
+func (l *emptyImmutableEList[T]) Contains(t T) bool {
 	return false
 }
 
 // IndexOf return the index on an element in an array, else return -1
-func (l *emptyImmutableEList) IndexOf(elem interface{}) int {
+func (l *emptyImmutableEList[T]) IndexOf(t T) int {
 	return -1
 }
 
 // Iterator through the array
-func (l *emptyImmutableEList) Iterator() EIterator {
-	return &listIterator{list: l}
+func (l *emptyImmutableEList[T]) Iterator() EIterator[T] {
+	return &eListIterator[T]{list: l}
 }
 
 // ToArray convert to array
-func (l *emptyImmutableEList) ToArray() []interface{} {
-	return []interface{}{}
+func (l *emptyImmutableEList[T]) ToArray() []T {
+	return []T{}
 }
 
-func (l *emptyImmutableEList) GetUnResolvedList() EList {
-	return l
+func NewEmptyImmutableEList[T any]() *emptyImmutableEList[T] {
+	return &emptyImmutableEList[T]{}
 }
 
-func NewEmptyImmutableEList() *emptyImmutableEList {
-	return &emptyImmutableEList{}
-}
-
-type immutableEList struct {
-	emptyImmutableEList
-	data []interface{}
+type immutableEList[T comparable] struct {
+	emptyImmutableEList[T]
+	data []T
 }
 
 // NewImmutableEList return a new ImmutableEList
-func NewImmutableEList(data []interface{}) *immutableEList {
-	return &immutableEList{data: data}
+func NewImmutableEList[T comparable](data []T) *immutableEList[T] {
+	return &immutableEList[T]{data: data}
 }
 
 // Get an element of the array
-func (l *immutableEList) Get(index int) interface{} {
+func (l *immutableEList[T]) Get(index int) T {
 	if index < 0 || index >= l.Size() {
 		panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(l.Size()))
 	}
@@ -120,24 +120,24 @@ func (l *immutableEList) Get(index int) interface{} {
 }
 
 // Size count the number of element in the array
-func (l *immutableEList) Size() int {
+func (l *immutableEList[T]) Size() int {
 	return len(l.data)
 }
 
 // Empty return true if the array contains 0 element
-func (l *immutableEList) Empty() bool {
+func (l *immutableEList[T]) Empty() bool {
 	return l.Size() == 0
 }
 
 // Contains return if an array contains or not an element
-func (l *immutableEList) Contains(elem interface{}) bool {
-	return l.IndexOf(elem) != -1
+func (l *immutableEList[T]) Contains(t T) bool {
+	return l.IndexOf(t) != -1
 }
 
 // IndexOf return the index on an element in an array, else return -1
-func (l *immutableEList) IndexOf(elem interface{}) int {
+func (l *immutableEList[T]) IndexOf(t T) int {
 	for i, value := range l.data {
-		if value == elem {
+		if value == t {
 			return i
 		}
 	}
@@ -145,15 +145,11 @@ func (l *immutableEList) IndexOf(elem interface{}) int {
 }
 
 // Iterator through the array
-func (l *immutableEList) Iterator() EIterator {
-	return &listIterator{list: l}
+func (l *immutableEList[T]) Iterator() EIterator[T] {
+	return &eListIterator[T]{list: l}
 }
 
 // ToArray convert to array
-func (l *immutableEList) ToArray() []interface{} {
+func (l *immutableEList[T]) ToArray() []T {
 	return l.data
-}
-
-func (l *immutableEList) GetUnResolvedList() EList {
-	return l
 }

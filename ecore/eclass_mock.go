@@ -37,15 +37,15 @@ func (eClass *MockEClass) SetAbstract(newIsAbstract bool) {
 }
 
 // GetEAllAttributes get the value of eAllAttributes
-func (eClass *MockEClass) GetEAllAttributes() EList {
+func (eClass *MockEClass) GetEAllAttributes() EList[EAttribute] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EAttribute]
+	if rf, ok := ret.Get(0).(func() EList[EAttribute]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EAttribute])
 		}
 	}
 
@@ -53,15 +53,15 @@ func (eClass *MockEClass) GetEAllAttributes() EList {
 }
 
 // GetEAllContainments get the value of eAllContainments
-func (eClass *MockEClass) GetEAllContainments() EList {
+func (eClass *MockEClass) GetEAllContainments() EList[EReference] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EReference]
+	if rf, ok := ret.Get(0).(func() EList[EReference]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EReference])
 		}
 	}
 
@@ -69,15 +69,15 @@ func (eClass *MockEClass) GetEAllContainments() EList {
 }
 
 // GetEAllOperations get the value of eAllOperations
-func (eClass *MockEClass) GetEAllOperations() EList {
+func (eClass *MockEClass) GetEAllOperations() EList[EOperation] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EOperation]
+	if rf, ok := ret.Get(0).(func() EList[EOperation]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EOperation])
 		}
 	}
 
@@ -85,15 +85,15 @@ func (eClass *MockEClass) GetEAllOperations() EList {
 }
 
 // GetEAllReferences get the value of eAllReferences
-func (eClass *MockEClass) GetEAllReferences() EList {
+func (eClass *MockEClass) GetEAllReferences() EList[EReference] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EReference]
+	if rf, ok := ret.Get(0).(func() EList[EReference]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EReference])
 		}
 	}
 
@@ -101,15 +101,15 @@ func (eClass *MockEClass) GetEAllReferences() EList {
 }
 
 // GetEAllStructuralFeatures get the value of eAllStructuralFeatures
-func (eClass *MockEClass) GetEAllStructuralFeatures() EList {
+func (eClass *MockEClass) GetEAllStructuralFeatures() EList[EStructuralFeature] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EStructuralFeature]
+	if rf, ok := ret.Get(0).(func() EList[EStructuralFeature]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EStructuralFeature])
 		}
 	}
 
@@ -117,15 +117,15 @@ func (eClass *MockEClass) GetEAllStructuralFeatures() EList {
 }
 
 // GetEAllSuperTypes get the value of eAllSuperTypes
-func (eClass *MockEClass) GetEAllSuperTypes() EList {
+func (eClass *MockEClass) GetEAllSuperTypes() EList[EClass] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EClass]
+	if rf, ok := ret.Get(0).(func() EList[EClass]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EClass])
 		}
 	}
 
@@ -133,15 +133,15 @@ func (eClass *MockEClass) GetEAllSuperTypes() EList {
 }
 
 // GetEAttributes get the value of eAttributes
-func (eClass *MockEClass) GetEAttributes() EList {
+func (eClass *MockEClass) GetEAttributes() EList[EAttribute] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EAttribute]
+	if rf, ok := ret.Get(0).(func() EList[EAttribute]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EAttribute])
 		}
 	}
 
@@ -149,15 +149,15 @@ func (eClass *MockEClass) GetEAttributes() EList {
 }
 
 // GetEContainmentFeatures get the value of eContainmentFeatures
-func (eClass *MockEClass) GetEContainmentFeatures() EList {
+func (eClass *MockEClass) GetEContainmentFeatures() EList[EStructuralFeature] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EStructuralFeature]
+	if rf, ok := ret.Get(0).(func() EList[EStructuralFeature]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EStructuralFeature])
 		}
 	}
 
@@ -165,15 +165,15 @@ func (eClass *MockEClass) GetEContainmentFeatures() EList {
 }
 
 // GetECrossReferenceFeatures get the value of eCrossReferenceFeatures
-func (eClass *MockEClass) GetECrossReferenceFeatures() EList {
+func (eClass *MockEClass) GetECrossReferenceFeatures() EList[EStructuralFeature] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EStructuralFeature]
+	if rf, ok := ret.Get(0).(func() EList[EStructuralFeature]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EStructuralFeature])
 		}
 	}
 
@@ -197,15 +197,15 @@ func (eClass *MockEClass) GetEIDAttribute() EAttribute {
 }
 
 // GetEOperations get the value of eOperations
-func (eClass *MockEClass) GetEOperations() EList {
+func (eClass *MockEClass) GetEOperations() EList[EOperation] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EOperation]
+	if rf, ok := ret.Get(0).(func() EList[EOperation]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EOperation])
 		}
 	}
 
@@ -213,15 +213,15 @@ func (eClass *MockEClass) GetEOperations() EList {
 }
 
 // GetEReferences get the value of eReferences
-func (eClass *MockEClass) GetEReferences() EList {
+func (eClass *MockEClass) GetEReferences() EList[EReference] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EReference]
+	if rf, ok := ret.Get(0).(func() EList[EReference]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EReference])
 		}
 	}
 
@@ -229,15 +229,15 @@ func (eClass *MockEClass) GetEReferences() EList {
 }
 
 // GetEStructuralFeatures get the value of eStructuralFeatures
-func (eClass *MockEClass) GetEStructuralFeatures() EList {
+func (eClass *MockEClass) GetEStructuralFeatures() EList[EStructuralFeature] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EStructuralFeature]
+	if rf, ok := ret.Get(0).(func() EList[EStructuralFeature]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EStructuralFeature])
 		}
 	}
 
@@ -245,15 +245,15 @@ func (eClass *MockEClass) GetEStructuralFeatures() EList {
 }
 
 // GetESuperTypes get the value of eSuperTypes
-func (eClass *MockEClass) GetESuperTypes() EList {
+func (eClass *MockEClass) GetESuperTypes() EList[EClass] {
 	ret := eClass.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EClass]
+	if rf, ok := ret.Get(0).(func() EList[EClass]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EClass])
 		}
 	}
 

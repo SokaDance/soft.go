@@ -17,9 +17,9 @@ import (
 )
 
 func TestMockEList_Add(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Add", 1).Once().Return(true)
-	l.On("Add", 1).Once().Return(func(interface{}) bool {
+	l.On("Add", 1).Once().Return(func(int) bool {
 		return true
 	})
 	assert.True(t, l.Add(1))
@@ -28,9 +28,9 @@ func TestMockEList_Add(t *testing.T) {
 }
 
 func TestMockEList_Remove(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Remove", 1).Once().Return(true)
-	l.On("Remove", 1).Once().Return(func(interface{}) bool {
+	l.On("Remove", 1).Once().Return(func(int) bool {
 		return true
 	})
 	assert.True(t, l.Remove(1))
@@ -39,9 +39,9 @@ func TestMockEList_Remove(t *testing.T) {
 }
 
 func TestMockEList_RemoveAt(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("RemoveAt", 1).Once().Return(1)
-	l.On("RemoveAt", 1).Once().Return(func(int) interface{} {
+	l.On("RemoveAt", 1).Once().Return(func(int) int {
 		return 2
 	})
 	assert.Equal(t, 1, l.RemoveAt(1))
@@ -50,9 +50,9 @@ func TestMockEList_RemoveAt(t *testing.T) {
 }
 
 func TestMockEList_Insert(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Insert", 1, 2).Once().Return(true)
-	l.On("Insert", 1, 2).Once().Return(func(int, interface{}) bool {
+	l.On("Insert", 1, 2).Once().Return(func(int, int) bool {
 		return true
 	})
 	assert.True(t, l.Insert(1, 2))
@@ -61,27 +61,27 @@ func TestMockEList_Insert(t *testing.T) {
 }
 
 func TestMockEList_MoveObject(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("MoveObject", 1, 2).Once()
 	l.MoveObject(1, 2)
 	mock.AssertExpectationsForObjects(t, l)
 }
 
-func TestMockEList_Move(t *testing.T) {
-	l := &MockEList{}
-	l.On("Move", 1, 2).Once().Return(3)
-	l.On("Move", 1, 2).Once().Return(func(int, int) interface{} {
+func TestMockEList_MoveIndex(t *testing.T) {
+	l := &MockEList[int]{}
+	l.On("MoveIndex", 1, 2).Once().Return(3)
+	l.On("MoveIndex", 1, 2).Once().Return(func(int, int) int {
 		return 3
 	})
-	assert.Equal(t, 3, l.Move(1, 2))
-	assert.Equal(t, 3, l.Move(1, 2))
+	assert.Equal(t, 3, l.MoveIndex(1, 2))
+	assert.Equal(t, 3, l.MoveIndex(1, 2))
 	mock.AssertExpectationsForObjects(t, l)
 }
 
 func TestMockEList_Get(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Get", 1).Once().Return(1)
-	l.On("Get", 1).Once().Return(func(int) interface{} {
+	l.On("Get", 1).Once().Return(func(int) int {
 		return 0
 	})
 	assert.Equal(t, 1, l.Get(1))
@@ -90,9 +90,9 @@ func TestMockEList_Get(t *testing.T) {
 }
 
 func TestMockEList_Set(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Set", 1, 2).Once().Return(3)
-	l.On("Set", 1, 2).Once().Return(func(int, interface{}) interface{} {
+	l.On("Set", 1, 2).Once().Return(func(int, int) int {
 		return 4
 	})
 	assert.Equal(t, 3, l.Set(1, 2))
@@ -101,10 +101,10 @@ func TestMockEList_Set(t *testing.T) {
 }
 
 func TestMockEList_AddAll(t *testing.T) {
-	l := &MockEList{}
-	c := &MockEList{}
+	l := &MockEList[int]{}
+	c := &MockEList[int]{}
 	l.On("AddAll", c).Once().Return(true)
-	l.On("AddAll", c).Once().Return(func(EList) bool {
+	l.On("AddAll", c).Once().Return(func(ECollection[int]) bool {
 		return true
 	})
 	assert.True(t, l.AddAll(c))
@@ -113,10 +113,10 @@ func TestMockEList_AddAll(t *testing.T) {
 }
 
 func TestMockEList_InsertAll(t *testing.T) {
-	l := &MockEList{}
-	c := &MockEList{}
+	l := &MockEList[int]{}
+	c := &MockEList[int]{}
 	l.On("InsertAll", 0, c).Once().Return(true)
-	l.On("InsertAll", 0, c).Once().Return(func(int, EList) bool {
+	l.On("InsertAll", 0, c).Once().Return(func(int, ECollection[int]) bool {
 		return true
 	})
 	assert.True(t, l.InsertAll(0, c))
@@ -125,10 +125,10 @@ func TestMockEList_InsertAll(t *testing.T) {
 }
 
 func TestMockEList_RemoveAll(t *testing.T) {
-	l := &MockEList{}
-	c := &MockEList{}
+	l := &MockEList[int]{}
+	c := &MockEList[int]{}
 	l.On("RemoveAll", c).Once().Return(true)
-	l.On("RemoveAll", c).Once().Return(func(EList) bool {
+	l.On("RemoveAll", c).Once().Return(func(ECollection[int]) bool {
 		return true
 	})
 	assert.True(t, l.RemoveAll(c))
@@ -136,8 +136,20 @@ func TestMockEList_RemoveAll(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, l, c)
 }
 
+func TestMockEList_RetainAll(t *testing.T) {
+	l := &MockEList[int]{}
+	c := &MockEList[int]{}
+	l.On("RetainAll", c).Once().Return(true)
+	l.On("RetainAll", c).Once().Return(func(ECollection[int]) bool {
+		return true
+	})
+	assert.True(t, l.RetainAll(c))
+	assert.True(t, l.RetainAll(c))
+	mock.AssertExpectationsForObjects(t, l, c)
+}
+
 func TestMockEList_Size(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Size").Once().Return(0)
 	l.On("Size").Once().Return(func() int {
 		return 1
@@ -148,14 +160,14 @@ func TestMockEList_Size(t *testing.T) {
 }
 
 func TestMockEList_Clear(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Clear").Once()
 	l.Clear()
 	mock.AssertExpectationsForObjects(t, l)
 }
 
 func TestMockEList_Empty(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Empty").Once().Return(true)
 	l.On("Empty").Once().Return(func() bool {
 		return false
@@ -166,10 +178,10 @@ func TestMockEList_Empty(t *testing.T) {
 }
 
 func TestMockEList_Iterator(t *testing.T) {
-	l := &MockEList{}
-	it := &MockEIterator{}
+	l := &MockEList[int]{}
+	it := &MockEIterator[int]{}
 	l.On("Iterator").Once().Return(it)
-	l.On("Iterator").Once().Return(func() EIterator {
+	l.On("Iterator").Once().Return(func() EIterator[int] {
 		return it
 	})
 	assert.Equal(t, it, l.Iterator())
@@ -178,10 +190,10 @@ func TestMockEList_Iterator(t *testing.T) {
 }
 
 func TestMockEList_ToArray(t *testing.T) {
-	l := &MockEList{}
-	r := []interface{}{}
+	l := &MockEList[int]{}
+	r := []int{}
 	l.On("ToArray").Once().Return(r)
-	l.On("ToArray").Once().Return(func() []interface{} {
+	l.On("ToArray").Once().Return(func() []int {
 		return r
 	})
 	assert.Equal(t, r, l.ToArray())
@@ -190,9 +202,9 @@ func TestMockEList_ToArray(t *testing.T) {
 }
 
 func TestMockEList_Contains(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("Contains", 1).Once().Return(false)
-	l.On("Contains", 2).Once().Return(func(interface{}) bool {
+	l.On("Contains", 2).Once().Return(func(int) bool {
 		return true
 	})
 	assert.False(t, l.Contains(1))
@@ -201,9 +213,9 @@ func TestMockEList_Contains(t *testing.T) {
 }
 
 func TestMockEList_IndexOf(t *testing.T) {
-	l := &MockEList{}
+	l := &MockEList[int]{}
 	l.On("IndexOf", 1).Once().Return(0)
-	l.On("IndexOf", 2).Once().Return(func(interface{}) int {
+	l.On("IndexOf", 2).Once().Return(func(int) int {
 		return 1
 	})
 	assert.Equal(t, 0, l.IndexOf(1))

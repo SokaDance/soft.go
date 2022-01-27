@@ -25,7 +25,7 @@ func discardMockEStructuralFeature() {
 // TestMockEStructuralFeatureIsChangeable tests method IsChangeable
 func TestMockEStructuralFeatureIsChangeable(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := bool(true)
+	r := true
 	o.On("IsChangeable").Once().Return(r)
 	o.On("IsChangeable").Once().Return(func() bool {
 		return r
@@ -38,7 +38,7 @@ func TestMockEStructuralFeatureIsChangeable(t *testing.T) {
 // TestMockEStructuralFeatureSetChangeable tests method SetChangeable
 func TestMockEStructuralFeatureSetChangeable(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	v := bool(true)
+	v := true
 	o.On("SetChangeable", v).Once()
 	o.SetChangeable(v)
 	o.AssertExpectations(t)
@@ -47,9 +47,9 @@ func TestMockEStructuralFeatureSetChangeable(t *testing.T) {
 // TestMockEStructuralFeatureGetDefaultValue tests method GetDefaultValue
 func TestMockEStructuralFeatureGetDefaultValue(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := interface{}(nil)
+	r := any(nil)
 	o.On("GetDefaultValue").Once().Return(r)
-	o.On("GetDefaultValue").Once().Return(func() interface{} {
+	o.On("GetDefaultValue").Once().Return(func() any {
 		return r
 	})
 	assert.Equal(t, r, o.GetDefaultValue())
@@ -60,7 +60,7 @@ func TestMockEStructuralFeatureGetDefaultValue(t *testing.T) {
 // TestMockEStructuralFeatureSetDefaultValue tests method SetDefaultValue
 func TestMockEStructuralFeatureSetDefaultValue(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	v := interface{}(nil)
+	v := any(nil)
 	o.On("SetDefaultValue", v).Once()
 	o.SetDefaultValue(v)
 	o.AssertExpectations(t)
@@ -69,7 +69,7 @@ func TestMockEStructuralFeatureSetDefaultValue(t *testing.T) {
 // TestMockEStructuralFeatureGetDefaultValueLiteral tests method GetDefaultValueLiteral
 func TestMockEStructuralFeatureGetDefaultValueLiteral(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := string("Test String")
+	r := "Test String"
 	o.On("GetDefaultValueLiteral").Once().Return(r)
 	o.On("GetDefaultValueLiteral").Once().Return(func() string {
 		return r
@@ -82,7 +82,7 @@ func TestMockEStructuralFeatureGetDefaultValueLiteral(t *testing.T) {
 // TestMockEStructuralFeatureSetDefaultValueLiteral tests method SetDefaultValueLiteral
 func TestMockEStructuralFeatureSetDefaultValueLiteral(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	v := string("Test String")
+	v := "Test String"
 	o.On("SetDefaultValueLiteral", v).Once()
 	o.SetDefaultValueLiteral(v)
 	o.AssertExpectations(t)
@@ -91,7 +91,7 @@ func TestMockEStructuralFeatureSetDefaultValueLiteral(t *testing.T) {
 // TestMockEStructuralFeatureIsDerived tests method IsDerived
 func TestMockEStructuralFeatureIsDerived(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := bool(true)
+	r := true
 	o.On("IsDerived").Once().Return(r)
 	o.On("IsDerived").Once().Return(func() bool {
 		return r
@@ -104,7 +104,7 @@ func TestMockEStructuralFeatureIsDerived(t *testing.T) {
 // TestMockEStructuralFeatureSetDerived tests method SetDerived
 func TestMockEStructuralFeatureSetDerived(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	v := bool(true)
+	v := true
 	o.On("SetDerived", v).Once()
 	o.SetDerived(v)
 	o.AssertExpectations(t)
@@ -113,7 +113,7 @@ func TestMockEStructuralFeatureSetDerived(t *testing.T) {
 // TestMockEStructuralFeatureGetEContainingClass tests method GetEContainingClass
 func TestMockEStructuralFeatureGetEContainingClass(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := new(MockEClass)
+	r := &MockEClass{}
 	o.On("GetEContainingClass").Once().Return(r)
 	o.On("GetEContainingClass").Once().Return(func() EClass {
 		return r
@@ -148,7 +148,7 @@ func TestMockEStructuralFeatureSetFeatureID(t *testing.T) {
 // TestMockEStructuralFeatureIsTransient tests method IsTransient
 func TestMockEStructuralFeatureIsTransient(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := bool(true)
+	r := true
 	o.On("IsTransient").Once().Return(r)
 	o.On("IsTransient").Once().Return(func() bool {
 		return r
@@ -161,7 +161,7 @@ func TestMockEStructuralFeatureIsTransient(t *testing.T) {
 // TestMockEStructuralFeatureSetTransient tests method SetTransient
 func TestMockEStructuralFeatureSetTransient(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	v := bool(true)
+	v := true
 	o.On("SetTransient", v).Once()
 	o.SetTransient(v)
 	o.AssertExpectations(t)
@@ -170,7 +170,7 @@ func TestMockEStructuralFeatureSetTransient(t *testing.T) {
 // TestMockEStructuralFeatureIsUnsettable tests method IsUnsettable
 func TestMockEStructuralFeatureIsUnsettable(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := bool(true)
+	r := true
 	o.On("IsUnsettable").Once().Return(r)
 	o.On("IsUnsettable").Once().Return(func() bool {
 		return r
@@ -183,7 +183,7 @@ func TestMockEStructuralFeatureIsUnsettable(t *testing.T) {
 // TestMockEStructuralFeatureSetUnsettable tests method SetUnsettable
 func TestMockEStructuralFeatureSetUnsettable(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	v := bool(true)
+	v := true
 	o.On("SetUnsettable", v).Once()
 	o.SetUnsettable(v)
 	o.AssertExpectations(t)
@@ -192,7 +192,7 @@ func TestMockEStructuralFeatureSetUnsettable(t *testing.T) {
 // TestMockEStructuralFeatureIsVolatile tests method IsVolatile
 func TestMockEStructuralFeatureIsVolatile(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := bool(true)
+	r := true
 	o.On("IsVolatile").Once().Return(r)
 	o.On("IsVolatile").Once().Return(func() bool {
 		return r
@@ -205,7 +205,7 @@ func TestMockEStructuralFeatureIsVolatile(t *testing.T) {
 // TestMockEStructuralFeatureSetVolatile tests method SetVolatile
 func TestMockEStructuralFeatureSetVolatile(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	v := bool(true)
+	v := true
 	o.On("SetVolatile", v).Once()
 	o.SetVolatile(v)
 	o.AssertExpectations(t)
@@ -214,7 +214,7 @@ func TestMockEStructuralFeatureSetVolatile(t *testing.T) {
 // TestMockEStructuralFeatureGetContainerClass tests method GetContainerClass
 func TestMockEStructuralFeatureGetContainerClass(t *testing.T) {
 	o := &MockEStructuralFeature{}
-	r := reflect.Type(reflect.TypeOf(""))
+	r := reflect.TypeOf("")
 	o.On("GetContainerClass").Return(r).Once()
 	o.On("GetContainerClass").Return(func() reflect.Type {
 		return r

@@ -17,7 +17,7 @@ type EModelElement interface {
 
 	GetEAnnotation(string) EAnnotation
 
-	GetEAnnotations() EList
+	GetEAnnotations() EList[EAnnotation]
 
 	// Start of user code EModelElement
 	// End of user code

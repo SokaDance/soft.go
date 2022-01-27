@@ -210,7 +210,7 @@ func TestReflectiveEObjectImpl_GetAttribute_Many(t *testing.T) {
 	mockAttribute.On("GetEType").Return(nil).Once()
 	val := o.EGetFromID(0, false)
 	assert.NotNil(t, val)
-	l, _ := val.(EList)
+	l, _ := val.(EList[any])
 	assert.NotNil(t, l)
 
 	mock.AssertExpectationsForObjects(t, mockClass, mockAttribute)
@@ -236,7 +236,7 @@ func TestReflectiveEObjectImpl_GetReference_Many(t *testing.T) {
 	assert.NotNil(t, val)
 
 	// check its is an object list
-	l, _ := val.(EObjectList)
+	l, _ := val.(EObjectList[any])
 	assert.NotNil(t, l)
 
 	mock.AssertExpectationsForObjects(t, mockClass, mockReference)

@@ -24,7 +24,7 @@ func discardMockEOperation() {
 // TestMockEOperationGetEContainingClass tests method GetEContainingClass
 func TestMockEOperationGetEContainingClass(t *testing.T) {
 	o := &MockEOperation{}
-	r := new(MockEClass)
+	r := &MockEClass{}
 	o.On("GetEContainingClass").Once().Return(r)
 	o.On("GetEContainingClass").Once().Return(func() EClass {
 		return r
@@ -37,10 +37,10 @@ func TestMockEOperationGetEContainingClass(t *testing.T) {
 // TestMockEOperationGetEExceptions tests method GetEExceptions
 func TestMockEOperationGetEExceptions(t *testing.T) {
 	o := &MockEOperation{}
-	l := &MockEList{}
+	l := &MockEList[EClassifier]{}
 	// return a value
 	o.On("GetEExceptions").Once().Return(l)
-	o.On("GetEExceptions").Once().Return(func() EList {
+	o.On("GetEExceptions").Once().Return(func() EList[EClassifier] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEExceptions())
@@ -59,10 +59,10 @@ func TestMockEOperationUnsetEExceptions(t *testing.T) {
 // TestMockEOperationGetEParameters tests method GetEParameters
 func TestMockEOperationGetEParameters(t *testing.T) {
 	o := &MockEOperation{}
-	l := &MockEList{}
+	l := &MockEList[EParameter]{}
 	// return a value
 	o.On("GetEParameters").Once().Return(l)
-	o.On("GetEParameters").Once().Return(func() EList {
+	o.On("GetEParameters").Once().Return(func() EList[EParameter] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEParameters())
@@ -95,8 +95,8 @@ func TestMockEOperationSetOperationID(t *testing.T) {
 // TestMockEOperationIsOverrideOf tests method IsOverrideOf
 func TestMockEOperationIsOverrideOf(t *testing.T) {
 	o := &MockEOperation{}
-	someOperation := new(MockEOperation)
-	r := bool(true)
+	someOperation := &MockEOperation{}
+	r := true
 	o.On("IsOverrideOf", someOperation).Return(r).Once()
 	o.On("IsOverrideOf", someOperation).Return(func() bool {
 		return r

@@ -83,7 +83,7 @@ func (dE *deepEqual) equals(eObj1 EObject, eObj2 EObject) bool {
 	dE.objects[eObj2] = eObj1
 
 	for it := eClass.GetEAttributes().Iterator(); it.HasNext(); {
-		eAttribute := it.Next().(EAttribute)
+		eAttribute := it.Next()
 		if !eAttribute.IsDerived() && !dE.equalsAttribute(eObj1, eObj2, eAttribute) {
 			delete(dE.objects, eObj1)
 			delete(dE.objects, eObj2)
@@ -91,7 +91,7 @@ func (dE *deepEqual) equals(eObj1 EObject, eObj2 EObject) bool {
 		}
 	}
 	for it := eClass.GetEReferences().Iterator(); it.HasNext(); {
-		eReference := it.Next().(EReference)
+		eReference := it.Next()
 		if !eReference.IsDerived() && !dE.equalsReference(eObj1, eObj2, eReference) {
 			delete(dE.objects, eObj1)
 			delete(dE.objects, eObj2)
@@ -104,14 +104,14 @@ func (dE *deepEqual) equals(eObj1 EObject, eObj2 EObject) bool {
 
 }
 
-func (dE *deepEqual) equalsAll(l1 EList, l2 EList) bool {
+func (dE *deepEqual) equalsAll(l1 EList[EObject], l2 EList[EObject]) bool {
 	size := l1.Size()
 	if size != l2.Size() {
 		return false
 	}
 	for i := 0; i < size; i++ {
-		eObj1 := l1.Get(i).(EObject)
-		eObj2 := l2.Get(i).(EObject)
+		eObj1 := l1.Get(i)
+		eObj2 := l2.Get(i)
 		if !dE.equals(eObj1, eObj2) {
 			return false
 		}
@@ -137,9 +137,9 @@ func (dE *deepEqual) equalsReference(eObj1 EObject, eObj2 EObject, eReference ER
 		value1 := eObj1.EGet(eReference)
 		value2 := eObj2.EGet(eReference)
 		if eReference.IsMany() {
-			return dE.equalsAll(value1.(EList), value2.(EList))
+			return dE.equalsAll(FromAnyList[EObject](value1), FromAnyList[EObject](value2))
 		} else {
-			return dE.equals(value1.(EObject), value2.(EObject))
+			return dE.equals(FromAny[EObject](value1), FromAny[EObject](value2))
 		}
 	}
 	return isSet1 == isSet2

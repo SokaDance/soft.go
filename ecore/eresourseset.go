@@ -17,7 +17,7 @@ const (
 type EResourceSet interface {
 	ENotifier
 
-	GetResources() EList
+	GetResources() EList[EResource]
 	GetResource(uri *URI, loadOnDemand bool) EResource
 	CreateResource(uri *URI) EResource
 

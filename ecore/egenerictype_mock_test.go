@@ -24,7 +24,7 @@ func discardMockEGenericType() {
 // TestMockEGenericTypeGetEClassifier tests method GetEClassifier
 func TestMockEGenericTypeGetEClassifier(t *testing.T) {
 	o := &MockEGenericType{}
-	r := new(MockEClassifier)
+	r := &MockEClassifier{}
 	o.On("GetEClassifier").Once().Return(r)
 	o.On("GetEClassifier").Once().Return(func() EClassifier {
 		return r
@@ -37,7 +37,7 @@ func TestMockEGenericTypeGetEClassifier(t *testing.T) {
 // TestMockEGenericTypeSetEClassifier tests method SetEClassifier
 func TestMockEGenericTypeSetEClassifier(t *testing.T) {
 	o := &MockEGenericType{}
-	v := new(MockEClassifier)
+	v := &MockEClassifier{}
 	o.On("SetEClassifier", v).Once()
 	o.SetEClassifier(v)
 	o.AssertExpectations(t)
@@ -46,7 +46,7 @@ func TestMockEGenericTypeSetEClassifier(t *testing.T) {
 // TestMockEGenericTypeGetELowerBound tests method GetELowerBound
 func TestMockEGenericTypeGetELowerBound(t *testing.T) {
 	o := &MockEGenericType{}
-	r := new(MockEGenericType)
+	r := &MockEGenericType{}
 	o.On("GetELowerBound").Once().Return(r)
 	o.On("GetELowerBound").Once().Return(func() EGenericType {
 		return r
@@ -59,7 +59,7 @@ func TestMockEGenericTypeGetELowerBound(t *testing.T) {
 // TestMockEGenericTypeSetELowerBound tests method SetELowerBound
 func TestMockEGenericTypeSetELowerBound(t *testing.T) {
 	o := &MockEGenericType{}
-	v := new(MockEGenericType)
+	v := &MockEGenericType{}
 	o.On("SetELowerBound", v).Once()
 	o.SetELowerBound(v)
 	o.AssertExpectations(t)
@@ -68,7 +68,7 @@ func TestMockEGenericTypeSetELowerBound(t *testing.T) {
 // TestMockEGenericTypeGetERawType tests method GetERawType
 func TestMockEGenericTypeGetERawType(t *testing.T) {
 	o := &MockEGenericType{}
-	r := new(MockEClassifier)
+	r := &MockEClassifier{}
 	o.On("GetERawType").Once().Return(r)
 	o.On("GetERawType").Once().Return(func() EClassifier {
 		return r
@@ -81,10 +81,10 @@ func TestMockEGenericTypeGetERawType(t *testing.T) {
 // TestMockEGenericTypeGetETypeArguments tests method GetETypeArguments
 func TestMockEGenericTypeGetETypeArguments(t *testing.T) {
 	o := &MockEGenericType{}
-	l := &MockEList{}
+	l := &MockEList[EGenericType]{}
 	// return a value
 	o.On("GetETypeArguments").Once().Return(l)
-	o.On("GetETypeArguments").Once().Return(func() EList {
+	o.On("GetETypeArguments").Once().Return(func() EList[EGenericType] {
 		return l
 	})
 	assert.Equal(t, l, o.GetETypeArguments())
@@ -95,7 +95,7 @@ func TestMockEGenericTypeGetETypeArguments(t *testing.T) {
 // TestMockEGenericTypeGetETypeParameter tests method GetETypeParameter
 func TestMockEGenericTypeGetETypeParameter(t *testing.T) {
 	o := &MockEGenericType{}
-	r := new(MockETypeParameter)
+	r := &MockETypeParameter{}
 	o.On("GetETypeParameter").Once().Return(r)
 	o.On("GetETypeParameter").Once().Return(func() ETypeParameter {
 		return r
@@ -108,7 +108,7 @@ func TestMockEGenericTypeGetETypeParameter(t *testing.T) {
 // TestMockEGenericTypeSetETypeParameter tests method SetETypeParameter
 func TestMockEGenericTypeSetETypeParameter(t *testing.T) {
 	o := &MockEGenericType{}
-	v := new(MockETypeParameter)
+	v := &MockETypeParameter{}
 	o.On("SetETypeParameter", v).Once()
 	o.SetETypeParameter(v)
 	o.AssertExpectations(t)
@@ -117,7 +117,7 @@ func TestMockEGenericTypeSetETypeParameter(t *testing.T) {
 // TestMockEGenericTypeGetEUpperBound tests method GetEUpperBound
 func TestMockEGenericTypeGetEUpperBound(t *testing.T) {
 	o := &MockEGenericType{}
-	r := new(MockEGenericType)
+	r := &MockEGenericType{}
 	o.On("GetEUpperBound").Once().Return(r)
 	o.On("GetEUpperBound").Once().Return(func() EGenericType {
 		return r
@@ -130,7 +130,7 @@ func TestMockEGenericTypeGetEUpperBound(t *testing.T) {
 // TestMockEGenericTypeSetEUpperBound tests method SetEUpperBound
 func TestMockEGenericTypeSetEUpperBound(t *testing.T) {
 	o := &MockEGenericType{}
-	v := new(MockEGenericType)
+	v := &MockEGenericType{}
 	o.On("SetEUpperBound", v).Once()
 	o.SetEUpperBound(v)
 	o.AssertExpectations(t)
@@ -139,8 +139,8 @@ func TestMockEGenericTypeSetEUpperBound(t *testing.T) {
 // TestMockEGenericTypeIsInstance tests method IsInstance
 func TestMockEGenericTypeIsInstance(t *testing.T) {
 	o := &MockEGenericType{}
-	object := interface{}(nil)
-	r := bool(true)
+	object := any(nil)
+	r := true
 	o.On("IsInstance", object).Return(r).Once()
 	o.On("IsInstance", object).Return(func() bool {
 		return r

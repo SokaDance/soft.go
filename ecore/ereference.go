@@ -28,7 +28,7 @@ type EReference interface {
 
 	GetEReferenceType() EClass
 
-	GetEKeys() EList
+	GetEKeys() EList[EAttribute]
 
 	// Start of user code EReference
 	// End of user code

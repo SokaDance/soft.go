@@ -14,15 +14,15 @@ package ecore
 // ePackageImpl is the implementation of the model object 'EPackage'
 type ePackageImpl struct {
 	eNamedElementImpl
-	eClassifiers     EList
+	eClassifiers     EList[EClassifier]
 	eFactoryInstance EFactory
-	eSubPackages     EList
+	eSubPackages     EList[EPackage]
 	nsPrefix         string
 	nsURI            string
 }
 type ePackageImplInitializers interface {
-	initEClassifiers() EList
-	initESubPackages() EList
+	initEClassifiers() EList[EClassifier]
+	initESubPackages() EList[EPackage]
 }
 
 // newEPackageImpl is the constructor of a ePackageImpl
@@ -62,7 +62,7 @@ func (ePackage *ePackageImpl) GetEClassifier(string) EClassifier {
 }
 
 // GetEClassifiers get the value of eClassifiers
-func (ePackage *ePackageImpl) GetEClassifiers() EList {
+func (ePackage *ePackageImpl) GetEClassifiers() EList[EClassifier] {
 	if ePackage.eClassifiers == nil {
 		ePackage.eClassifiers = ePackage.asInitializers().initEClassifiers()
 	}
@@ -107,7 +107,7 @@ func (ePackage *ePackageImpl) basicSetEFactoryInstance(newEFactoryInstance EFact
 }
 
 // GetESubPackages get the value of eSubPackages
-func (ePackage *ePackageImpl) GetESubPackages() EList {
+func (ePackage *ePackageImpl) GetESubPackages() EList[EPackage] {
 	if ePackage.eSubPackages == nil {
 		ePackage.eSubPackages = ePackage.asInitializers().initESubPackages()
 	}
@@ -150,51 +150,56 @@ func (ePackage *ePackageImpl) SetNsURI(newNsURI string) {
 	}
 }
 
-func (ePackage *ePackageImpl) initEClassifiers() EList {
-	return NewBasicEObjectList(ePackage.AsEObjectInternal(), EPACKAGE__ECLASSIFIERS, ECLASSIFIER__EPACKAGE, true, true, true, false, false)
+func (ePackage *ePackageImpl) initEClassifiers() EList[EClassifier] {
+	return NewBasicEObjectList[EClassifier](ePackage.AsEObjectInternal(), EPACKAGE__ECLASSIFIERS, ECLASSIFIER__EPACKAGE, true, true, true, false, false)
 }
 
-func (ePackage *ePackageImpl) initESubPackages() EList {
-	return NewBasicEObjectList(ePackage.AsEObjectInternal(), EPACKAGE__ESUB_PACKAGES, EPACKAGE__ESUPER_PACKAGE, true, true, true, false, false)
+func (ePackage *ePackageImpl) initESubPackages() EList[EPackage] {
+	return NewBasicEObjectList[EPackage](ePackage.AsEObjectInternal(), EPACKAGE__ESUB_PACKAGES, EPACKAGE__ESUPER_PACKAGE, true, true, true, false, false)
 }
 
-func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		return ePackage.asEPackage().GetEClassifiers()
+		return ToAnyList(ePackage.asEPackage().GetEClassifiers())
 	case EPACKAGE__EFACTORY_INSTANCE:
-		return ePackage.asEPackage().GetEFactoryInstance()
+		return ToAny(ePackage.asEPackage().GetEFactoryInstance())
 	case EPACKAGE__ESUB_PACKAGES:
-		return ePackage.asEPackage().GetESubPackages()
+		return ToAnyList(ePackage.asEPackage().GetESubPackages())
 	case EPACKAGE__ESUPER_PACKAGE:
-		return ePackage.asEPackage().GetESuperPackage()
+		return ToAny(ePackage.asEPackage().GetESuperPackage())
 	case EPACKAGE__NS_PREFIX:
-		return ePackage.asEPackage().GetNsPrefix()
+		return ToAny(ePackage.asEPackage().GetNsPrefix())
 	case EPACKAGE__NS_URI:
-		return ePackage.asEPackage().GetNsURI()
+		return ToAny(ePackage.asEPackage().GetNsURI())
 	default:
 		return ePackage.eNamedElementImpl.EGetFromID(featureID, resolve)
 	}
 }
 
-func (ePackage *ePackageImpl) ESetFromID(featureID int, newValue interface{}) {
+func (ePackage *ePackageImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		list := ePackage.asEPackage().GetEClassifiers()
-		list.Clear()
-		list.AddAll(newValue.(EList))
+		newList := FromAnyList[EClassifier](value)
+		l := ePackage.asEPackage().GetEClassifiers()
+		l.Clear()
+		l.AddAll(newList)
 	case EPACKAGE__EFACTORY_INSTANCE:
-		ePackage.asEPackage().SetEFactoryInstance(newValue.(EFactory))
+		newValue := FromAny[EFactory](value)
+		ePackage.asEPackage().SetEFactoryInstance(newValue)
 	case EPACKAGE__ESUB_PACKAGES:
-		list := ePackage.asEPackage().GetESubPackages()
-		list.Clear()
-		list.AddAll(newValue.(EList))
+		newList := FromAnyList[EPackage](value)
+		l := ePackage.asEPackage().GetESubPackages()
+		l.Clear()
+		l.AddAll(newList)
 	case EPACKAGE__NS_PREFIX:
-		ePackage.asEPackage().SetNsPrefix(newValue.(string))
+		newValue := FromAny[string](value)
+		ePackage.asEPackage().SetNsPrefix(newValue)
 	case EPACKAGE__NS_URI:
-		ePackage.asEPackage().SetNsURI(newValue.(string))
+		newValue := FromAny[string](value)
+		ePackage.asEPackage().SetNsURI(newValue)
 	default:
-		ePackage.eNamedElementImpl.ESetFromID(featureID, newValue)
+		ePackage.eNamedElementImpl.ESetFromID(featureID, value)
 	}
 }
 
@@ -234,7 +239,7 @@ func (ePackage *ePackageImpl) EIsSetFromID(featureID int) bool {
 	}
 }
 
-func (ePackage *ePackageImpl) EInvokeFromID(operationID int, arguments EList) interface{} {
+func (ePackage *ePackageImpl) EInvokeFromID(operationID int, arguments EList[any]) any {
 	switch operationID {
 	case EPACKAGE__GET_ECLASSIFIER_ESTRING:
 		return ePackage.asEPackage().GetEClassifier(arguments.Get(0).(string))
@@ -246,8 +251,9 @@ func (ePackage *ePackageImpl) EInvokeFromID(operationID int, arguments EList) in
 func (ePackage *ePackageImpl) EBasicInverseAdd(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		list := ePackage.GetEClassifiers().(ENotifyingList)
-		return list.AddWithNotification(otherEnd, notifications)
+		list := ePackage.GetEClassifiers().(ENotifyingList[EClassifier])
+		end := otherEnd.(EClassifier)
+		return list.AddWithNotification(end, notifications)
 	case EPACKAGE__EFACTORY_INSTANCE:
 		msgs := notifications
 		eFactoryInstance := ePackage.eFactoryInstance
@@ -256,8 +262,9 @@ func (ePackage *ePackageImpl) EBasicInverseAdd(otherEnd EObject, featureID int, 
 		}
 		return ePackage.basicSetEFactoryInstance(otherEnd.(EFactory), msgs)
 	case EPACKAGE__ESUB_PACKAGES:
-		list := ePackage.GetESubPackages().(ENotifyingList)
-		return list.AddWithNotification(otherEnd, notifications)
+		list := ePackage.GetESubPackages().(ENotifyingList[EPackage])
+		end := otherEnd.(EPackage)
+		return list.AddWithNotification(end, notifications)
 	case EPACKAGE__ESUPER_PACKAGE:
 		msgs := notifications
 		if ePackage.EInternalContainer() != nil {
@@ -272,13 +279,15 @@ func (ePackage *ePackageImpl) EBasicInverseAdd(otherEnd EObject, featureID int, 
 func (ePackage *ePackageImpl) EBasicInverseRemove(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		list := ePackage.GetEClassifiers().(ENotifyingList)
-		return list.RemoveWithNotification(otherEnd, notifications)
+		list := ePackage.GetEClassifiers().(ENotifyingList[EClassifier])
+		end := otherEnd.(EClassifier)
+		return list.RemoveWithNotification(end, notifications)
 	case EPACKAGE__EFACTORY_INSTANCE:
 		return ePackage.basicSetEFactoryInstance(nil, notifications)
 	case EPACKAGE__ESUB_PACKAGES:
-		list := ePackage.GetESubPackages().(ENotifyingList)
-		return list.RemoveWithNotification(otherEnd, notifications)
+		list := ePackage.GetESubPackages().(ENotifyingList[EPackage])
+		end := otherEnd.(EPackage)
+		return list.RemoveWithNotification(end, notifications)
 	case EPACKAGE__ESUPER_PACKAGE:
 		return ePackage.EBasicSetContainer(nil, EPACKAGE__ESUPER_PACKAGE, notifications)
 	default:

@@ -23,11 +23,11 @@ func TestEContentAdapter_SetTarget_EObject(t *testing.T) {
 	// create a hierarchy of objects
 	nb := rand.Intn(10) + 1
 	mockObjects := []*MockEObject{}
-	mockLists := []*MockEList{}
-	children := []interface{}{}
+	mockLists := []*MockEList[EAdapter]{}
+	children := []EObject{}
 	for i := 0; i < nb; i++ {
 		mockObject := new(MockEObject)
-		mockAdapters := new(MockEList)
+		mockAdapters := new(MockEList[EAdapter])
 		mockLists = append(mockLists, mockAdapters)
 		mockObjects = append(mockObjects, mockObject)
 		children = append(children, mockObject)
@@ -50,7 +50,7 @@ func TestEContentAdapter_SetTarget_EObject(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.SetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, children...)
+	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 
 	// unset adapter target -> this should recursively unregister adapter on all object children
@@ -62,7 +62,7 @@ func TestEContentAdapter_SetTarget_EObject(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.UnSetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, children...)
+	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 }
 
@@ -71,11 +71,11 @@ func TestEContentAdapter_SetTarget_EObject_ResolveProxies(t *testing.T) {
 	// create a hierarchy of objects
 	nb := rand.Intn(10) + 1
 	mockObjects := []*MockEObject{}
-	mockLists := []*MockEList{}
-	children := []interface{}{}
+	mockLists := []*MockEList[EAdapter]{}
+	children := []EObject{}
 	for i := 0; i < nb; i++ {
 		mockObject := new(MockEObject)
-		mockAdapters := new(MockEList)
+		mockAdapters := new(MockEList[EAdapter])
 		mockLists = append(mockLists, mockAdapters)
 		mockObjects = append(mockObjects, mockObject)
 		children = append(children, mockObject)
@@ -94,7 +94,7 @@ func TestEContentAdapter_SetTarget_EObject_ResolveProxies(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.SetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, children...)
+	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 
 	// unset adapter target -> this should recursively unregister adapter on all object children
@@ -106,7 +106,7 @@ func TestEContentAdapter_SetTarget_EObject_ResolveProxies(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.UnSetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, children...)
+	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 }
 
@@ -114,10 +114,10 @@ func TestEContentAdapter_SetTarget_EResourceSet(t *testing.T) {
 	adapter := NewEContentAdapter()
 	mockResourceSet := &MockEResourceSet{}
 	mockResource := &MockEResource{}
-	mockResourceAdapters := new(MockEList)
+	mockResourceAdapters := new(MockEList[EAdapter])
 
 	// Set target
-	mockResourceSet.On("GetResources").Return(NewImmutableEList([]interface{}{mockResource})).Once()
+	mockResourceSet.On("GetResources").Return(NewImmutableEList([]EResource{mockResource})).Once()
 	mockResource.On("EAdapters").Return(mockResourceAdapters).Once()
 	mockResourceAdapters.On("Contains", adapter).Return(false).Once()
 	mockResourceAdapters.On("Add", adapter).Return(true).Once()
@@ -125,7 +125,7 @@ func TestEContentAdapter_SetTarget_EResourceSet(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, mockResourceSet, mockResource, mockResourceAdapters)
 
 	// UnSet target
-	mockResourceSet.On("GetResources").Return(NewImmutableEList([]interface{}{mockResource})).Once()
+	mockResourceSet.On("GetResources").Return(NewImmutableEList([]EResource{mockResource})).Once()
 	mockResource.On("EAdapters").Return(mockResourceAdapters).Once()
 	mockResourceAdapters.On("Remove", adapter).Return(true).Once()
 	adapter.UnSetTarget(mockResourceSet)
@@ -136,10 +136,10 @@ func TestEContentAdapter_SetTarget_EResource(t *testing.T) {
 	adapter := NewEContentAdapter()
 	mockResource := &MockEResource{}
 	mockObject := &MockEObject{}
-	mockObjectAdapters := new(MockEList)
+	mockObjectAdapters := new(MockEList[EAdapter])
 
 	// Set target
-	mockResource.On("GetContents").Return(NewImmutableEList([]interface{}{mockObject})).Once()
+	mockResource.On("GetContents").Return(NewImmutableEList([]EObject{mockObject})).Once()
 	mockObject.On("EAdapters").Return(mockObjectAdapters).Once()
 	mockObjectAdapters.On("Contains", adapter).Return(false).Once()
 	mockObjectAdapters.On("Add", adapter).Return(true).Once()
@@ -147,7 +147,7 @@ func TestEContentAdapter_SetTarget_EResource(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, mockResource, mockObject, mockObjectAdapters)
 
 	// UnSet target
-	mockResource.On("GetContents").Return(NewImmutableEList([]interface{}{mockObject})).Once()
+	mockResource.On("GetContents").Return(NewImmutableEList([]EObject{mockObject})).Once()
 	mockObject.On("EAdapters").Return(mockObjectAdapters).Once()
 	mockObjectAdapters.On("Remove", adapter).Return(true).Once()
 	adapter.UnSetTarget(mockResource)
@@ -179,7 +179,7 @@ func TestEContentAdapterNotifyChanged_Resolve(t *testing.T) {
 	mockObject := new(MockEObject)
 	mockReference := new(MockEReference)
 	mockOldObject := new(MockEObject)
-	mockOldAdapters := new(MockEList)
+	mockOldAdapters := new(MockEList[EAdapter])
 
 	mockReference.On("IsContainment").Once().Return(true)
 	mockOldObject.On("EAdapters").Once().Return(mockOldAdapters)
@@ -198,9 +198,9 @@ func TestEContentAdapterNotifyChanged_Resolve_Contains(t *testing.T) {
 	mockObject := new(MockEObject)
 	mockReference := new(MockEReference)
 	mockOldObject := new(MockEObject)
-	mockOldAdapters := new(MockEList)
+	mockOldAdapters := new(MockEList[EAdapter])
 	mockNewObject := new(MockEObject)
-	mockNewAdapters := new(MockEList)
+	mockNewAdapters := new(MockEList[EAdapter])
 
 	mockReference.On("IsContainment").Once().Return(true)
 	mockOldObject.On("EAdapters").Twice().Return(mockOldAdapters)
@@ -225,9 +225,9 @@ func TestEContentAdapterNotifyChanged_UnSet(t *testing.T) {
 	mockObject := new(MockEObjectInternal)
 	mockReference := new(MockEReference)
 	mockOldObject := new(MockEObjectInternal)
-	mockOldAdapters := new(MockEList)
+	mockOldAdapters := new(MockEList[EAdapter])
 	mockNewObject := new(MockEObjectInternal)
-	mockNewAdapters := new(MockEList)
+	mockNewAdapters := new(MockEList[EAdapter])
 
 	mockReference.On("IsContainment").Once().Return(true)
 	mockOldObject.On("EAdapters").Return(mockOldAdapters)
@@ -262,9 +262,9 @@ func TestEContentAdapterNotifyChanged_Set(t *testing.T) {
 	mockObject := new(MockEObjectInternal)
 	mockReference := new(MockEReference)
 	mockOldObject := new(MockEObjectInternal)
-	mockOldAdapters := new(MockEList)
+	mockOldAdapters := new(MockEList[EAdapter])
 	mockNewObject := new(MockEObjectInternal)
-	mockNewAdapters := new(MockEList)
+	mockNewAdapters := new(MockEList[EAdapter])
 
 	mockReference.On("IsContainment").Once().Return(true)
 	mockOldObject.On("EAdapters").Return(mockOldAdapters)
@@ -299,7 +299,7 @@ func TestEContentAdapterNotifyChanged_Add(t *testing.T) {
 	mockObject := new(MockEObjectInternal)
 	mockReference := new(MockEReference)
 	mockNewObject := new(MockEObjectInternal)
-	mockNewAdapters := new(MockEList)
+	mockNewAdapters := new(MockEList[EAdapter])
 
 	mockReference.On("IsContainment").Once().Return(true)
 	mockNewObject.On("EAdapters").Once().Return(mockNewAdapters)
@@ -334,7 +334,7 @@ func TestEContentAdapterNotifyChanged_AddMany(t *testing.T) {
 	mockChildren := []interface{}{}
 	for i := 0; i < nb; i++ {
 		mockObject := new(MockEObject)
-		mockAdapters := new(MockEList)
+		mockAdapters := new(MockEList[EAdapter])
 
 		mockObject.On("EAdapters").Return(mockAdapters)
 		mockAdapters.On("Contains", adapter).Return(false)
@@ -382,7 +382,7 @@ func TestEContentAdapterNotifyChanged_Remove(t *testing.T) {
 	mockObject := new(MockEObjectInternal)
 	mockReference := new(MockEReference)
 	mockOldObject := new(MockEObjectInternal)
-	mockOldAdapters := new(MockEList)
+	mockOldAdapters := new(MockEList[EAdapter])
 
 	mockReference.On("IsContainment").Once().Return(true)
 
@@ -413,7 +413,7 @@ func TestEContentAdapterNotifyChanged_RemoveMany(t *testing.T) {
 	mockChildren := []interface{}{}
 	for i := 0; i < nb; i++ {
 		mockObject := new(MockEObjectInternal)
-		mockAdapters := new(MockEList)
+		mockAdapters := new(MockEList[EAdapter])
 
 		mockObject.On("EAdapters").Return(mockAdapters)
 		mockObject.On("EInternalResource").Return(nil)

@@ -25,7 +25,7 @@ func TestDynamicEObjectConstructor(t *testing.T) {
 func TestDynamicEObject_EClass(t *testing.T) {
 	o := NewDynamicEObjectImpl()
 	mockClass := &MockEClass{}
-	mockAdapters := &MockEList{}
+	mockAdapters := &MockEList[EAdapter]{}
 	mockClass.On("GetFeatureCount").Return(0)
 	mockClass.On("EAdapters").Return(mockAdapters)
 	mockAdapters.On("Add", mock.Anything).Return(true).Once()
@@ -151,9 +151,9 @@ func TestDynamicEObject_Proxy(t *testing.T) {
 	o1c2 := NewDynamicEObjectImpl()
 	o1c2.SetEClass(c2)
 
-	o1cs, _ := o1.EGet(r1).(EList)
+	o1cs, _ := o1.EGet(r1).(EList[any])
 	assert.NotNil(t, o1cs)
-	o1cs.AddAll(NewImmutableEList([]interface{}{o1c1, o1c2}))
+	o1cs.AddAll(NewImmutableEList([]any{o1c1, o1c2}))
 
 	o3 := NewDynamicEObjectImpl()
 	o3.SetEClass(c3)
@@ -161,7 +161,7 @@ func TestDynamicEObject_Proxy(t *testing.T) {
 	// add to resource to enable proxy resolution
 	resource := NewEResourceImpl()
 	resource.SetURI(&URI{Path: "r"})
-	resource.GetContents().AddAll(NewImmutableEList([]interface{}{o1, o3}))
+	resource.GetContents().AddAll(NewImmutableEList([]EObject{o1, o3}))
 
 	resourceSet := NewEResourceSetImpl()
 	resourceSet.GetResources().Add(resource)

@@ -63,12 +63,12 @@ func (eStructuralFeature *eStructuralFeatureImpl) GetContainerClass() reflect.Ty
 }
 
 // GetDefaultValue get the value of defaultValue
-func (eStructuralFeature *eStructuralFeatureImpl) GetDefaultValue() interface{} {
+func (eStructuralFeature *eStructuralFeatureImpl) GetDefaultValue() any {
 	panic("GetDefaultValue not implemented")
 }
 
 // SetDefaultValue set the value of defaultValue
-func (eStructuralFeature *eStructuralFeatureImpl) SetDefaultValue(newDefaultValue interface{}) {
+func (eStructuralFeature *eStructuralFeatureImpl) SetDefaultValue(newDefaultValue any) {
 	panic("SetDefaultValue not implemented")
 }
 
@@ -178,51 +178,59 @@ func (eStructuralFeature *eStructuralFeatureImpl) SetVolatile(newIsVolatile bool
 	}
 }
 
-func (eStructuralFeature *eStructuralFeatureImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eStructuralFeature *eStructuralFeatureImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case ESTRUCTURAL_FEATURE__CHANGEABLE:
-		return eStructuralFeature.asEStructuralFeature().IsChangeable()
+		return ToAny(eStructuralFeature.asEStructuralFeature().IsChangeable())
 	case ESTRUCTURAL_FEATURE__DEFAULT_VALUE:
-		return eStructuralFeature.asEStructuralFeature().GetDefaultValue()
+		return ToAny(eStructuralFeature.asEStructuralFeature().GetDefaultValue())
 	case ESTRUCTURAL_FEATURE__DEFAULT_VALUE_LITERAL:
-		return eStructuralFeature.asEStructuralFeature().GetDefaultValueLiteral()
+		return ToAny(eStructuralFeature.asEStructuralFeature().GetDefaultValueLiteral())
 	case ESTRUCTURAL_FEATURE__DERIVED:
-		return eStructuralFeature.asEStructuralFeature().IsDerived()
+		return ToAny(eStructuralFeature.asEStructuralFeature().IsDerived())
 	case ESTRUCTURAL_FEATURE__ECONTAINING_CLASS:
-		return eStructuralFeature.asEStructuralFeature().GetEContainingClass()
+		return ToAny(eStructuralFeature.asEStructuralFeature().GetEContainingClass())
 	case ESTRUCTURAL_FEATURE__FEATURE_ID:
-		return eStructuralFeature.asEStructuralFeature().GetFeatureID()
+		return ToAny(eStructuralFeature.asEStructuralFeature().GetFeatureID())
 	case ESTRUCTURAL_FEATURE__TRANSIENT:
-		return eStructuralFeature.asEStructuralFeature().IsTransient()
+		return ToAny(eStructuralFeature.asEStructuralFeature().IsTransient())
 	case ESTRUCTURAL_FEATURE__UNSETTABLE:
-		return eStructuralFeature.asEStructuralFeature().IsUnsettable()
+		return ToAny(eStructuralFeature.asEStructuralFeature().IsUnsettable())
 	case ESTRUCTURAL_FEATURE__VOLATILE:
-		return eStructuralFeature.asEStructuralFeature().IsVolatile()
+		return ToAny(eStructuralFeature.asEStructuralFeature().IsVolatile())
 	default:
 		return eStructuralFeature.eTypedElementExt.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eStructuralFeature *eStructuralFeatureImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eStructuralFeature *eStructuralFeatureImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case ESTRUCTURAL_FEATURE__CHANGEABLE:
-		eStructuralFeature.asEStructuralFeature().SetChangeable(newValue.(bool))
+		newValue := FromAny[bool](value)
+		eStructuralFeature.asEStructuralFeature().SetChangeable(newValue)
 	case ESTRUCTURAL_FEATURE__DEFAULT_VALUE:
+		newValue := FromAny[any](value)
 		eStructuralFeature.asEStructuralFeature().SetDefaultValue(newValue)
 	case ESTRUCTURAL_FEATURE__DEFAULT_VALUE_LITERAL:
-		eStructuralFeature.asEStructuralFeature().SetDefaultValueLiteral(newValue.(string))
+		newValue := FromAny[string](value)
+		eStructuralFeature.asEStructuralFeature().SetDefaultValueLiteral(newValue)
 	case ESTRUCTURAL_FEATURE__DERIVED:
-		eStructuralFeature.asEStructuralFeature().SetDerived(newValue.(bool))
+		newValue := FromAny[bool](value)
+		eStructuralFeature.asEStructuralFeature().SetDerived(newValue)
 	case ESTRUCTURAL_FEATURE__FEATURE_ID:
-		eStructuralFeature.asEStructuralFeature().SetFeatureID(newValue.(int))
+		newValue := FromAny[int](value)
+		eStructuralFeature.asEStructuralFeature().SetFeatureID(newValue)
 	case ESTRUCTURAL_FEATURE__TRANSIENT:
-		eStructuralFeature.asEStructuralFeature().SetTransient(newValue.(bool))
+		newValue := FromAny[bool](value)
+		eStructuralFeature.asEStructuralFeature().SetTransient(newValue)
 	case ESTRUCTURAL_FEATURE__UNSETTABLE:
-		eStructuralFeature.asEStructuralFeature().SetUnsettable(newValue.(bool))
+		newValue := FromAny[bool](value)
+		eStructuralFeature.asEStructuralFeature().SetUnsettable(newValue)
 	case ESTRUCTURAL_FEATURE__VOLATILE:
-		eStructuralFeature.asEStructuralFeature().SetVolatile(newValue.(bool))
+		newValue := FromAny[bool](value)
+		eStructuralFeature.asEStructuralFeature().SetVolatile(newValue)
 	default:
-		eStructuralFeature.eTypedElementExt.ESetFromID(featureID, newValue)
+		eStructuralFeature.eTypedElementExt.ESetFromID(featureID, value)
 	}
 }
 
@@ -274,7 +282,7 @@ func (eStructuralFeature *eStructuralFeatureImpl) EIsSetFromID(featureID int) bo
 	}
 }
 
-func (eStructuralFeature *eStructuralFeatureImpl) EInvokeFromID(operationID int, arguments EList) interface{} {
+func (eStructuralFeature *eStructuralFeatureImpl) EInvokeFromID(operationID int, arguments EList[any]) any {
 	switch operationID {
 	case ESTRUCTURAL_FEATURE__GET_CONTAINER_CLASS:
 		return eStructuralFeature.asEStructuralFeature().GetContainerClass()

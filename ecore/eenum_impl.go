@@ -14,10 +14,10 @@ package ecore
 // eEnumImpl is the implementation of the model object 'EEnum'
 type eEnumImpl struct {
 	eDataTypeExt
-	eLiterals EList
+	eLiterals EList[EEnumLiteral]
 }
 type eEnumImplInitializers interface {
-	initELiterals() EList
+	initELiterals() EList[EEnumLiteral]
 }
 
 // newEEnumImpl is the constructor of a eEnumImpl
@@ -65,34 +65,35 @@ func (eEnum *eEnumImpl) GetEEnumLiteralByValue(int) EEnumLiteral {
 }
 
 // GetELiterals get the value of eLiterals
-func (eEnum *eEnumImpl) GetELiterals() EList {
+func (eEnum *eEnumImpl) GetELiterals() EList[EEnumLiteral] {
 	if eEnum.eLiterals == nil {
 		eEnum.eLiterals = eEnum.asInitializers().initELiterals()
 	}
 	return eEnum.eLiterals
 }
 
-func (eEnum *eEnumImpl) initELiterals() EList {
-	return NewBasicEObjectList(eEnum.AsEObjectInternal(), EENUM__ELITERALS, EENUM_LITERAL__EENUM, true, true, true, false, false)
+func (eEnum *eEnumImpl) initELiterals() EList[EEnumLiteral] {
+	return NewBasicEObjectList[EEnumLiteral](eEnum.AsEObjectInternal(), EENUM__ELITERALS, EENUM_LITERAL__EENUM, true, true, true, false, false)
 }
 
-func (eEnum *eEnumImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eEnum *eEnumImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EENUM__ELITERALS:
-		return eEnum.asEEnum().GetELiterals()
+		return ToAnyList(eEnum.asEEnum().GetELiterals())
 	default:
 		return eEnum.eDataTypeExt.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eEnum *eEnumImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eEnum *eEnumImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EENUM__ELITERALS:
-		list := eEnum.asEEnum().GetELiterals()
-		list.Clear()
-		list.AddAll(newValue.(EList))
+		newList := FromAnyList[EEnumLiteral](value)
+		l := eEnum.asEEnum().GetELiterals()
+		l.Clear()
+		l.AddAll(newList)
 	default:
-		eEnum.eDataTypeExt.ESetFromID(featureID, newValue)
+		eEnum.eDataTypeExt.ESetFromID(featureID, value)
 	}
 }
 
@@ -114,7 +115,7 @@ func (eEnum *eEnumImpl) EIsSetFromID(featureID int) bool {
 	}
 }
 
-func (eEnum *eEnumImpl) EInvokeFromID(operationID int, arguments EList) interface{} {
+func (eEnum *eEnumImpl) EInvokeFromID(operationID int, arguments EList[any]) any {
 	switch operationID {
 	case EENUM__GET_EENUM_LITERAL_BY_LITERAL_ESTRING:
 		return eEnum.asEEnum().GetEEnumLiteralByLiteral(arguments.Get(0).(string))
@@ -130,8 +131,9 @@ func (eEnum *eEnumImpl) EInvokeFromID(operationID int, arguments EList) interfac
 func (eEnum *eEnumImpl) EBasicInverseAdd(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain {
 	switch featureID {
 	case EENUM__ELITERALS:
-		list := eEnum.GetELiterals().(ENotifyingList)
-		return list.AddWithNotification(otherEnd, notifications)
+		list := eEnum.GetELiterals().(ENotifyingList[EEnumLiteral])
+		end := otherEnd.(EEnumLiteral)
+		return list.AddWithNotification(end, notifications)
 	default:
 		return eEnum.eDataTypeExt.EBasicInverseAdd(otherEnd, featureID, notifications)
 	}
@@ -140,8 +142,9 @@ func (eEnum *eEnumImpl) EBasicInverseAdd(otherEnd EObject, featureID int, notifi
 func (eEnum *eEnumImpl) EBasicInverseRemove(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain {
 	switch featureID {
 	case EENUM__ELITERALS:
-		list := eEnum.GetELiterals().(ENotifyingList)
-		return list.RemoveWithNotification(otherEnd, notifications)
+		list := eEnum.GetELiterals().(ENotifyingList[EEnumLiteral])
+		end := otherEnd.(EEnumLiteral)
+		return list.RemoveWithNotification(end, notifications)
 	default:
 		return eEnum.eDataTypeExt.EBasicInverseRemove(otherEnd, featureID, notifications)
 	}

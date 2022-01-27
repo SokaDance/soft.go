@@ -95,15 +95,15 @@ func (_m *MockEResourceSet) GetResourceCodecRegistry() EResourceCodecRegistry {
 }
 
 // GetResources provides a mock function with given fields:
-func (_m *MockEResourceSet) GetResources() EList {
+func (_m *MockEResourceSet) GetResources() EList[EResource] {
 	ret := _m.Called()
 
-	var r0 EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r0 EList[EResource]
+	if rf, ok := ret.Get(0).(func() EList[EResource]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EList)
+			r0 = ret.Get(0).(EList[EResource])
 		}
 	}
 

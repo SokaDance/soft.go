@@ -53,15 +53,15 @@ func (eReference *MockEReference) SetContainment(newIsContainment bool) {
 }
 
 // GetEKeys get the value of eKeys
-func (eReference *MockEReference) GetEKeys() EList {
+func (eReference *MockEReference) GetEKeys() EList[EAttribute] {
 	ret := eReference.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EAttribute]
+	if rf, ok := ret.Get(0).(func() EList[EAttribute]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EAttribute])
 		}
 	}
 

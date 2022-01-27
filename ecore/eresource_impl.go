@@ -44,8 +44,8 @@ func newResourceNotification(
 	notifier ENotifier,
 	featureID int,
 	eventType EventType,
-	oldValue interface{},
-	newValue interface{},
+	oldValue any,
+	newValue any,
 	position int) *resourceNotification {
 	n := new(resourceNotification)
 	n.Initialize(n, eventType, oldValue, newValue, position)
@@ -55,14 +55,14 @@ func newResourceNotification(
 }
 
 type resourceContents struct {
-	BasicENotifyingList
+	BasicENotifyingList[EObject]
 	resource *EResourceImpl
 }
 
 func newResourceContents(resource *EResourceImpl) *resourceContents {
 	rc := new(resourceContents)
 	rc.interfaces = rc
-	rc.data = []interface{}{}
+	rc.data = []EObject{}
 	rc.isUnique = true
 	rc.resource = resource
 	return rc
@@ -76,7 +76,7 @@ func (rc *resourceContents) GetFeatureID() int {
 	return RESOURCE__CONTENTS
 }
 
-func (rc *resourceContents) inverseAdd(object interface{}, notifications ENotificationChain) ENotificationChain {
+func (rc *resourceContents) inverseAdd(object EObject, notifications ENotificationChain) ENotificationChain {
 	n := notifications
 	if eObject, _ := object.(EObjectInternal); eObject != nil {
 		eResource := rc.resource.AsEResource()
@@ -86,7 +86,7 @@ func (rc *resourceContents) inverseAdd(object interface{}, notifications ENotifi
 	return n
 }
 
-func (rc *resourceContents) inverseRemove(object interface{}, notifications ENotificationChain) ENotificationChain {
+func (rc *resourceContents) inverseRemove(object EObject, notifications ENotificationChain) ENotificationChain {
 	n := notifications
 	if eObject, _ := object.(EObjectInternal); eObject != nil {
 		eResource := rc.resource.AsEResource()
@@ -134,7 +134,7 @@ func (rc *resourceContents) unloaded() {
 }
 
 type resourceDiagnostics struct {
-	BasicENotifyingList
+	BasicENotifyingList[EDiagnostic]
 	resource  *EResourceImpl
 	featureID int
 }
@@ -142,7 +142,7 @@ type resourceDiagnostics struct {
 func newResourceDiagnostics(resource *EResourceImpl, featureID int) *resourceDiagnostics {
 	rd := new(resourceDiagnostics)
 	rd.interfaces = rd
-	rd.data = []interface{}{}
+	rd.data = []EDiagnostic{}
 	rd.isUnique = true
 	rd.resource = resource
 	rd.featureID = featureID
@@ -163,9 +163,9 @@ type EResourceImpl struct {
 	resourceSet     EResourceSet
 	objectIDManager EObjectIDManager
 	uri             *URI
-	contents        EList
-	errors          EList
-	warnings        EList
+	contents        EList[EObject]
+	errors          EList[EDiagnostic]
+	warnings        EList[EDiagnostic]
 	isLoaded        bool
 	isLoading       bool
 }
@@ -202,25 +202,25 @@ func (r *EResourceImpl) SetURI(uri *URI) {
 	}
 }
 
-func (r *EResourceImpl) GetContents() EList {
+func (r *EResourceImpl) GetContents() EList[EObject] {
 	if r.contents == nil {
 		r.contents = newResourceContents(r)
 	}
 	return r.contents
 }
 
-func (r *EResourceImpl) GetAllContents() EIterator {
+func (r *EResourceImpl) GetAllContents() EIterator[EObject] {
 	return r.getAllContentsResolve(r.GetInterfaces(), true)
 }
 
-func (r *EResourceImpl) getAllContentsResolve(root interface{}, resolve bool) EIterator {
-	return newTreeIterator(root, false, func(o interface{}) EIterator {
+func (r *EResourceImpl) getAllContentsResolve(root interface{}, resolve bool) EIterator[EObject] {
+	return newTreeIterator(root, false, func(o interface{}) EIterator[EObject] {
 		if o == r.GetInterfaces() {
 			return o.(EResource).GetContents().Iterator()
 		}
 		contents := o.(EObject).EContents()
 		if !resolve {
-			contents = contents.(EObjectList).GetUnResolvedList()
+			contents = contents.(EObjectList[EObject]).GetUnResolvedList()
 		}
 		return contents.Iterator()
 	})
@@ -525,14 +525,14 @@ func (r *EResourceImpl) DoSave(encoder EResourceEncoder) {
 	encoder.Encode()
 }
 
-func (r *EResourceImpl) GetErrors() EList {
+func (r *EResourceImpl) GetErrors() EList[EDiagnostic] {
 	if r.errors == nil {
 		r.errors = newResourceDiagnostics(r, RESOURCE__ERRORS)
 	}
 	return r.errors
 }
 
-func (r *EResourceImpl) GetWarnings() EList {
+func (r *EResourceImpl) GetWarnings() EList[EDiagnostic] {
 	if r.warnings == nil {
 		r.warnings = newResourceDiagnostics(r, RESOURCE__WARNINGS)
 	}
@@ -547,7 +547,7 @@ func (r *EResourceImpl) BasicSetLoaded(isLoaded bool, msgs ENotificationChain) E
 		if notifications == nil {
 			notifications = NewNotificationChain()
 		}
-		notifications.Add(newResourceNotification(r.GetInterfaces().(ENotifier), RESOURCE__IS_LOADED, SET, oldLoaded, r.isLoaded, -1))
+		notifications.Add(newResourceNotification(r.AsENotifier(), RESOURCE__IS_LOADED, SET, oldLoaded, r.isLoaded, -1))
 	}
 	return notifications
 }
@@ -556,15 +556,15 @@ func (r *EResourceImpl) BasicSetResourceSet(resourceSet EResourceSet, msgs ENoti
 	notifications := msgs
 	oldAbstractResourceSet := r.resourceSet
 	if oldAbstractResourceSet != nil {
-		l := oldAbstractResourceSet.GetResources().(ENotifyingList)
-		notifications = l.RemoveWithNotification(r.GetInterfaces().(ENotifier), notifications)
+		l := oldAbstractResourceSet.GetResources().(ENotifyingList[EResource])
+		notifications = l.RemoveWithNotification(r.AsEResource(), notifications)
 	}
 	r.resourceSet = resourceSet
 	if r.ENotificationRequired() {
 		if notifications == nil {
 			notifications = NewNotificationChain()
 		}
-		notifications.Add(newResourceNotification(r.GetInterfaces().(ENotifier), RESOURCE__RESOURCE_SET, SET, oldAbstractResourceSet, resourceSet, -1))
+		notifications.Add(newResourceNotification(r.AsENotifier(), RESOURCE__RESOURCE_SET, SET, oldAbstractResourceSet, resourceSet, -1))
 	}
 	return notifications
 }

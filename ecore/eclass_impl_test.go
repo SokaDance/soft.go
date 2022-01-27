@@ -113,14 +113,14 @@ func TestEClassAbstractGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsAbstract())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isAbstract = v
 	assert.Equal(t, v, o.IsAbstract())
 }
 
 func TestEClassAbstractSet(t *testing.T) {
 	o := newEClassImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -134,14 +134,14 @@ func TestEClassInterfaceGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsInterface())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isInterface = v
 	assert.Equal(t, v, o.IsInterface())
 }
 
 func TestEClassInterfaceSet(t *testing.T) {
 	o := newEClassImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -194,87 +194,98 @@ func TestEClassIsSuperTypeOfOperation(t *testing.T) {
 func TestEClassEGetFromID(t *testing.T) {
 	o := newEClassImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.IsAbstract(), o.EGetFromID(ECLASS__ABSTRACT, true))
-	assert.Equal(t, o.GetEAllAttributes(), o.EGetFromID(ECLASS__EALL_ATTRIBUTES, true))
-	assert.Equal(t, o.GetEAllAttributes().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EALL_ATTRIBUTES, false))
-	assert.Equal(t, o.GetEAllContainments(), o.EGetFromID(ECLASS__EALL_CONTAINMENTS, true))
-	assert.Equal(t, o.GetEAllContainments().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EALL_CONTAINMENTS, false))
-	assert.Equal(t, o.GetEAllOperations(), o.EGetFromID(ECLASS__EALL_OPERATIONS, true))
-	assert.Equal(t, o.GetEAllOperations().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EALL_OPERATIONS, false))
-	assert.Equal(t, o.GetEAllReferences(), o.EGetFromID(ECLASS__EALL_REFERENCES, true))
-	assert.Equal(t, o.GetEAllReferences().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EALL_REFERENCES, false))
-	assert.Equal(t, o.GetEAllStructuralFeatures(), o.EGetFromID(ECLASS__EALL_STRUCTURAL_FEATURES, true))
-	assert.Equal(t, o.GetEAllStructuralFeatures().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EALL_STRUCTURAL_FEATURES, false))
-	assert.Equal(t, o.GetEAllSuperTypes(), o.EGetFromID(ECLASS__EALL_SUPER_TYPES, true))
-	assert.Equal(t, o.GetEAllSuperTypes().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EALL_SUPER_TYPES, false))
-	assert.Equal(t, o.GetEAttributes(), o.EGetFromID(ECLASS__EATTRIBUTES, true))
-	assert.Equal(t, o.GetEAttributes().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EATTRIBUTES, false))
-	assert.Equal(t, o.GetEContainmentFeatures(), o.EGetFromID(ECLASS__ECONTAINMENT_FEATURES, true))
-	assert.Equal(t, o.GetEContainmentFeatures().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__ECONTAINMENT_FEATURES, false))
-	assert.Equal(t, o.GetECrossReferenceFeatures(), o.EGetFromID(ECLASS__ECROSS_REFERENCE_FEATURES, true))
-	assert.Equal(t, o.GetECrossReferenceFeatures().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__ECROSS_REFERENCE_FEATURES, false))
+	assert.Equal(t, o.GetEAllAttributes(), FromAnyList[EAttribute](o.EGetFromID(ECLASS__EALL_ATTRIBUTES, true)))
+	assert.Equal(t, o.GetEAllAttributes().(EObjectList[EAttribute]).GetUnResolvedList(), FromAnyList[EAttribute](o.EGetFromID(ECLASS__EALL_ATTRIBUTES, false)))
+	assert.Equal(t, o.GetEAllContainments(), FromAnyList[EReference](o.EGetFromID(ECLASS__EALL_CONTAINMENTS, true)))
+	assert.Equal(t, o.GetEAllContainments().(EObjectList[EReference]).GetUnResolvedList(), FromAnyList[EReference](o.EGetFromID(ECLASS__EALL_CONTAINMENTS, false)))
+	assert.Equal(t, o.GetEAllOperations(), FromAnyList[EOperation](o.EGetFromID(ECLASS__EALL_OPERATIONS, true)))
+	assert.Equal(t, o.GetEAllOperations().(EObjectList[EOperation]).GetUnResolvedList(), FromAnyList[EOperation](o.EGetFromID(ECLASS__EALL_OPERATIONS, false)))
+	assert.Equal(t, o.GetEAllReferences(), FromAnyList[EReference](o.EGetFromID(ECLASS__EALL_REFERENCES, true)))
+	assert.Equal(t, o.GetEAllReferences().(EObjectList[EReference]).GetUnResolvedList(), FromAnyList[EReference](o.EGetFromID(ECLASS__EALL_REFERENCES, false)))
+	assert.Equal(t, o.GetEAllStructuralFeatures(), FromAnyList[EStructuralFeature](o.EGetFromID(ECLASS__EALL_STRUCTURAL_FEATURES, true)))
+	assert.Equal(t, o.GetEAllStructuralFeatures().(EObjectList[EStructuralFeature]).GetUnResolvedList(), FromAnyList[EStructuralFeature](o.EGetFromID(ECLASS__EALL_STRUCTURAL_FEATURES, false)))
+	assert.Equal(t, o.GetEAllSuperTypes(), FromAnyList[EClass](o.EGetFromID(ECLASS__EALL_SUPER_TYPES, true)))
+	assert.Equal(t, o.GetEAllSuperTypes().(EObjectList[EClass]).GetUnResolvedList(), FromAnyList[EClass](o.EGetFromID(ECLASS__EALL_SUPER_TYPES, false)))
+	assert.Equal(t, o.GetEAttributes(), FromAnyList[EAttribute](o.EGetFromID(ECLASS__EATTRIBUTES, true)))
+	assert.Equal(t, o.GetEAttributes().(EObjectList[EAttribute]).GetUnResolvedList(), FromAnyList[EAttribute](o.EGetFromID(ECLASS__EATTRIBUTES, false)))
+	assert.Equal(t, o.GetEContainmentFeatures(), FromAnyList[EStructuralFeature](o.EGetFromID(ECLASS__ECONTAINMENT_FEATURES, true)))
+	assert.Equal(t, o.GetEContainmentFeatures().(EObjectList[EStructuralFeature]).GetUnResolvedList(), FromAnyList[EStructuralFeature](o.EGetFromID(ECLASS__ECONTAINMENT_FEATURES, false)))
+	assert.Equal(t, o.GetECrossReferenceFeatures(), FromAnyList[EStructuralFeature](o.EGetFromID(ECLASS__ECROSS_REFERENCE_FEATURES, true)))
+	assert.Equal(t, o.GetECrossReferenceFeatures().(EObjectList[EStructuralFeature]).GetUnResolvedList(), FromAnyList[EStructuralFeature](o.EGetFromID(ECLASS__ECROSS_REFERENCE_FEATURES, false)))
 	assert.Panics(t, func() { o.EGetFromID(ECLASS__EID_ATTRIBUTE, true) })
 	assert.Panics(t, func() { o.EGetFromID(ECLASS__EID_ATTRIBUTE, false) })
-	assert.Equal(t, o.GetEOperations(), o.EGetFromID(ECLASS__EOPERATIONS, true))
-	assert.Equal(t, o.GetEOperations().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EOPERATIONS, false))
-	assert.Equal(t, o.GetEReferences(), o.EGetFromID(ECLASS__EREFERENCES, true))
-	assert.Equal(t, o.GetEReferences().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__EREFERENCES, false))
-	assert.Equal(t, o.GetEStructuralFeatures(), o.EGetFromID(ECLASS__ESTRUCTURAL_FEATURES, true))
-	assert.Equal(t, o.GetEStructuralFeatures().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__ESTRUCTURAL_FEATURES, false))
-	assert.Equal(t, o.GetESuperTypes(), o.EGetFromID(ECLASS__ESUPER_TYPES, true))
-	assert.Equal(t, o.GetESuperTypes().(EObjectList).GetUnResolvedList(), o.EGetFromID(ECLASS__ESUPER_TYPES, false))
-	assert.Equal(t, o.IsInterface(), o.EGetFromID(ECLASS__INTERFACE, true))
+	assert.Equal(t, o.GetEOperations(), FromAnyList[EOperation](o.EGetFromID(ECLASS__EOPERATIONS, true)))
+	assert.Equal(t, o.GetEReferences(), FromAnyList[EReference](o.EGetFromID(ECLASS__EREFERENCES, true)))
+	assert.Equal(t, o.GetEReferences().(EObjectList[EReference]).GetUnResolvedList(), FromAnyList[EReference](o.EGetFromID(ECLASS__EREFERENCES, false)))
+	assert.Equal(t, o.GetEStructuralFeatures(), FromAnyList[EStructuralFeature](o.EGetFromID(ECLASS__ESTRUCTURAL_FEATURES, true)))
+	assert.Equal(t, o.GetESuperTypes(), FromAnyList[EClass](o.EGetFromID(ECLASS__ESUPER_TYPES, true)))
+	assert.Equal(t, o.GetESuperTypes().(EObjectList[EClass]).GetUnResolvedList(), FromAnyList[EClass](o.EGetFromID(ECLASS__ESUPER_TYPES, false)))
 }
 
 func TestEClassESetFromID(t *testing.T) {
 	o := newEClassImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ECLASS__ABSTRACT, v)
 		assert.Equal(t, v, o.EGetFromID(ECLASS__ABSTRACT, false))
 	}
 	{
 		// list with a value
-		mockValue := new(MockEOperation)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EOperation]{}
+		mockValue := &MockEOperation{}
+		mockIterator := &MockEIterator[EOperation]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EInverseAdd", o, EOPERATION__ECONTAINING_CLASS, mock.Anything).Return(nil).Once()
 
 		// set list with new contents
-		o.ESetFromID(ECLASS__EOPERATIONS, l)
+		o.ESetFromID(ECLASS__EOPERATIONS, ToAnyList[EOperation](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetEOperations().Size())
 		assert.Equal(t, mockValue, o.GetEOperations().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 	{
 		// list with a value
-		mockValue := new(MockEStructuralFeature)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EStructuralFeature]{}
+		mockValue := &MockEStructuralFeature{}
+		mockIterator := &MockEIterator[EStructuralFeature]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EInverseAdd", o, ESTRUCTURAL_FEATURE__ECONTAINING_CLASS, mock.Anything).Return(nil).Once()
 
 		// set list with new contents
-		o.ESetFromID(ECLASS__ESTRUCTURAL_FEATURES, l)
+		o.ESetFromID(ECLASS__ESTRUCTURAL_FEATURES, ToAnyList[EStructuralFeature](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetEStructuralFeatures().Size())
 		assert.Equal(t, mockValue, o.GetEStructuralFeatures().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 	{
 		// list with a value
-		mockValue := new(MockEClass)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EClass]{}
+		mockValue := &MockEClass{}
+		mockIterator := &MockEIterator[EClass]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EIsProxy").Return(false).Once()
 
 		// set list with new contents
-		o.ESetFromID(ECLASS__ESUPER_TYPES, l)
+		o.ESetFromID(ECLASS__ESUPER_TYPES, ToAnyList[EClass](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetESuperTypes().Size())
 		assert.Equal(t, mockValue, o.GetESuperTypes().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ECLASS__INTERFACE, v)
 		assert.Equal(t, v, o.EGetFromID(ECLASS__INTERFACE, false))
 	}
@@ -314,21 +325,21 @@ func TestEClassEUnsetFromID(t *testing.T) {
 		o.EUnsetFromID(ECLASS__EOPERATIONS)
 		v := o.EGetFromID(ECLASS__EOPERATIONS, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 	{
 		o.EUnsetFromID(ECLASS__ESTRUCTURAL_FEATURES)
 		v := o.EGetFromID(ECLASS__ESTRUCTURAL_FEATURES, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 	{
 		o.EUnsetFromID(ECLASS__ESUPER_TYPES)
 		v := o.EGetFromID(ECLASS__ESUPER_TYPES, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 	{
@@ -361,14 +372,14 @@ func TestEClassEBasicInverseAdd(t *testing.T) {
 		assert.Equal(t, mockNotifications, o.EBasicInverseAdd(mockObject, -1, mockNotifications))
 	}
 	{
-		mockObject := new(MockEOperation)
+		mockObject := &MockEOperation{}
 		o.EBasicInverseAdd(mockObject, ECLASS__EOPERATIONS, nil)
 		l := o.GetEOperations()
 		assert.True(t, l.Contains(mockObject))
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}
 	{
-		mockObject := new(MockEStructuralFeature)
+		mockObject := &MockEStructuralFeature{}
 		o.EBasicInverseAdd(mockObject, ECLASS__ESTRUCTURAL_FEATURES, nil)
 		l := o.GetEStructuralFeatures()
 		assert.True(t, l.Contains(mockObject))
@@ -386,7 +397,7 @@ func TestEClassEBasicInverseRemove(t *testing.T) {
 	}
 	{
 		// initialize list with a mock object
-		mockObject := new(MockEOperation)
+		mockObject := &MockEOperation{}
 		mockObject.On("EInverseAdd", o, EOPERATION__ECONTAINING_CLASS, mock.Anything).Return(nil).Once()
 
 		l := o.GetEOperations()
@@ -401,7 +412,7 @@ func TestEClassEBasicInverseRemove(t *testing.T) {
 	}
 	{
 		// initialize list with a mock object
-		mockObject := new(MockEStructuralFeature)
+		mockObject := &MockEStructuralFeature{}
 		mockObject.On("EInverseAdd", o, ESTRUCTURAL_FEATURE__ECONTAINING_CLASS, mock.Anything).Return(nil).Once()
 
 		l := o.GetEStructuralFeatures()

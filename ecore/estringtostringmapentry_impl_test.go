@@ -53,14 +53,14 @@ func TestEStringToStringMapEntryKeyGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, string(""), o.GetStringKey())
 	// get initialized value
-	v := string("Test String")
+	v := "Test String"
 	o.key = v
 	assert.Equal(t, v, o.GetStringKey())
 }
 
 func TestEStringToStringMapEntryKeySet(t *testing.T) {
 	o := newEStringToStringMapEntryImpl()
-	v := string("Test String")
+	v := "Test String"
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -74,14 +74,14 @@ func TestEStringToStringMapEntryValueGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, string(""), o.GetStringValue())
 	// get initialized value
-	v := string("Test String")
+	v := "Test String"
 	o.value = v
 	assert.Equal(t, v, o.GetStringValue())
 }
 
 func TestEStringToStringMapEntryValueSet(t *testing.T) {
 	o := newEStringToStringMapEntryImpl()
-	v := string("Test String")
+	v := "Test String"
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -93,20 +93,18 @@ func TestEStringToStringMapEntryValueSet(t *testing.T) {
 func TestEStringToStringMapEntryEGetFromID(t *testing.T) {
 	o := newEStringToStringMapEntryImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetStringKey(), o.EGetFromID(ESTRING_TO_STRING_MAP_ENTRY__KEY, true))
-	assert.Equal(t, o.GetStringValue(), o.EGetFromID(ESTRING_TO_STRING_MAP_ENTRY__VALUE, true))
 }
 
 func TestEStringToStringMapEntryESetFromID(t *testing.T) {
 	o := newEStringToStringMapEntryImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := string("Test String")
+		v := "Test String"
 		o.ESetFromID(ESTRING_TO_STRING_MAP_ENTRY__KEY, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRING_TO_STRING_MAP_ENTRY__KEY, false))
 	}
 	{
-		v := string("Test String")
+		v := "Test String"
 		o.ESetFromID(ESTRING_TO_STRING_MAP_ENTRY__VALUE, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRING_TO_STRING_MAP_ENTRY__VALUE, false))
 	}

@@ -24,10 +24,10 @@ func discardMockETypeParameter() {
 // TestMockETypeParameterGetEBounds tests method GetEBounds
 func TestMockETypeParameterGetEBounds(t *testing.T) {
 	o := &MockETypeParameter{}
-	l := &MockEList{}
+	l := &MockEList[EGenericType]{}
 	// return a value
 	o.On("GetEBounds").Once().Return(l)
-	o.On("GetEBounds").Once().Return(func() EList {
+	o.On("GetEBounds").Once().Return(func() EList[EGenericType] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEBounds())

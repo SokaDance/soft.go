@@ -16,15 +16,15 @@ type MockEObject struct {
 }
 
 // EAllContents provides mock implementation
-func (eObject *MockEObject) EAllContents() EIterator {
+func (eObject *MockEObject) EAllContents() EIterator[EObject] {
 	ret := eObject.Called()
 
-	var r EIterator
-	if rf, ok := ret.Get(0).(func() EIterator); ok {
+	var r EIterator[EObject]
+	if rf, ok := ret.Get(0).(func() EIterator[EObject]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EIterator)
+			r = ret.Get(0).(EIterator[EObject])
 		}
 	}
 
@@ -96,15 +96,15 @@ func (eObject *MockEObject) EContainmentFeature() EReference {
 }
 
 // EContents provides mock implementation
-func (eObject *MockEObject) EContents() EList {
+func (eObject *MockEObject) EContents() EList[EObject] {
 	ret := eObject.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EObject]
+	if rf, ok := ret.Get(0).(func() EList[EObject]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EObject])
 		}
 	}
 
@@ -112,15 +112,15 @@ func (eObject *MockEObject) EContents() EList {
 }
 
 // ECrossReferences provides mock implementation
-func (eObject *MockEObject) ECrossReferences() EList {
+func (eObject *MockEObject) ECrossReferences() EList[EObject] {
 	ret := eObject.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EObject]
+	if rf, ok := ret.Get(0).(func() EList[EObject]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EObject])
 		}
 	}
 
@@ -128,15 +128,15 @@ func (eObject *MockEObject) ECrossReferences() EList {
 }
 
 // EGet provides mock implementation
-func (eObject *MockEObject) EGet(feature EStructuralFeature) interface{} {
+func (eObject *MockEObject) EGet(feature EStructuralFeature) any {
 	ret := eObject.Called(feature)
 
-	var r interface{}
-	if rf, ok := ret.Get(0).(func() interface{}); ok {
+	var r any
+	if rf, ok := ret.Get(0).(func() any); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(interface{})
+			r = ret.Get(0).(any)
 		}
 	}
 
@@ -144,15 +144,15 @@ func (eObject *MockEObject) EGet(feature EStructuralFeature) interface{} {
 }
 
 // EGetResolve provides mock implementation
-func (eObject *MockEObject) EGetResolve(feature EStructuralFeature, resolve bool) interface{} {
+func (eObject *MockEObject) EGetResolve(feature EStructuralFeature, resolve bool) any {
 	ret := eObject.Called(feature, resolve)
 
-	var r interface{}
-	if rf, ok := ret.Get(0).(func() interface{}); ok {
+	var r any
+	if rf, ok := ret.Get(0).(func() any); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(interface{})
+			r = ret.Get(0).(any)
 		}
 	}
 
@@ -160,15 +160,15 @@ func (eObject *MockEObject) EGetResolve(feature EStructuralFeature, resolve bool
 }
 
 // EInvoke provides mock implementation
-func (eObject *MockEObject) EInvoke(operation EOperation, arguments EList) interface{} {
+func (eObject *MockEObject) EInvoke(operation EOperation, arguments EList[any]) any {
 	ret := eObject.Called(operation, arguments)
 
-	var r interface{}
-	if rf, ok := ret.Get(0).(func() interface{}); ok {
+	var r any
+	if rf, ok := ret.Get(0).(func() any); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(interface{})
+			r = ret.Get(0).(any)
 		}
 	}
 
@@ -224,7 +224,7 @@ func (eObject *MockEObject) EResource() EResource {
 }
 
 // ESet provides mock implementation
-func (eObject *MockEObject) ESet(feature EStructuralFeature, newValue interface{}) {
+func (eObject *MockEObject) ESet(feature EStructuralFeature, newValue any) {
 	eObject.Called(feature, newValue)
 }
 

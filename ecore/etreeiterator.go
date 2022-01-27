@@ -9,24 +9,24 @@
 
 package ecore
 
-type treeIterator struct {
-	object      interface{}
-	data        []EIterator
+type treeIterator[T any] struct {
+	object      any
+	data        []EIterator[T]
 	root        bool
-	getChildren func(interface{}) EIterator
+	getChildren func(any) EIterator[T]
 }
 
-func newTreeIterator(object interface{}, root bool, getChildren func(interface{}) EIterator) *treeIterator {
-	return &treeIterator{object: object, root: root, getChildren: getChildren}
+func newTreeIterator[T any](object any, root bool, getChildren func(any) EIterator[T]) *treeIterator[T] {
+	return &treeIterator[T]{object: object, root: root, getChildren: getChildren}
 }
 
-func newEAllContentsIterator(object EObject) *treeIterator {
-	return &treeIterator{object: object, root: false, getChildren: func(o interface{}) EIterator {
+func newEAllContentsIterator(object EObject) *treeIterator[EObject] {
+	return &treeIterator[EObject]{object: object, root: false, getChildren: func(o any) EIterator[EObject] {
 		return o.(EObject).EContents().Iterator()
 	}}
 }
 
-func (it *treeIterator) HasNext() bool {
+func (it *treeIterator[T]) HasNext() bool {
 	if it.data == nil && !it.root {
 		return it.hasAnyChildren()
 	} else {
@@ -34,23 +34,23 @@ func (it *treeIterator) HasNext() bool {
 	}
 }
 
-func (it *treeIterator) hasAnyChildren() bool {
+func (it *treeIterator[T]) hasAnyChildren() bool {
 	current := it.getChildren(it.object)
 	it.data = append(it.data, current)
 	return current.HasNext()
 }
 
-func (it *treeIterator) hasMoreChildren() bool {
+func (it *treeIterator[T]) hasMoreChildren() bool {
 	return it.data == nil || len(it.data) != 0 && it.data[len(it.data)-1].HasNext()
 }
 
-func (it *treeIterator) Next() interface{} {
+func (it *treeIterator[T]) Next() T {
 	if it.data == nil {
 		// Yield that mapping, create a stack, and add it to the stack.
 		current := it.getChildren(it.object)
 		it.data = append(it.data, current)
 		if it.root {
-			return it.object
+			return it.object.(T)
 		}
 	}
 

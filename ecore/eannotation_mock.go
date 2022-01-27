@@ -16,15 +16,15 @@ type MockEAnnotation struct {
 }
 
 // GetContents get the value of contents
-func (eAnnotation *MockEAnnotation) GetContents() EList {
+func (eAnnotation *MockEAnnotation) GetContents() EList[EObject] {
 	ret := eAnnotation.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EObject]
+	if rf, ok := ret.Get(0).(func() EList[EObject]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EObject])
 		}
 	}
 
@@ -32,15 +32,15 @@ func (eAnnotation *MockEAnnotation) GetContents() EList {
 }
 
 // GetDetails get the value of details
-func (eAnnotation *MockEAnnotation) GetDetails() EMap {
+func (eAnnotation *MockEAnnotation) GetDetails() EMap[string, string] {
 	ret := eAnnotation.Called()
 
-	var r EMap
-	if rf, ok := ret.Get(0).(func() EMap); ok {
+	var r EMap[string, string]
+	if rf, ok := ret.Get(0).(func() EMap[string, string]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EMap)
+			r = ret.Get(0).(EMap[string, string])
 		}
 	}
 
@@ -69,15 +69,15 @@ func (eAnnotation *MockEAnnotation) SetEModelElement(newEModelElement EModelElem
 }
 
 // GetReferences get the value of references
-func (eAnnotation *MockEAnnotation) GetReferences() EList {
+func (eAnnotation *MockEAnnotation) GetReferences() EList[EObject] {
 	ret := eAnnotation.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EObject]
+	if rf, ok := ret.Get(0).(func() EList[EObject]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EObject])
 		}
 	}
 

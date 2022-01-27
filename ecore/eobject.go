@@ -21,15 +21,15 @@ type EObject interface {
 	EContainer() EObject
 	EContainingFeature() EStructuralFeature
 	EContainmentFeature() EReference
-	EContents() EList
-	EAllContents() EIterator
-	ECrossReferences() EList
-	EGet(EStructuralFeature) interface{}
-	EGetResolve(EStructuralFeature, bool) interface{}
-	ESet(EStructuralFeature, interface{})
+	EContents() EList[EObject]
+	EAllContents() EIterator[EObject]
+	ECrossReferences() EList[EObject]
+	EGet(EStructuralFeature) any
+	EGetResolve(EStructuralFeature, bool) any
+	ESet(EStructuralFeature, any)
 	EIsSet(EStructuralFeature) bool
 	EUnset(EStructuralFeature)
-	EInvoke(EOperation, EList) interface{}
+	EInvoke(EOperation, EList[any]) any
 
 	// Start of user code EObject
 	// End of user code

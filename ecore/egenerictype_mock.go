@@ -74,15 +74,15 @@ func (eGenericType *MockEGenericType) GetERawType() EClassifier {
 }
 
 // GetETypeArguments get the value of eTypeArguments
-func (eGenericType *MockEGenericType) GetETypeArguments() EList {
+func (eGenericType *MockEGenericType) GetETypeArguments() EList[EGenericType] {
 	ret := eGenericType.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EGenericType]
+	if rf, ok := ret.Get(0).(func() EList[EGenericType]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EGenericType])
 		}
 	}
 
@@ -132,7 +132,7 @@ func (eGenericType *MockEGenericType) SetEUpperBound(newEUpperBound EGenericType
 }
 
 // IsInstance provides mock implementation
-func (eGenericType *MockEGenericType) IsInstance(object interface{}) bool {
+func (eGenericType *MockEGenericType) IsInstance(object any) bool {
 	ret := eGenericType.Called(object)
 
 	var r bool

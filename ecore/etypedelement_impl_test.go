@@ -45,7 +45,7 @@ func TestETypedElementETypeGet(t *testing.T) {
 	assert.Nil(t, o.GetEType())
 
 	// initialize object with a mock value
-	mockValue := new(MockEClassifier)
+	mockValue := &MockEClassifier{}
 	o.eType = mockValue
 
 	// events
@@ -66,7 +66,7 @@ func TestETypedElementETypeGet(t *testing.T) {
 
 	// get a resolved value
 	mockURI := NewURI("test:///file.t")
-	mockResolved := new(MockEClassifier)
+	mockResolved := &MockEClassifier{}
 	mockResolved.On("EProxyURI").Return(nil).Once()
 	mockResource.On("GetResourceSet").Return(mockResourceSet).Once()
 	mockResourceSet.On("GetEObject", mockURI, true).Return(mockResolved).Once()
@@ -81,7 +81,7 @@ func TestETypedElementETypeGet(t *testing.T) {
 
 func TestETypedElementETypeSet(t *testing.T) {
 	o := newETypedElementImpl()
-	v := new(MockEClassifier)
+	v := &MockEClassifier{}
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -114,14 +114,14 @@ func TestETypedElementOrderedGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(true), o.IsOrdered())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isOrdered = v
 	assert.Equal(t, v, o.IsOrdered())
 }
 
 func TestETypedElementOrderedSet(t *testing.T) {
 	o := newETypedElementImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -140,14 +140,14 @@ func TestETypedElementUniqueGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(true), o.IsUnique())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isUnique = v
 	assert.Equal(t, v, o.IsUnique())
 }
 
 func TestETypedElementUniqueSet(t *testing.T) {
 	o := newETypedElementImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -201,22 +201,17 @@ func TestETypedElementUpperBoundSet(t *testing.T) {
 func TestETypedElementEGetFromID(t *testing.T) {
 	o := newETypedElementImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEType(), o.EGetFromID(ETYPED_ELEMENT__ETYPE, true))
-	assert.Equal(t, o.GetLowerBound(), o.EGetFromID(ETYPED_ELEMENT__LOWER_BOUND, true))
 	assert.Panics(t, func() { o.EGetFromID(ETYPED_ELEMENT__MANY, true) })
 	assert.Panics(t, func() { o.EGetFromID(ETYPED_ELEMENT__MANY, false) })
-	assert.Equal(t, o.IsOrdered(), o.EGetFromID(ETYPED_ELEMENT__ORDERED, true))
 	assert.Panics(t, func() { o.EGetFromID(ETYPED_ELEMENT__REQUIRED, true) })
 	assert.Panics(t, func() { o.EGetFromID(ETYPED_ELEMENT__REQUIRED, false) })
-	assert.Equal(t, o.IsUnique(), o.EGetFromID(ETYPED_ELEMENT__UNIQUE, true))
-	assert.Equal(t, o.GetUpperBound(), o.EGetFromID(ETYPED_ELEMENT__UPPER_BOUND, true))
 }
 
 func TestETypedElementESetFromID(t *testing.T) {
 	o := newETypedElementImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := new(MockEClassifier)
+		v := &MockEClassifier{}
 		o.ESetFromID(ETYPED_ELEMENT__ETYPE, v)
 		assert.Equal(t, v, o.EGetFromID(ETYPED_ELEMENT__ETYPE, false))
 	}
@@ -226,12 +221,12 @@ func TestETypedElementESetFromID(t *testing.T) {
 		assert.Equal(t, v, o.EGetFromID(ETYPED_ELEMENT__LOWER_BOUND, false))
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ETYPED_ELEMENT__ORDERED, v)
 		assert.Equal(t, v, o.EGetFromID(ETYPED_ELEMENT__ORDERED, false))
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ETYPED_ELEMENT__UNIQUE, v)
 		assert.Equal(t, v, o.EGetFromID(ETYPED_ELEMENT__UNIQUE, false))
 	}

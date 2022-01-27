@@ -18,9 +18,9 @@ import (
 
 func TestMockEResourceSetGetResources(t *testing.T) {
 	rs := &MockEResourceSet{}
-	l := &MockEList{}
+	l := &MockEList[EResource]{}
 	rs.On("GetResources").Return(l).Once()
-	rs.On("GetResources").Return(func() EList {
+	rs.On("GetResources").Return(func() EList[EResource] {
 		return l
 	}).Once()
 	assert.Equal(t, l, rs.GetResources())

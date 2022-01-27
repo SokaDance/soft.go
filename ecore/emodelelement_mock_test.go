@@ -24,10 +24,10 @@ func discardMockEModelElement() {
 // TestMockEModelElementGetEAnnotations tests method GetEAnnotations
 func TestMockEModelElementGetEAnnotations(t *testing.T) {
 	o := &MockEModelElement{}
-	l := &MockEList{}
+	l := &MockEList[EAnnotation]{}
 	// return a value
 	o.On("GetEAnnotations").Once().Return(l)
-	o.On("GetEAnnotations").Once().Return(func() EList {
+	o.On("GetEAnnotations").Once().Return(func() EList[EAnnotation] {
 		return l
 	})
 	assert.Equal(t, l, o.GetEAnnotations())
@@ -38,8 +38,8 @@ func TestMockEModelElementGetEAnnotations(t *testing.T) {
 // TestMockEModelElementGetEAnnotation tests method GetEAnnotation
 func TestMockEModelElementGetEAnnotation(t *testing.T) {
 	o := &MockEModelElement{}
-	source := string("Test String")
-	r := new(MockEAnnotation)
+	source := "Test String"
+	r := &MockEAnnotation{}
 	o.On("GetEAnnotation", source).Return(r).Once()
 	o.On("GetEAnnotation", source).Return(func() EAnnotation {
 		return r

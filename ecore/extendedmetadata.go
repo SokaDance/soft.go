@@ -168,8 +168,8 @@ func (emd *ExtendedMetaData) GetXSISchemaLocationMapFeature(eClass EClass) ERefe
 
 func (emd *ExtendedMetaData) basicGetName(eElement ENamedElement) string {
 	if annotation := eElement.GetEAnnotation(annotationURI); annotation != nil {
-		if name := annotation.GetDetails().GetValue("name"); name != nil {
-			return name.(string)
+		if name, ok := annotation.GetDetails().GetValue("name"); ok {
+			return name
 		}
 	}
 	return eElement.GetName()
@@ -177,8 +177,7 @@ func (emd *ExtendedMetaData) basicGetName(eElement ENamedElement) string {
 
 func (emd *ExtendedMetaData) basicGetNamespace(eFeature EStructuralFeature) string {
 	if annotation := eFeature.GetEAnnotation(annotationURI); annotation != nil {
-		if value := annotation.GetDetails().GetValue("namespace"); value != nil {
-			namespace := value.(string)
+		if namespace, ok := annotation.GetDetails().GetValue("namespace"); ok {
 			if namespace == "##targetNamespace" {
 				eContainingClass := eFeature.GetEContainingClass()
 				if eContainingClass != nil {

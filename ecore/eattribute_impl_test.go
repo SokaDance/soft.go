@@ -48,14 +48,14 @@ func TestEAttributeIDGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsID())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isID = v
 	assert.Equal(t, v, o.IsID())
 }
 
 func TestEAttributeIDSet(t *testing.T) {
 	o := newEAttributeImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -69,14 +69,13 @@ func TestEAttributeEGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
 	assert.Panics(t, func() { o.EGetFromID(EATTRIBUTE__EATTRIBUTE_TYPE, true) })
 	assert.Panics(t, func() { o.EGetFromID(EATTRIBUTE__EATTRIBUTE_TYPE, false) })
-	assert.Equal(t, o.IsID(), o.EGetFromID(EATTRIBUTE__ID, true))
 }
 
 func TestEAttributeESetFromID(t *testing.T) {
 	o := newEAttributeImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(EATTRIBUTE__ID, v)
 		assert.Equal(t, v, o.EGetFromID(EATTRIBUTE__ID, false))
 	}

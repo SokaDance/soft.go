@@ -1,15 +1,15 @@
 package ecore
 
-type basicEDataTypeList struct {
-	BasicENotifyingList
+type basicEDataTypeList[T comparable] struct {
+	BasicENotifyingList[T]
 	owner     EObjectInternal
 	featureID int
 }
 
-func NewBasicEDataTypeList(owner EObjectInternal, featureID int, isUnique bool) *basicEDataTypeList {
-	l := new(basicEDataTypeList)
+func NewBasicEDataTypeList[T comparable](owner EObjectInternal, featureID int, isUnique bool) *basicEDataTypeList[T] {
+	l := new(basicEDataTypeList[T])
 	l.interfaces = l
-	l.data = []interface{}{}
+	l.data = []T{}
 	l.owner = owner
 	l.featureID = featureID
 	l.isUnique = isUnique
@@ -17,12 +17,12 @@ func NewBasicEDataTypeList(owner EObjectInternal, featureID int, isUnique bool) 
 }
 
 // GetNotifier ...
-func (list *basicEDataTypeList) GetNotifier() ENotifier {
+func (list *basicEDataTypeList[T]) GetNotifier() ENotifier {
 	return list.owner
 }
 
 // GetFeature ...
-func (list *basicEDataTypeList) GetFeature() EStructuralFeature {
+func (list *basicEDataTypeList[T]) GetFeature() EStructuralFeature {
 	if list.owner != nil {
 		return list.owner.EClass().GetEStructuralFeature(list.featureID)
 	}
@@ -30,6 +30,6 @@ func (list *basicEDataTypeList) GetFeature() EStructuralFeature {
 }
 
 // GetFeatureID ...
-func (list *basicEDataTypeList) GetFeatureID() int {
+func (list *basicEDataTypeList[T]) GetFeatureID() int {
 	return list.featureID
 }

@@ -59,8 +59,7 @@ func TestEEnumGetEEnumLiteralByValueOperation(t *testing.T) {
 func TestEEnumEGetFromID(t *testing.T) {
 	o := newEEnumImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetELiterals(), o.EGetFromID(EENUM__ELITERALS, true))
-	assert.Equal(t, o.GetELiterals().(EObjectList).GetUnResolvedList(), o.EGetFromID(EENUM__ELITERALS, false))
+	assert.Equal(t, o.GetELiterals(), FromAnyList[EEnumLiteral](o.EGetFromID(EENUM__ELITERALS, true)))
 }
 
 func TestEEnumESetFromID(t *testing.T) {
@@ -68,16 +67,21 @@ func TestEEnumESetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
 		// list with a value
-		mockValue := new(MockEEnumLiteral)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EEnumLiteral]{}
+		mockValue := &MockEEnumLiteral{}
+		mockIterator := &MockEIterator[EEnumLiteral]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EInverseAdd", o, EENUM_LITERAL__EENUM, mock.Anything).Return(nil).Once()
 
 		// set list with new contents
-		o.ESetFromID(EENUM__ELITERALS, l)
+		o.ESetFromID(EENUM__ELITERALS, ToAnyList[EEnumLiteral](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetELiterals().Size())
 		assert.Equal(t, mockValue, o.GetELiterals().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 
 }
@@ -95,7 +99,7 @@ func TestEEnumEUnsetFromID(t *testing.T) {
 		o.EUnsetFromID(EENUM__ELITERALS)
 		v := o.EGetFromID(EENUM__ELITERALS, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 }
@@ -116,7 +120,7 @@ func TestEEnumEBasicInverseAdd(t *testing.T) {
 		assert.Equal(t, mockNotifications, o.EBasicInverseAdd(mockObject, -1, mockNotifications))
 	}
 	{
-		mockObject := new(MockEEnumLiteral)
+		mockObject := &MockEEnumLiteral{}
 		o.EBasicInverseAdd(mockObject, EENUM__ELITERALS, nil)
 		l := o.GetELiterals()
 		assert.True(t, l.Contains(mockObject))
@@ -134,7 +138,7 @@ func TestEEnumEBasicInverseRemove(t *testing.T) {
 	}
 	{
 		// initialize list with a mock object
-		mockObject := new(MockEEnumLiteral)
+		mockObject := &MockEEnumLiteral{}
 		mockObject.On("EInverseAdd", o, EENUM_LITERAL__EENUM, mock.Anything).Return(nil).Once()
 
 		l := o.GetELiterals()

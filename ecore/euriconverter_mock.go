@@ -63,15 +63,15 @@ func (_m *MockEURIConverter) GetURIHandler(uri *URI) EURIHandler {
 }
 
 // GetURIHandlers provides a mock function with given fields:
-func (_m *MockEURIConverter) GetURIHandlers() EList {
+func (_m *MockEURIConverter) GetURIHandlers() EList[EURIHandler] {
 	ret := _m.Called()
 
-	var r0 EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r0 EList[EURIHandler]
+	if rf, ok := ret.Get(0).(func() EList[EURIHandler]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EList)
+			r0 = ret.Get(0).(EList[EURIHandler])
 		}
 	}
 

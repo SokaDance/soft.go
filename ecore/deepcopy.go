@@ -30,7 +30,7 @@ func (dC *deepCopy) copy(eObject EObject) EObject {
 			dC.objects[eObject] = copyEObject
 			eClass := eObject.EClass()
 			for it := eClass.GetEAllStructuralFeatures().Iterator(); it.HasNext(); {
-				eFeature := it.Next().(EStructuralFeature)
+				eFeature := it.Next()
 				if eFeature.IsChangeable() && !eFeature.IsDerived() {
 					if eAttribute, _ := eFeature.(EAttribute); eAttribute != nil {
 						dC.copyAttribute(eAttribute, eObject, copyEObject)
@@ -46,10 +46,10 @@ func (dC *deepCopy) copy(eObject EObject) EObject {
 	return nil
 }
 
-func (dC *deepCopy) copyAll(eObjects EList) EList {
-	copies := []interface{}{}
+func (dC *deepCopy) copyAll(eObjects EList[EObject]) EList[EObject] {
+	copies := []EObject{}
 	for it := eObjects.Iterator(); it.HasNext(); {
-		eObject := it.Next().(EObject)
+		eObject := it.Next()
 		copies = append(copies, dC.copy(eObject))
 	}
 	return NewImmutableEList(copies)
@@ -79,10 +79,10 @@ func (dC *deepCopy) copyContainment(eReference EReference, eObject EObject, copy
 	if eObject.EIsSet(eReference) {
 		value := eObject.EGetResolve(eReference, dC.resolve)
 		if eReference.IsMany() {
-			list := value.(EList)
-			copyEObject.ESet(eReference, dC.copyAll(list))
+			list := FromAnyList[EObject](value)
+			copyEObject.ESet(eReference, ToAnyList(dC.copyAll(list)))
 		} else {
-			object := value.(EObject)
+			object := FromAny[EObject](value)
 			copyEObject.ESet(eReference, dC.copy(object))
 		}
 	}
@@ -91,7 +91,7 @@ func (dC *deepCopy) copyContainment(eReference EReference, eObject EObject, copy
 func (dC *deepCopy) copyReferences() {
 	for eObject, copyEObject := range dC.objects {
 		for it := eObject.EClass().GetEReferences().Iterator(); it.HasNext(); {
-			eReference := it.Next().(EReference)
+			eReference := it.Next()
 			if eReference.IsChangeable() && !eReference.IsDerived() && !eReference.IsContainment() && !eReference.IsContainer() {
 				dC.copyReference(eReference, eObject, copyEObject)
 			}
@@ -103,37 +103,36 @@ func (dC *deepCopy) copyReference(eReference EReference, eObject EObject, copyEO
 	if eObject.EIsSet(eReference) {
 		value := eObject.EGetResolve(eReference, dC.resolve)
 		if eReference.IsMany() {
-			listSource := value.(EObjectList)
-			listTarget := copyEObject.EGetResolve(eReference, false).(EObjectList)
-			var source EList = listSource
+			listSource := FromAnyList[EObject](value).(EObjectList[EObject])
+			listTarget := FromAnyList[EObject](copyEObject.EGetResolve(eReference, false)).(EObjectList[EObject])
 			if !dC.resolve {
-				source = listSource.GetUnResolvedList()
+				listSource = listSource.GetUnResolvedList()
 			}
-			target := listTarget.GetUnResolvedList()
-			if source.Empty() {
-				target.Clear()
+			listTarget = listTarget.GetUnResolvedList()
+			if listSource.Empty() {
+				listTarget.Clear()
 			} else {
 				isBidirectional := eReference.GetEOpposite() != nil
 				index := 0
-				for it := source.Iterator(); it.HasNext(); {
-					referencedObject := it.Next().(EObject)
+				for it := listSource.Iterator(); it.HasNext(); {
+					referencedObject := it.Next()
 					copyReferencedEObject := dC.objects[referencedObject]
 					if copyReferencedEObject != nil {
 						if isBidirectional {
-							position := target.IndexOf(copyReferencedEObject)
+							position := listTarget.IndexOf(copyReferencedEObject)
 							if position == -1 {
-								target.Insert(index, copyReferencedEObject)
+								listTarget.Insert(index, copyReferencedEObject)
 							} else if index != position {
-								target.MoveObject(index, copyReferencedEObject)
+								listTarget.MoveObject(index, copyReferencedEObject)
 							}
 
 						} else {
-							target.Insert(index, copyReferencedEObject)
+							listTarget.Insert(index, copyReferencedEObject)
 						}
 						index++
 					} else {
 						if dC.originalReferences && !isBidirectional {
-							target.Insert(index, referencedObject)
+							listTarget.Insert(index, referencedObject)
 							index++
 						}
 					}

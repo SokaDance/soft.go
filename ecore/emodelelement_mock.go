@@ -16,15 +16,15 @@ type MockEModelElement struct {
 }
 
 // GetEAnnotations get the value of eAnnotations
-func (eModelElement *MockEModelElement) GetEAnnotations() EList {
+func (eModelElement *MockEModelElement) GetEAnnotations() EList[EAnnotation] {
 	ret := eModelElement.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EAnnotation]
+	if rf, ok := ret.Get(0).(func() EList[EAnnotation]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EAnnotation])
 		}
 	}
 

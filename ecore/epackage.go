@@ -26,9 +26,9 @@ type EPackage interface {
 	GetEFactoryInstance() EFactory
 	SetEFactoryInstance(EFactory)
 
-	GetEClassifiers() EList
+	GetEClassifiers() EList[EClassifier]
 
-	GetESubPackages() EList
+	GetESubPackages() EList[EPackage]
 
 	GetESuperPackage() EPackage
 

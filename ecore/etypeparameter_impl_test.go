@@ -46,8 +46,7 @@ func TestETypeParameterEBoundsGet(t *testing.T) {
 func TestETypeParameterEGetFromID(t *testing.T) {
 	o := newETypeParameterImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEBounds(), o.EGetFromID(ETYPE_PARAMETER__EBOUNDS, true))
-	assert.Equal(t, o.GetEBounds().(EObjectList).GetUnResolvedList(), o.EGetFromID(ETYPE_PARAMETER__EBOUNDS, false))
+	assert.Equal(t, o.GetEBounds(), FromAnyList[EGenericType](o.EGetFromID(ETYPE_PARAMETER__EBOUNDS, true)))
 }
 
 func TestETypeParameterESetFromID(t *testing.T) {
@@ -55,16 +54,21 @@ func TestETypeParameterESetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
 		// list with a value
-		mockValue := new(MockEGenericType)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EGenericType]{}
+		mockValue := &MockEGenericType{}
+		mockIterator := &MockEIterator[EGenericType]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EInverseAdd", o, EOPPOSITE_FEATURE_BASE-ETYPE_PARAMETER__EBOUNDS, mock.Anything).Return(nil).Once()
 
 		// set list with new contents
-		o.ESetFromID(ETYPE_PARAMETER__EBOUNDS, l)
+		o.ESetFromID(ETYPE_PARAMETER__EBOUNDS, ToAnyList[EGenericType](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetEBounds().Size())
 		assert.Equal(t, mockValue, o.GetEBounds().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 
 }
@@ -82,7 +86,7 @@ func TestETypeParameterEUnsetFromID(t *testing.T) {
 		o.EUnsetFromID(ETYPE_PARAMETER__EBOUNDS)
 		v := o.EGetFromID(ETYPE_PARAMETER__EBOUNDS, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 }
@@ -96,7 +100,7 @@ func TestETypeParameterEBasicInverseRemove(t *testing.T) {
 	}
 	{
 		// initialize list with a mock object
-		mockObject := new(MockEGenericType)
+		mockObject := &MockEGenericType{}
 		mockObject.On("EInverseAdd", o, EOPPOSITE_FEATURE_BASE-ETYPE_PARAMETER__EBOUNDS, mock.Anything).Return(nil).Once()
 
 		l := o.GetEBounds()

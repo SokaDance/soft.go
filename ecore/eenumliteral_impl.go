@@ -14,7 +14,7 @@ package ecore
 // eEnumLiteralImpl is the implementation of the model object 'EEnumLiteral'
 type eEnumLiteralImpl struct {
 	eNamedElementImpl
-	instance interface{}
+	instance any
 	literal  string
 	value    int
 }
@@ -56,12 +56,12 @@ func (eEnumLiteral *eEnumLiteralImpl) GetEEnum() EEnum {
 }
 
 // GetInstance get the value of instance
-func (eEnumLiteral *eEnumLiteralImpl) GetInstance() interface{} {
+func (eEnumLiteral *eEnumLiteralImpl) GetInstance() any {
 	return eEnumLiteral.instance
 }
 
 // SetInstance set the value of instance
-func (eEnumLiteral *eEnumLiteralImpl) SetInstance(newInstance interface{}) {
+func (eEnumLiteral *eEnumLiteralImpl) SetInstance(newInstance any) {
 	oldInstance := eEnumLiteral.instance
 	eEnumLiteral.instance = newInstance
 	if eEnumLiteral.ENotificationRequired() {
@@ -97,31 +97,34 @@ func (eEnumLiteral *eEnumLiteralImpl) SetValue(newValue int) {
 	}
 }
 
-func (eEnumLiteral *eEnumLiteralImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eEnumLiteral *eEnumLiteralImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EENUM_LITERAL__EENUM:
-		return eEnumLiteral.asEEnumLiteral().GetEEnum()
+		return ToAny(eEnumLiteral.asEEnumLiteral().GetEEnum())
 	case EENUM_LITERAL__INSTANCE:
-		return eEnumLiteral.asEEnumLiteral().GetInstance()
+		return ToAny(eEnumLiteral.asEEnumLiteral().GetInstance())
 	case EENUM_LITERAL__LITERAL:
-		return eEnumLiteral.asEEnumLiteral().GetLiteral()
+		return ToAny(eEnumLiteral.asEEnumLiteral().GetLiteral())
 	case EENUM_LITERAL__VALUE:
-		return eEnumLiteral.asEEnumLiteral().GetValue()
+		return ToAny(eEnumLiteral.asEEnumLiteral().GetValue())
 	default:
 		return eEnumLiteral.eNamedElementImpl.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eEnumLiteral *eEnumLiteralImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eEnumLiteral *eEnumLiteralImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EENUM_LITERAL__INSTANCE:
+		newValue := FromAny[any](value)
 		eEnumLiteral.asEEnumLiteral().SetInstance(newValue)
 	case EENUM_LITERAL__LITERAL:
-		eEnumLiteral.asEEnumLiteral().SetLiteral(newValue.(string))
+		newValue := FromAny[string](value)
+		eEnumLiteral.asEEnumLiteral().SetLiteral(newValue)
 	case EENUM_LITERAL__VALUE:
-		eEnumLiteral.asEEnumLiteral().SetValue(newValue.(int))
+		newValue := FromAny[int](value)
+		eEnumLiteral.asEEnumLiteral().SetValue(newValue)
 	default:
-		eEnumLiteral.eNamedElementImpl.ESetFromID(featureID, newValue)
+		eEnumLiteral.eNamedElementImpl.ESetFromID(featureID, value)
 	}
 }
 

@@ -17,7 +17,7 @@ import "reflect"
 type EClassifier interface {
 	ENamedElement
 
-	IsInstance(interface{}) bool
+	IsInstance(any) bool
 
 	GetInstanceTypeName() string
 	SetInstanceTypeName(string)
@@ -25,7 +25,7 @@ type EClassifier interface {
 	GetInstanceClass() reflect.Type
 	SetInstanceClass(reflect.Type)
 
-	GetDefaultValue() interface{}
+	GetDefaultValue() any
 
 	GetClassifierID() int
 	SetClassifierID(int)

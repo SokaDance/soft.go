@@ -24,7 +24,7 @@ func discardMockETypedElement() {
 // TestMockETypedElementGetEType tests method GetEType
 func TestMockETypedElementGetEType(t *testing.T) {
 	o := &MockETypedElement{}
-	r := new(MockEClassifier)
+	r := &MockEClassifier{}
 	o.On("GetEType").Once().Return(r)
 	o.On("GetEType").Once().Return(func() EClassifier {
 		return r
@@ -37,7 +37,7 @@ func TestMockETypedElementGetEType(t *testing.T) {
 // TestMockETypedElementSetEType tests method SetEType
 func TestMockETypedElementSetEType(t *testing.T) {
 	o := &MockETypedElement{}
-	v := new(MockEClassifier)
+	v := &MockEClassifier{}
 	o.On("SetEType", v).Once()
 	o.SetEType(v)
 	o.AssertExpectations(t)
@@ -76,7 +76,7 @@ func TestMockETypedElementSetLowerBound(t *testing.T) {
 // TestMockETypedElementIsMany tests method IsMany
 func TestMockETypedElementIsMany(t *testing.T) {
 	o := &MockETypedElement{}
-	r := bool(true)
+	r := true
 	o.On("IsMany").Once().Return(r)
 	o.On("IsMany").Once().Return(func() bool {
 		return r
@@ -89,7 +89,7 @@ func TestMockETypedElementIsMany(t *testing.T) {
 // TestMockETypedElementIsOrdered tests method IsOrdered
 func TestMockETypedElementIsOrdered(t *testing.T) {
 	o := &MockETypedElement{}
-	r := bool(true)
+	r := true
 	o.On("IsOrdered").Once().Return(r)
 	o.On("IsOrdered").Once().Return(func() bool {
 		return r
@@ -102,7 +102,7 @@ func TestMockETypedElementIsOrdered(t *testing.T) {
 // TestMockETypedElementSetOrdered tests method SetOrdered
 func TestMockETypedElementSetOrdered(t *testing.T) {
 	o := &MockETypedElement{}
-	v := bool(true)
+	v := true
 	o.On("SetOrdered", v).Once()
 	o.SetOrdered(v)
 	o.AssertExpectations(t)
@@ -111,7 +111,7 @@ func TestMockETypedElementSetOrdered(t *testing.T) {
 // TestMockETypedElementIsRequired tests method IsRequired
 func TestMockETypedElementIsRequired(t *testing.T) {
 	o := &MockETypedElement{}
-	r := bool(true)
+	r := true
 	o.On("IsRequired").Once().Return(r)
 	o.On("IsRequired").Once().Return(func() bool {
 		return r
@@ -124,7 +124,7 @@ func TestMockETypedElementIsRequired(t *testing.T) {
 // TestMockETypedElementIsUnique tests method IsUnique
 func TestMockETypedElementIsUnique(t *testing.T) {
 	o := &MockETypedElement{}
-	r := bool(true)
+	r := true
 	o.On("IsUnique").Once().Return(r)
 	o.On("IsUnique").Once().Return(func() bool {
 		return r
@@ -137,7 +137,7 @@ func TestMockETypedElementIsUnique(t *testing.T) {
 // TestMockETypedElementSetUnique tests method SetUnique
 func TestMockETypedElementSetUnique(t *testing.T) {
 	o := &MockETypedElement{}
-	v := bool(true)
+	v := true
 	o.On("SetUnique", v).Once()
 	o.SetUnique(v)
 	o.AssertExpectations(t)

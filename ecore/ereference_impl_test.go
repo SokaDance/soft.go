@@ -50,7 +50,7 @@ func TestEReferenceEOppositeGet(t *testing.T) {
 	assert.Nil(t, o.GetEOpposite())
 
 	// initialize object with a mock value
-	mockValue := new(MockEReference)
+	mockValue := &MockEReference{}
 	o.eOpposite = mockValue
 
 	// events
@@ -71,7 +71,7 @@ func TestEReferenceEOppositeGet(t *testing.T) {
 
 	// get a resolved value
 	mockURI := NewURI("test:///file.t")
-	mockResolved := new(MockEReference)
+	mockResolved := &MockEReference{}
 	mockResolved.On("EProxyURI").Return(nil).Once()
 	mockResource.On("GetResourceSet").Return(mockResourceSet).Once()
 	mockResourceSet.On("GetEObject", mockURI, true).Return(mockResolved).Once()
@@ -86,7 +86,7 @@ func TestEReferenceEOppositeGet(t *testing.T) {
 
 func TestEReferenceEOppositeSet(t *testing.T) {
 	o := newEReferenceImpl()
-	v := new(MockEReference)
+	v := &MockEReference{}
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -110,14 +110,14 @@ func TestEReferenceContainmentGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsContainment())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isContainment = v
 	assert.Equal(t, v, o.IsContainment())
 }
 
 func TestEReferenceContainmentSet(t *testing.T) {
 	o := newEReferenceImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -131,14 +131,14 @@ func TestEReferenceResolveProxiesGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(true), o.IsResolveProxies())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isResolveProxies = v
 	assert.Equal(t, v, o.IsResolveProxies())
 }
 
 func TestEReferenceResolveProxiesSet(t *testing.T) {
 	o := newEReferenceImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -152,43 +152,45 @@ func TestEReferenceEGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__CONTAINER, true) })
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__CONTAINER, false) })
-	assert.Equal(t, o.IsContainment(), o.EGetFromID(EREFERENCE__CONTAINMENT, true))
-	assert.Equal(t, o.GetEKeys(), o.EGetFromID(EREFERENCE__EKEYS, true))
-	assert.Equal(t, o.GetEKeys().(EObjectList).GetUnResolvedList(), o.EGetFromID(EREFERENCE__EKEYS, false))
-	assert.Equal(t, o.GetEOpposite(), o.EGetFromID(EREFERENCE__EOPPOSITE, true))
+	assert.Equal(t, o.GetEKeys(), FromAnyList[EAttribute](o.EGetFromID(EREFERENCE__EKEYS, true)))
+	assert.Equal(t, o.GetEKeys().(EObjectList[EAttribute]).GetUnResolvedList(), FromAnyList[EAttribute](o.EGetFromID(EREFERENCE__EKEYS, false)))
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__EREFERENCE_TYPE, true) })
 	assert.Panics(t, func() { o.EGetFromID(EREFERENCE__EREFERENCE_TYPE, false) })
-	assert.Equal(t, o.IsResolveProxies(), o.EGetFromID(EREFERENCE__RESOLVE_PROXIES, true))
 }
 
 func TestEReferenceESetFromID(t *testing.T) {
 	o := newEReferenceImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(EREFERENCE__CONTAINMENT, v)
 		assert.Equal(t, v, o.EGetFromID(EREFERENCE__CONTAINMENT, false))
 	}
 	{
 		// list with a value
-		mockValue := new(MockEAttribute)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EAttribute]{}
+		mockValue := &MockEAttribute{}
+		mockIterator := &MockEIterator[EAttribute]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EIsProxy").Return(false).Once()
 
 		// set list with new contents
-		o.ESetFromID(EREFERENCE__EKEYS, l)
+		o.ESetFromID(EREFERENCE__EKEYS, ToAnyList[EAttribute](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetEKeys().Size())
 		assert.Equal(t, mockValue, o.GetEKeys().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 	{
-		v := new(MockEReference)
+		v := &MockEReference{}
 		o.ESetFromID(EREFERENCE__EOPPOSITE, v)
 		assert.Equal(t, v, o.EGetFromID(EREFERENCE__EOPPOSITE, false))
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(EREFERENCE__RESOLVE_PROXIES, v)
 		assert.Equal(t, v, o.EGetFromID(EREFERENCE__RESOLVE_PROXIES, false))
 	}
@@ -218,7 +220,7 @@ func TestEReferenceEUnsetFromID(t *testing.T) {
 		o.EUnsetFromID(EREFERENCE__EKEYS)
 		v := o.EGetFromID(EREFERENCE__EKEYS, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 	{

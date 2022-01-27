@@ -14,13 +14,13 @@ package ecore
 // eOperationImpl is the implementation of the model object 'EOperation'
 type eOperationImpl struct {
 	eTypedElementExt
-	eExceptions EList
-	eParameters EList
+	eExceptions EList[EClassifier]
+	eParameters EList[EParameter]
 	operationID int
 }
 type eOperationImplInitializers interface {
-	initEExceptions() EList
-	initEParameters() EList
+	initEExceptions() EList[EClassifier]
+	initEParameters() EList[EParameter]
 }
 
 // newEOperationImpl is the constructor of a eOperationImpl
@@ -67,7 +67,7 @@ func (eOperation *eOperationImpl) GetEContainingClass() EClass {
 }
 
 // GetEExceptions get the value of eExceptions
-func (eOperation *eOperationImpl) GetEExceptions() EList {
+func (eOperation *eOperationImpl) GetEExceptions() EList[EClassifier] {
 	if eOperation.eExceptions == nil {
 		eOperation.eExceptions = eOperation.asInitializers().initEExceptions()
 	}
@@ -82,7 +82,7 @@ func (eOperation *eOperationImpl) UnsetEExceptions() {
 }
 
 // GetEParameters get the value of eParameters
-func (eOperation *eOperationImpl) GetEParameters() EList {
+func (eOperation *eOperationImpl) GetEParameters() EList[EParameter] {
 	if eOperation.eParameters == nil {
 		eOperation.eParameters = eOperation.asInitializers().initEParameters()
 	}
@@ -103,49 +103,50 @@ func (eOperation *eOperationImpl) SetOperationID(newOperationID int) {
 	}
 }
 
-func (eOperation *eOperationImpl) initEExceptions() EList {
-	return NewBasicEObjectList(eOperation.AsEObjectInternal(), EOPERATION__EEXCEPTIONS, -1, false, false, false, true, true)
+func (eOperation *eOperationImpl) initEExceptions() EList[EClassifier] {
+	return NewBasicEObjectList[EClassifier](eOperation.AsEObjectInternal(), EOPERATION__EEXCEPTIONS, -1, false, false, false, true, true)
 }
 
-func (eOperation *eOperationImpl) initEParameters() EList {
-	return NewBasicEObjectList(eOperation.AsEObjectInternal(), EOPERATION__EPARAMETERS, EPARAMETER__EOPERATION, true, true, true, false, false)
+func (eOperation *eOperationImpl) initEParameters() EList[EParameter] {
+	return NewBasicEObjectList[EParameter](eOperation.AsEObjectInternal(), EOPERATION__EPARAMETERS, EPARAMETER__EOPERATION, true, true, true, false, false)
 }
 
-func (eOperation *eOperationImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eOperation *eOperationImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EOPERATION__ECONTAINING_CLASS:
-		return eOperation.asEOperation().GetEContainingClass()
+		return ToAny(eOperation.asEOperation().GetEContainingClass())
 	case EOPERATION__EEXCEPTIONS:
-		list := eOperation.asEOperation().GetEExceptions()
+		list := eOperation.asEOperation().GetEExceptions().(EObjectList[EClassifier])
 		if !resolve {
-			if objects, _ := list.(EObjectList); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyList[EClassifier](list)
 	case EOPERATION__EPARAMETERS:
-		return eOperation.asEOperation().GetEParameters()
+		return ToAnyList(eOperation.asEOperation().GetEParameters())
 	case EOPERATION__OPERATION_ID:
-		return eOperation.asEOperation().GetOperationID()
+		return ToAny(eOperation.asEOperation().GetOperationID())
 	default:
 		return eOperation.eTypedElementExt.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eOperation *eOperationImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eOperation *eOperationImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EOPERATION__EEXCEPTIONS:
-		list := eOperation.asEOperation().GetEExceptions()
-		list.Clear()
-		list.AddAll(newValue.(EList))
+		newList := FromAnyList[EClassifier](value)
+		l := eOperation.asEOperation().GetEExceptions()
+		l.Clear()
+		l.AddAll(newList)
 	case EOPERATION__EPARAMETERS:
-		list := eOperation.asEOperation().GetEParameters()
-		list.Clear()
-		list.AddAll(newValue.(EList))
+		newList := FromAnyList[EParameter](value)
+		l := eOperation.asEOperation().GetEParameters()
+		l.Clear()
+		l.AddAll(newList)
 	case EOPERATION__OPERATION_ID:
-		eOperation.asEOperation().SetOperationID(newValue.(int))
+		newValue := FromAny[int](value)
+		eOperation.asEOperation().SetOperationID(newValue)
 	default:
-		eOperation.eTypedElementExt.ESetFromID(featureID, newValue)
+		eOperation.eTypedElementExt.ESetFromID(featureID, value)
 	}
 }
 
@@ -177,7 +178,7 @@ func (eOperation *eOperationImpl) EIsSetFromID(featureID int) bool {
 	}
 }
 
-func (eOperation *eOperationImpl) EInvokeFromID(operationID int, arguments EList) interface{} {
+func (eOperation *eOperationImpl) EInvokeFromID(operationID int, arguments EList[any]) any {
 	switch operationID {
 	case EOPERATION__IS_OVERRIDE_OF_EOPERATION:
 		return eOperation.asEOperation().IsOverrideOf(arguments.Get(0).(EOperation))
@@ -195,8 +196,9 @@ func (eOperation *eOperationImpl) EBasicInverseAdd(otherEnd EObject, featureID i
 		}
 		return eOperation.EBasicSetContainer(otherEnd, EOPERATION__ECONTAINING_CLASS, msgs)
 	case EOPERATION__EPARAMETERS:
-		list := eOperation.GetEParameters().(ENotifyingList)
-		return list.AddWithNotification(otherEnd, notifications)
+		list := eOperation.GetEParameters().(ENotifyingList[EParameter])
+		end := otherEnd.(EParameter)
+		return list.AddWithNotification(end, notifications)
 	default:
 		return eOperation.eTypedElementExt.EBasicInverseAdd(otherEnd, featureID, notifications)
 	}
@@ -207,8 +209,9 @@ func (eOperation *eOperationImpl) EBasicInverseRemove(otherEnd EObject, featureI
 	case EOPERATION__ECONTAINING_CLASS:
 		return eOperation.EBasicSetContainer(nil, EOPERATION__ECONTAINING_CLASS, notifications)
 	case EOPERATION__EPARAMETERS:
-		list := eOperation.GetEParameters().(ENotifyingList)
-		return list.RemoveWithNotification(otherEnd, notifications)
+		list := eOperation.GetEParameters().(ENotifyingList[EParameter])
+		end := otherEnd.(EParameter)
+		return list.RemoveWithNotification(end, notifications)
 	default:
 		return eOperation.eTypedElementExt.EBasicInverseRemove(otherEnd, featureID, notifications)
 	}

@@ -22,9 +22,9 @@ type EOperation interface {
 
 	GetEContainingClass() EClass
 
-	GetEParameters() EList
+	GetEParameters() EList[EParameter]
 
-	GetEExceptions() EList
+	GetEExceptions() EList[EClassifier]
 	UnsetEExceptions()
 
 	// Start of user code EOperation

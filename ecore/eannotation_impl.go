@@ -14,15 +14,15 @@ package ecore
 // eAnnotationImpl is the implementation of the model object 'EAnnotation'
 type eAnnotationImpl struct {
 	eModelElementExt
-	contents   EList
-	details    EMap
-	references EList
+	contents   EList[EObject]
+	details    EMap[string, string]
+	references EList[EObject]
 	source     string
 }
 type eAnnotationImplInitializers interface {
-	initContents() EList
-	initDetails() EMap
-	initReferences() EList
+	initContents() EList[EObject]
+	initDetails() EMap[string, string]
+	initReferences() EList[EObject]
 }
 
 // newEAnnotationImpl is the constructor of a eAnnotationImpl
@@ -56,7 +56,7 @@ func (eAnnotation *eAnnotationImpl) EStaticFeatureCount() int {
 }
 
 // GetContents get the value of contents
-func (eAnnotation *eAnnotationImpl) GetContents() EList {
+func (eAnnotation *eAnnotationImpl) GetContents() EList[EObject] {
 	if eAnnotation.contents == nil {
 		eAnnotation.contents = eAnnotation.asInitializers().initContents()
 	}
@@ -64,7 +64,7 @@ func (eAnnotation *eAnnotationImpl) GetContents() EList {
 }
 
 // GetDetails get the value of details
-func (eAnnotation *eAnnotationImpl) GetDetails() EMap {
+func (eAnnotation *eAnnotationImpl) GetDetails() EMap[string, string] {
 	if eAnnotation.details == nil {
 		eAnnotation.details = eAnnotation.asInitializers().initDetails()
 	}
@@ -103,7 +103,7 @@ func (eAnnotation *eAnnotationImpl) basicSetEModelElement(newEModelElement EMode
 }
 
 // GetReferences get the value of references
-func (eAnnotation *eAnnotationImpl) GetReferences() EList {
+func (eAnnotation *eAnnotationImpl) GetReferences() EList[EObject] {
 	if eAnnotation.references == nil {
 		eAnnotation.references = eAnnotation.asInitializers().initReferences()
 	}
@@ -124,61 +124,64 @@ func (eAnnotation *eAnnotationImpl) SetSource(newSource string) {
 	}
 }
 
-func (eAnnotation *eAnnotationImpl) initContents() EList {
-	return NewBasicEObjectList(eAnnotation.AsEObjectInternal(), EANNOTATION__CONTENTS, -1, true, true, false, false, false)
+func (eAnnotation *eAnnotationImpl) initContents() EList[EObject] {
+	return NewBasicEObjectList[EObject](eAnnotation.AsEObjectInternal(), EANNOTATION__CONTENTS, -1, true, true, false, false, false)
 }
 
-func (eAnnotation *eAnnotationImpl) initDetails() EMap {
-	return NewBasicEObjectMap(GetPackage().GetEStringToStringMapEntry())
+func (eAnnotation *eAnnotationImpl) initDetails() EMap[string, string] {
+	return NewBasicEObjectMap[string, string](GetPackage().GetEStringToStringMapEntry())
 }
 
-func (eAnnotation *eAnnotationImpl) initReferences() EList {
-	return NewBasicEObjectList(eAnnotation.AsEObjectInternal(), EANNOTATION__REFERENCES, -1, false, false, false, true, false)
+func (eAnnotation *eAnnotationImpl) initReferences() EList[EObject] {
+	return NewBasicEObjectList[EObject](eAnnotation.AsEObjectInternal(), EANNOTATION__REFERENCES, -1, false, false, false, true, false)
 }
 
-func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) interface{} {
+func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) any {
 	switch featureID {
 	case EANNOTATION__CONTENTS:
-		return eAnnotation.asEAnnotation().GetContents()
+		return ToAnyList(eAnnotation.asEAnnotation().GetContents())
 	case EANNOTATION__DETAILS:
-		return eAnnotation.asEAnnotation().GetDetails()
+		return ToAnyMap(eAnnotation.asEAnnotation().GetDetails())
 	case EANNOTATION__EMODEL_ELEMENT:
-		return eAnnotation.asEAnnotation().GetEModelElement()
+		return ToAny(eAnnotation.asEAnnotation().GetEModelElement())
 	case EANNOTATION__REFERENCES:
-		list := eAnnotation.asEAnnotation().GetReferences()
+		list := eAnnotation.asEAnnotation().GetReferences().(EObjectList[EObject])
 		if !resolve {
-			if objects, _ := list.(EObjectList); objects != nil {
-				return objects.GetUnResolvedList()
-			}
+			list = list.GetUnResolvedList()
 		}
-		return list
+		return ToAnyList[EObject](list)
 	case EANNOTATION__SOURCE:
-		return eAnnotation.asEAnnotation().GetSource()
+		return ToAny(eAnnotation.asEAnnotation().GetSource())
 	default:
 		return eAnnotation.eModelElementExt.EGetFromID(featureID, resolve)
 	}
 }
 
-func (eAnnotation *eAnnotationImpl) ESetFromID(featureID int, newValue interface{}) {
+func (eAnnotation *eAnnotationImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EANNOTATION__CONTENTS:
-		list := eAnnotation.asEAnnotation().GetContents()
-		list.Clear()
-		list.AddAll(newValue.(EList))
+		newList := FromAnyList[EObject](value)
+		l := eAnnotation.asEAnnotation().GetContents()
+		l.Clear()
+		l.AddAll(newList)
 	case EANNOTATION__DETAILS:
+		newMap := FromAnyMap[string, string](value)
 		m := eAnnotation.asEAnnotation().GetDetails()
 		m.Clear()
-		m.AddAll(newValue.(EList))
+		m.AddAll(newMap)
 	case EANNOTATION__EMODEL_ELEMENT:
-		eAnnotation.asEAnnotation().SetEModelElement(newValue.(EModelElement))
+		newValue := FromAny[EModelElement](value)
+		eAnnotation.asEAnnotation().SetEModelElement(newValue)
 	case EANNOTATION__REFERENCES:
-		list := eAnnotation.asEAnnotation().GetReferences()
-		list.Clear()
-		list.AddAll(newValue.(EList))
+		newList := FromAnyList[EObject](value)
+		l := eAnnotation.asEAnnotation().GetReferences()
+		l.Clear()
+		l.AddAll(newList)
 	case EANNOTATION__SOURCE:
-		eAnnotation.asEAnnotation().SetSource(newValue.(string))
+		newValue := FromAny[string](value)
+		eAnnotation.asEAnnotation().SetSource(newValue)
 	default:
-		eAnnotation.eModelElementExt.ESetFromID(featureID, newValue)
+		eAnnotation.eModelElementExt.ESetFromID(featureID, value)
 	}
 }
 
@@ -232,8 +235,9 @@ func (eAnnotation *eAnnotationImpl) EBasicInverseAdd(otherEnd EObject, featureID
 func (eAnnotation *eAnnotationImpl) EBasicInverseRemove(otherEnd EObject, featureID int, notifications ENotificationChain) ENotificationChain {
 	switch featureID {
 	case EANNOTATION__CONTENTS:
-		list := eAnnotation.GetContents().(ENotifyingList)
-		return list.RemoveWithNotification(otherEnd, notifications)
+		list := eAnnotation.GetContents().(ENotifyingList[EObject])
+		end := otherEnd.(EObject)
+		return list.RemoveWithNotification(end, notifications)
 	case EANNOTATION__DETAILS:
 		return notifications
 	case EANNOTATION__EMODEL_ELEMENT:

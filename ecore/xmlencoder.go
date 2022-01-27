@@ -66,7 +66,7 @@ type XMLEncoder struct {
 	extendedMetaData *ExtendedMetaData
 	keepDefaults     bool
 	idAttributeName  string
-	roots            EList
+	roots            EList[EObject]
 	xmlVersion       string
 	encoding         string
 	errorFn          func(diagnostic EDiagnostic)
@@ -86,7 +86,7 @@ func NewXMLEncoder(resource EResource, w io.Writer, options map[string]interface
 	s.featureKinds = make(map[EStructuralFeature]xmlSaveFeatureKind)
 	if options != nil {
 		s.idAttributeName, _ = options[XML_OPTION_ID_ATTRIBUTE_NAME].(string)
-		s.roots, _ = options[XML_OPTION_ROOT_OBJECTS].(EList)
+		s.roots, _ = options[XML_OPTION_ROOT_OBJECTS].(EList[EObject])
 		if extendedMetaData := options[XML_OPTION_EXTENDED_META_DATA]; extendedMetaData != nil {
 			s.extendedMetaData = extendedMetaData.(*ExtendedMetaData)
 		}
@@ -116,7 +116,7 @@ func (s *XMLEncoder) Encode() {
 	if contents.Empty() {
 		return
 	}
-	s.encodeTopObject(contents.Get(0).(EObject))
+	s.encodeTopObject(contents.Get(0))
 }
 
 func (s *XMLEncoder) EncodeObject(eObject EObject) (err error) {
@@ -136,7 +136,7 @@ func (s *XMLEncoder) encodeTopObject(eObject EObject) {
 	if s.extendedMetaData != nil {
 		eClass := eObject.EClass()
 		if ePrefixMapFeature := s.extendedMetaData.GetXMLNSPrefixMapFeature(eClass); ePrefixMapFeature != nil {
-			m := eObject.EGet(ePrefixMapFeature).(EMap)
+			m := FromAnyMap[string, string](eObject.EGet(ePrefixMapFeature).(EMap[any, any]))
 			s.setPrefixToNamespace(m)
 		}
 	}
@@ -179,7 +179,7 @@ func (s *XMLEncoder) getRootFeature(eClassifier EClassifier) EStructuralFeature 
 		for eClassifier != nil {
 			if eClass := s.extendedMetaData.GetDocumentRoot(eClassifier.GetEPackage()); eClass != nil {
 				for it := eClass.GetEStructuralFeatures().Iterator(); it.HasNext(); {
-					eFeature := it.Next().(EStructuralFeature)
+					eFeature := it.Next()
 					if eFeature.GetEType() == eClassifier && eFeature.IsChangeable() {
 						return eFeature
 					}
@@ -231,7 +231,7 @@ func (s *XMLEncoder) saveFeatures(eObject EObject, attributesOnly bool) bool {
 	i := 0
 	for it := eAllFeatures.Iterator(); it.HasNext(); i++ {
 		// current feature
-		eFeature := it.Next().(EStructuralFeature)
+		eFeature := it.Next()
 		// compute feature kind
 		kind, ok := s.featureKinds[eFeature]
 		if !ok {
@@ -321,7 +321,7 @@ func (s *XMLEncoder) saveFeatures(eObject EObject, attributesOnly bool) bool {
 		return false
 	}
 	for i := 0; i < elementCount; i++ {
-		eFeature := eAllFeatures.Get(elementFeatures[i]).(EStructuralFeature)
+		eFeature := eAllFeatures.Get(elementFeatures[i])
 		kind := s.featureKinds[eFeature]
 		switch kind {
 		case xsfkDataTypeSingleNillable:
@@ -368,7 +368,7 @@ func (s *XMLEncoder) saveDataTypeSingle(eObject EObject, eFeature EStructuralFea
 }
 
 func (s *XMLEncoder) saveDataTypeMany(eObject EObject, eFeature EStructuralFeature) {
-	l := eObject.EGetResolve(eFeature, false).(EList)
+	l := eObject.EGetResolve(eFeature, false).(EList[any])
 	d := eFeature.GetEType().(EDataType)
 	p := d.GetEPackage()
 	f := p.GetEFactoryInstance()
@@ -401,7 +401,7 @@ func (s *XMLEncoder) saveEObjectSingle(eObject EObject, eFeature EStructuralFeat
 }
 
 func (s *XMLEncoder) saveEObjectMany(eObject EObject, eFeature EStructuralFeature) {
-	l := eObject.EGetResolve(eFeature, false).(EList)
+	l := eObject.EGetResolve(eFeature, false).(EList[any])
 	failure := false
 	var buffer strings.Builder
 	for it := l.Iterator(); ; {
@@ -440,7 +440,7 @@ func (s *XMLEncoder) saveContainedSingle(eObject EObject, eFeature EStructuralFe
 }
 
 func (s *XMLEncoder) saveContainedMany(eObject EObject, eFeature EStructuralFeature) {
-	l := eObject.EGetResolve(eFeature, false).(EList)
+	l := eObject.EGetResolve(eFeature, false).(EList[any])
 	for it := l.Iterator(); it.HasNext(); {
 		value, _ := it.Next().(EObjectInternal)
 		if value != nil {
@@ -482,7 +482,7 @@ func (s *XMLEncoder) saveHRefSingle(eObject EObject, eFeature EStructuralFeature
 }
 
 func (s *XMLEncoder) saveHRefMany(eObject EObject, eFeature EStructuralFeature) {
-	l := eObject.EGetResolve(eFeature, false).(EList)
+	l := eObject.EGetResolve(eFeature, false).(EList[any])
 	for it := l.Iterator(); it.HasNext(); {
 		value, _ := it.Next().(EObject)
 		if value != nil {
@@ -516,7 +516,7 @@ func (s *XMLEncoder) saveIDRefSingle(eObject EObject, eFeature EStructuralFeatur
 }
 
 func (s *XMLEncoder) saveIDRefMany(eObject EObject, eFeature EStructuralFeature) {
-	l := eObject.EGetResolve(eFeature, false).(EList)
+	l := eObject.EGetResolve(eFeature, false).(EList[any])
 	failure := false
 	var buffer strings.Builder
 	for it := l.Iterator(); ; {
@@ -548,7 +548,7 @@ func (s *XMLEncoder) isNil(eObject EObject, eFeature EStructuralFeature) bool {
 }
 
 func (s *XMLEncoder) isEmpty(eObject EObject, eFeature EStructuralFeature) bool {
-	return eObject.EGetResolve(eFeature, false).(EList).Empty()
+	return eObject.EGetResolve(eFeature, false).(EList[any]).Empty()
 }
 
 func (s *XMLEncoder) shouldSaveFeature(o EObject, f EStructuralFeature) bool {
@@ -636,7 +636,7 @@ func (s *XMLEncoder) getSaveResourceKindSingle(eObject EObject, eFeature EStruct
 }
 
 func (s *XMLEncoder) getSaveResourceKindMany(eObject EObject, eFeature EStructuralFeature) int {
-	list, _ := eObject.EGetResolve(eFeature, false).(EList)
+	list, _ := eObject.EGetResolve(eFeature, false).(EList[any])
 	if list == nil || list.Empty() {
 		return skip
 	}
@@ -730,7 +730,7 @@ func (s *XMLEncoder) getPrefix(ePackage EPackage, mustHavePrefix bool) string {
 	return nsPrefix
 }
 
-func (s *XMLEncoder) setPrefixToNamespace(prefixToNamespaceMap EMap) {
+func (s *XMLEncoder) setPrefixToNamespace(prefixToNamespaceMap EMap[string, string]) {
 	for it := prefixToNamespaceMap.Iterator(); it.HasNext(); {
 		entry := it.Next().(EMapEntry)
 		prefix := entry.GetKey().(string)

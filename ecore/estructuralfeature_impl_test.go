@@ -45,7 +45,7 @@ func TestEStructuralFeatureDefaultValueGet(t *testing.T) {
 
 func TestEStructuralFeatureDefaultValueSet(t *testing.T) {
 	o := newEStructuralFeatureImpl()
-	v := interface{}(nil)
+	v := any(nil)
 	assert.Panics(t, func() { o.SetDefaultValue(v) })
 }
 
@@ -54,14 +54,14 @@ func TestEStructuralFeatureDefaultValueLiteralGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, string(""), o.GetDefaultValueLiteral())
 	// get initialized value
-	v := string("Test String")
+	v := "Test String"
 	o.defaultValueLiteral = v
 	assert.Equal(t, v, o.GetDefaultValueLiteral())
 }
 
 func TestEStructuralFeatureDefaultValueLiteralSet(t *testing.T) {
 	o := newEStructuralFeatureImpl()
-	v := string("Test String")
+	v := "Test String"
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -76,7 +76,7 @@ func TestEStructuralFeatureEContainingClassGet(t *testing.T) {
 	assert.Nil(t, o.GetEContainingClass())
 
 	// set a mock container
-	v := new(MockEClass)
+	v := &MockEClass{}
 	o.ESetInternalContainer(v, ESTRUCTURAL_FEATURE__ECONTAINING_CLASS)
 
 	// no proxy
@@ -110,14 +110,14 @@ func TestEStructuralFeatureChangeableGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(true), o.IsChangeable())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isChangeable = v
 	assert.Equal(t, v, o.IsChangeable())
 }
 
 func TestEStructuralFeatureChangeableSet(t *testing.T) {
 	o := newEStructuralFeatureImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -131,14 +131,14 @@ func TestEStructuralFeatureDerivedGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsDerived())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isDerived = v
 	assert.Equal(t, v, o.IsDerived())
 }
 
 func TestEStructuralFeatureDerivedSet(t *testing.T) {
 	o := newEStructuralFeatureImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -152,14 +152,14 @@ func TestEStructuralFeatureTransientGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsTransient())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isTransient = v
 	assert.Equal(t, v, o.IsTransient())
 }
 
 func TestEStructuralFeatureTransientSet(t *testing.T) {
 	o := newEStructuralFeatureImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -173,14 +173,14 @@ func TestEStructuralFeatureUnsettableGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsUnsettable())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isUnsettable = v
 	assert.Equal(t, v, o.IsUnsettable())
 }
 
 func TestEStructuralFeatureUnsettableSet(t *testing.T) {
 	o := newEStructuralFeatureImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -194,14 +194,14 @@ func TestEStructuralFeatureVolatileGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, bool(false), o.IsVolatile())
 	// get initialized value
-	v := bool(true)
+	v := true
 	o.isVolatile = v
 	assert.Equal(t, v, o.IsVolatile())
 }
 
 func TestEStructuralFeatureVolatileSet(t *testing.T) {
 	o := newEStructuralFeatureImpl()
-	v := bool(true)
+	v := true
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -218,34 +218,26 @@ func TestEStructuralFeatureGetContainerClassOperation(t *testing.T) {
 func TestEStructuralFeatureEGetFromID(t *testing.T) {
 	o := newEStructuralFeatureImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.IsChangeable(), o.EGetFromID(ESTRUCTURAL_FEATURE__CHANGEABLE, true))
 	assert.Panics(t, func() { o.EGetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE, true) })
 	assert.Panics(t, func() { o.EGetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE, false) })
-	assert.Equal(t, o.GetDefaultValueLiteral(), o.EGetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE_LITERAL, true))
-	assert.Equal(t, o.IsDerived(), o.EGetFromID(ESTRUCTURAL_FEATURE__DERIVED, true))
-	assert.Equal(t, o.GetEContainingClass(), o.EGetFromID(ESTRUCTURAL_FEATURE__ECONTAINING_CLASS, true))
-	assert.Equal(t, o.GetFeatureID(), o.EGetFromID(ESTRUCTURAL_FEATURE__FEATURE_ID, true))
-	assert.Equal(t, o.IsTransient(), o.EGetFromID(ESTRUCTURAL_FEATURE__TRANSIENT, true))
-	assert.Equal(t, o.IsUnsettable(), o.EGetFromID(ESTRUCTURAL_FEATURE__UNSETTABLE, true))
-	assert.Equal(t, o.IsVolatile(), o.EGetFromID(ESTRUCTURAL_FEATURE__VOLATILE, true))
 }
 
 func TestEStructuralFeatureESetFromID(t *testing.T) {
 	o := newEStructuralFeatureImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ESTRUCTURAL_FEATURE__CHANGEABLE, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__CHANGEABLE, false))
 	}
 	assert.Panics(t, func() { o.ESetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE, nil) })
 	{
-		v := string("Test String")
+		v := "Test String"
 		o.ESetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE_LITERAL, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE_LITERAL, false))
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ESTRUCTURAL_FEATURE__DERIVED, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__DERIVED, false))
 	}
@@ -255,17 +247,17 @@ func TestEStructuralFeatureESetFromID(t *testing.T) {
 		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__FEATURE_ID, false))
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ESTRUCTURAL_FEATURE__TRANSIENT, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__TRANSIENT, false))
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ESTRUCTURAL_FEATURE__UNSETTABLE, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__UNSETTABLE, false))
 	}
 	{
-		v := bool(true)
+		v := true
 		o.ESetFromID(ESTRUCTURAL_FEATURE__VOLATILE, v)
 		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__VOLATILE, false))
 	}
@@ -343,14 +335,14 @@ func TestEStructuralFeatureEBasicInverseAdd(t *testing.T) {
 		assert.Equal(t, mockNotifications, o.EBasicInverseAdd(mockObject, -1, mockNotifications))
 	}
 	{
-		mockObject := new(MockEClass)
+		mockObject := &MockEClass{}
 		mockObject.On("EResource").Return(nil).Once()
 		mockObject.On("EIsProxy").Return(false).Once()
 		o.EBasicInverseAdd(mockObject, ESTRUCTURAL_FEATURE__ECONTAINING_CLASS, nil)
 		assert.Equal(t, mockObject, o.GetEContainingClass())
 		mock.AssertExpectationsForObjects(t, mockObject)
 
-		mockOther := new(MockEClass)
+		mockOther := &MockEClass{}
 		mockOther.On("EResource").Return(nil).Once()
 		mockOther.On("EIsProxy").Return(false).Once()
 		mockObject.On("EResource").Return(nil).Once()
@@ -370,7 +362,7 @@ func TestEStructuralFeatureEBasicInverseRemove(t *testing.T) {
 		assert.Equal(t, mockNotifications, o.EBasicInverseRemove(mockObject, -1, mockNotifications))
 	}
 	{
-		mockObject := new(MockEClass)
+		mockObject := &MockEClass{}
 		o.EBasicInverseRemove(mockObject, ESTRUCTURAL_FEATURE__ECONTAINING_CLASS, nil)
 		mock.AssertExpectationsForObjects(t, mockObject)
 	}

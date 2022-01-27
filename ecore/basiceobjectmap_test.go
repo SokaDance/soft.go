@@ -18,13 +18,13 @@ import (
 
 func TestBasicEObjectMap_Constructor(t *testing.T) {
 	mockClass := &MockEClass{}
-	m := NewBasicEObjectMap(mockClass)
+	m := NewBasicEObjectMap[EObject, EObject](mockClass)
 	assert.NotNil(t, m)
 
-	var mp EMap = m
+	var mp EMap[EObject, EObject] = m
 	assert.NotNil(t, mp)
 
-	var ml EList = m
+	var ml EList[any] = m
 	assert.NotNil(t, ml)
 }
 
@@ -33,20 +33,63 @@ type MockEObjectEMapEntry struct {
 	MockEMapEntry
 }
 
+// func (m *MockEObjectEMapEntry) GetKey() any {
+// 	ret := m.Called()
+
+// 	var r0 any
+// 	if rf, ok := ret.Get(0).(func() any); ok {
+// 		r0 = rf()
+// 	} else {
+// 		if ret.Get(0) != nil {
+// 			r0 = ret.Get(0)
+// 		}
+// 	}
+
+// 	return r0
+// }
+
+// // GetValue provides a mock function with given fields:
+// func (m *MockEObjectEMapEntry) GetValue() any {
+// 	ret := m.Called()
+
+// 	var r0 any
+// 	if rf, ok := ret.Get(0).(func() any); ok {
+// 		r0 = rf()
+// 	} else {
+// 		if ret.Get(0) != nil {
+// 			r0 = ret.Get(0)
+// 		}
+// 	}
+
+// 	return r0
+// }
+
+// // SetKey provides a mock function with given fields: _a0
+// func (m *MockEObjectEMapEntry) SetKey(_a0 any) {
+// 	m.Called(_a0)
+// }
+
+// // SetValue provides a mock function with given fields: _a0
+// func (m *MockEObjectEMapEntry) SetValue(_a0 any) {
+// 	m.Called(_a0)
+// }
+
 func TestBasicEObjectMap_Put(t *testing.T) {
 	mockClass := &MockEClass{}
 	mockPackage := &MockEPackage{}
 	mockFactory := &MockEFactory{}
 	mockEntry := &MockEObjectEMapEntry{}
-	m := NewBasicEObjectMap(mockClass)
+	mockKey := &MockEObject{}
+	mockValue := &MockEObject{}
+	m := NewBasicEObjectMap[EObject, EObject](mockClass)
 
 	mockClass.On("GetEPackage").Once().Return(mockPackage)
 	mockPackage.On("GetEFactoryInstance").Once().Return(mockFactory)
 	mockFactory.On("Create", mockClass).Once().Return(mockEntry)
-	mockEntry.On("SetKey", 2).Once()
-	mockEntry.On("SetValue", "2").Once()
-	mockEntry.On("GetKey").Once().Return(2)
-	mockEntry.On("GetValue").Once().Return("2")
-	m.Put(2, "2")
-	mock.AssertExpectationsForObjects(t, mockClass, mockPackage, mockFactory, mockEntry)
+	mockEntry.On("SetKey", mockKey).Once()
+	mockEntry.On("SetValue", mockValue).Once()
+	mockEntry.On("GetKey").Once().Return(mockKey)
+	mockEntry.On("GetValue").Once().Return(mockValue)
+	m.Put(mockKey, mockValue)
+	mock.AssertExpectationsForObjects(t, mockClass, mockPackage, mockFactory, mockEntry, mockKey, mockValue)
 }

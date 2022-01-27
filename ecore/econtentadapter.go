@@ -24,6 +24,10 @@ func NewEContentAdapter() *EContentAdapter {
 	return ca
 }
 
+func (adapter *EContentAdapter) AsEAdapter() EAdapter {
+	return adapter.interfaces.(EAdapter)
+}
+
 func (adapter *EContentAdapter) SetInterfaces(interfaces interface{}) {
 	adapter.interfaces = interfaces
 }
@@ -40,29 +44,39 @@ func (adapter *EContentAdapter) NotifyChanged(notification ENotification) {
 	adapter.selfAdapt(notification)
 }
 
+func toNotifier[T ENotifier](t T) ENotifier {
+	return t
+}
+
+func fromNotifier[T ENotifier](n ENotifier) T {
+	return n.(T)
+}
+
 func (adapter *EContentAdapter) SetTarget(notifier ENotifier) {
 	adapter.AbstractEAdapter.SetTarget(notifier)
 	if eObject, _ := notifier.(EObject); eObject != nil && !adapter.resolveProxies {
-		l := eObject.EContents().(EObjectList)
-		l = l.GetUnResolvedList().(EObjectList)
+		l := eObject.EContents()
+		if objectList, _ := l.(EObjectList[EObject]); objectList != nil {
+			l = objectList.GetUnResolvedList()
+		}
 		for it := l.Iterator(); it.HasNext(); {
-			n := it.Next().(EObject)
+			n := it.Next()
 			if !n.EIsProxy() {
 				adapter.addAdapter(n)
 			}
 		}
 	} else {
-		var it EIterator
+		var it EIterator[ENotifier]
 		switch t := notifier.(type) {
 		case EObject:
-			it = t.EContents().Iterator()
+			it = ToList(t.EContents(), toNotifier[EObject], fromNotifier[EObject]).Iterator()
 		case EResource:
-			it = t.GetContents().Iterator()
+			it = ToList(t.GetContents(), toNotifier[EObject], fromNotifier[EObject]).Iterator()
 		case EResourceSet:
-			it = t.GetResources().Iterator()
+			it = ToList(t.GetResources(), toNotifier[EResource], fromNotifier[EResource]).Iterator()
 		}
 		for it != nil && it.HasNext() {
-			n := it.Next().(ENotifier)
+			n := it.Next()
 			adapter.addAdapter(n)
 		}
 	}
@@ -73,17 +87,17 @@ func (adapter *EContentAdapter) UnSetTarget(notifier ENotifier) {
 	switch t := notifier.(type) {
 	case EObject:
 		for it := t.EContents().Iterator(); it.HasNext(); {
-			notifier, _ := it.Next().(ENotifier)
+			notifier := it.Next()
 			adapter.removeAdapterWithChecks(notifier, false, true)
 		}
 	case EResource:
 		for it := t.GetContents().Iterator(); it.HasNext(); {
-			notifier, _ := it.Next().(ENotifier)
+			notifier := it.Next()
 			adapter.removeAdapterWithChecks(notifier, true, false)
 		}
 	case EResourceSet:
 		for it := t.GetResources().Iterator(); it.HasNext(); {
-			notifier, _ := it.Next().(ENotifier)
+			notifier := it.Next()
 			adapter.removeAdapterWithChecks(notifier, false, false)
 		}
 	}
@@ -137,7 +151,7 @@ func (adapter *EContentAdapter) handleContainment(notification ENotification) {
 		newNotifier, _ := notification.GetNewValue().(ENotifier)
 		adapter.addAdapter(newNotifier)
 	case ADD_MANY:
-		newValues, _ := notification.GetNewValue().([]interface{})
+		newValues, _ := notification.GetNewValue().([]any)
 		for _, notifier := range newValues {
 			newNotifier, _ := notifier.(ENotifier)
 			adapter.addAdapter(newNotifier)
@@ -150,7 +164,7 @@ func (adapter *EContentAdapter) handleContainment(notification ENotification) {
 	case REMOVE_MANY:
 		_, checkContainer := notification.GetNotifier().(EResource)
 		checkResource := notification.GetFeature() != nil
-		oldValues, _ := notification.GetOldValue().([]interface{})
+		oldValues, _ := notification.GetOldValue().([]any)
 		for _, notifier := range oldValues {
 			oldNotifier, _ := notifier.(ENotifier)
 			adapter.removeAdapterWithChecks(oldNotifier, checkContainer, checkResource)
@@ -161,15 +175,15 @@ func (adapter *EContentAdapter) handleContainment(notification ENotification) {
 func (adapter *EContentAdapter) addAdapter(notifier ENotifier) {
 	if notifier != nil {
 		eAdapters := notifier.EAdapters()
-		if !eAdapters.Contains(adapter.interfaces) {
-			eAdapters.Add(adapter.interfaces)
+		if eAdapter := adapter.AsEAdapter(); !eAdapters.Contains(eAdapter) {
+			eAdapters.Add(eAdapter)
 		}
 	}
 }
 
 func (adapter *EContentAdapter) removeAdapter(notifier ENotifier) {
 	if notifier != nil {
-		notifier.EAdapters().Remove(adapter.interfaces)
+		notifier.EAdapters().Remove(adapter.AsEAdapter())
 	}
 }
 

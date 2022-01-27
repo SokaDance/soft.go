@@ -9,16 +9,16 @@
 
 package ecore
 
-type MockEMap struct {
-	MockEList
+type MockEMap[K comparable, V any] struct {
+	MockEList[any]
 }
 
 // ContainsKey provides a mock function with given fields: key
-func (_m *MockEMap) ContainsKey(key interface{}) bool {
+func (_m *MockEMap[K, V]) ContainsKey(key K) bool {
 	ret := _m.Called(key)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(interface{}) bool); ok {
+	if rf, ok := ret.Get(0).(func(K) bool); ok {
 		r0 = rf(key)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -28,11 +28,11 @@ func (_m *MockEMap) ContainsKey(key interface{}) bool {
 }
 
 // ContainsValue provides a mock function with given fields: value
-func (_m *MockEMap) ContainsValue(value interface{}) bool {
+func (_m *MockEMap[K, V]) ContainsValue(value V) bool {
 	ret := _m.Called(value)
 
 	var r0 bool
-	if rf, ok := ret.Get(0).(func(interface{}) bool); ok {
+	if rf, ok := ret.Get(0).(func(V) bool); ok {
 		r0 = rf(value)
 	} else {
 		r0 = ret.Get(0).(bool)
@@ -42,36 +42,37 @@ func (_m *MockEMap) ContainsValue(value interface{}) bool {
 }
 
 // GetValue provides a mock function with given fields: value
-func (_m *MockEMap) GetValue(value interface{}) interface{} {
+func (_m *MockEMap[K, V]) GetValue(value K) (V, bool) {
 	ret := _m.Called(value)
 
-	var r0 interface{}
-	if rf, ok := ret.Get(0).(func(interface{}) interface{}); ok {
-		r0 = rf(value)
+	var r0 V
+	var r1 bool
+	if rf, ok := ret.Get(0).(func(K) (V, bool)); ok {
+		r0, r1 = rf(value)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(interface{})
+			r0 = ret.Get(0).(V)
+			r1 = ret.Get(1).(bool)
 		}
 	}
-
-	return r0
+	return r0, r1
 }
 
 // Put provides a mock function with given fields: key, value
-func (_m *MockEMap) Put(key interface{}, value interface{}) {
+func (_m *MockEMap[K, V]) Put(key K, value V) {
 	_m.Called(key, value)
 }
 
 // RemoveKey provides a mock function with given fields: key
-func (_m *MockEMap) RemoveKey(key interface{}) interface{} {
+func (_m *MockEMap[K, V]) RemoveKey(key K) V {
 	ret := _m.Called(key)
 
-	var r0 interface{}
-	if rf, ok := ret.Get(0).(func(interface{}) interface{}); ok {
+	var r0 V
+	if rf, ok := ret.Get(0).(func(K) V); ok {
 		r0 = rf(key)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(interface{})
+			r0 = ret.Get(0).(V)
 		}
 	}
 
@@ -79,15 +80,15 @@ func (_m *MockEMap) RemoveKey(key interface{}) interface{} {
 }
 
 // ToMap provides a mock function with given fields:
-func (_m *MockEMap) ToMap() map[interface{}]interface{} {
+func (_m *MockEMap[K, V]) ToMap() map[K]V {
 	ret := _m.Called()
 
-	var r0 map[interface{}]interface{}
-	if rf, ok := ret.Get(0).(func() map[interface{}]interface{}); ok {
+	var r0 map[K]V
+	if rf, ok := ret.Get(0).(func() map[K]V); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[interface{}]interface{})
+			r0 = ret.Get(0).(map[K]V)
 		}
 	}
 

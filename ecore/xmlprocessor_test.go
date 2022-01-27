@@ -100,7 +100,7 @@ func (f *nodeFactory) newNode(name string, depth int) EObject {
 	n := f.eFactory.Create(f.eNodeClass)
 	n.ESet(f.eNameAttribute, name)
 	if depth > 0 {
-		children := n.EGet(f.eNodesReference).(EList)
+		children := n.EGet(f.eNodesReference).(EList[any])
 		for i := 0; i < rand.Intn(5); i++ {
 			c := f.newNode(fmt.Sprintf("%v.%v", name, i), depth-1)
 			children.Add(c)

@@ -15,12 +15,12 @@ package ecore
 type EGenericType interface {
 	EObject
 
-	IsInstance(interface{}) bool
+	IsInstance(any) bool
 
 	GetEUpperBound() EGenericType
 	SetEUpperBound(EGenericType)
 
-	GetETypeArguments() EList
+	GetETypeArguments() EList[EGenericType]
 
 	GetERawType() EClassifier
 

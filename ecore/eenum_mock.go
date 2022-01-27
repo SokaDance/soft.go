@@ -16,15 +16,15 @@ type MockEEnum struct {
 }
 
 // GetELiterals get the value of eLiterals
-func (eEnum *MockEEnum) GetELiterals() EList {
+func (eEnum *MockEEnum) GetELiterals() EList[EEnumLiteral] {
 	ret := eEnum.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EEnumLiteral]
+	if rf, ok := ret.Get(0).(func() EList[EEnumLiteral]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EEnumLiteral])
 		}
 	}
 

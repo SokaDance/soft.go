@@ -43,14 +43,14 @@ func TestENamedElementNameGet(t *testing.T) {
 	// get default value
 	assert.Equal(t, string(""), o.GetName())
 	// get initialized value
-	v := string("Test String")
+	v := "Test String"
 	o.name = v
 	assert.Equal(t, v, o.GetName())
 }
 
 func TestENamedElementNameSet(t *testing.T) {
 	o := newENamedElementImpl()
-	v := string("Test String")
+	v := "Test String"
 	mockAdapter := new(MockEAdapter)
 	mockAdapter.On("SetTarget", o).Once()
 	mockAdapter.On("NotifyChanged", mock.Anything).Once()
@@ -62,14 +62,13 @@ func TestENamedElementNameSet(t *testing.T) {
 func TestENamedElementEGetFromID(t *testing.T) {
 	o := newENamedElementImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetName(), o.EGetFromID(ENAMED_ELEMENT__NAME, true))
 }
 
 func TestENamedElementESetFromID(t *testing.T) {
 	o := newENamedElementImpl()
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
-		v := string("Test String")
+		v := "Test String"
 		o.ESetFromID(ENAMED_ELEMENT__NAME, v)
 		assert.Equal(t, v, o.EGetFromID(ENAMED_ELEMENT__NAME, false))
 	}

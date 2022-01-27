@@ -51,8 +51,7 @@ func TestEModelElementGetEAnnotationOperation(t *testing.T) {
 func TestEModelElementEGetFromID(t *testing.T) {
 	o := newEModelElementImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
-	assert.Equal(t, o.GetEAnnotations(), o.EGetFromID(EMODEL_ELEMENT__EANNOTATIONS, true))
-	assert.Equal(t, o.GetEAnnotations().(EObjectList).GetUnResolvedList(), o.EGetFromID(EMODEL_ELEMENT__EANNOTATIONS, false))
+	assert.Equal(t, o.GetEAnnotations(), FromAnyList[EAnnotation](o.EGetFromID(EMODEL_ELEMENT__EANNOTATIONS, true)))
 }
 
 func TestEModelElementESetFromID(t *testing.T) {
@@ -60,16 +59,21 @@ func TestEModelElementESetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.ESetFromID(-1, nil) })
 	{
 		// list with a value
-		mockValue := new(MockEAnnotation)
-		l := NewImmutableEList([]interface{}{mockValue})
+		mockList := &MockEList[EAnnotation]{}
+		mockValue := &MockEAnnotation{}
+		mockIterator := &MockEIterator[EAnnotation]{}
+		mockList.On("Iterator").Return(mockIterator).Once()
+		mockIterator.On("HasNext").Return(true).Once()
+		mockIterator.On("Next").Return(mockValue).Once()
+		mockIterator.On("HasNext").Return(false).Once()
 		mockValue.On("EInverseAdd", o, EANNOTATION__EMODEL_ELEMENT, mock.Anything).Return(nil).Once()
 
 		// set list with new contents
-		o.ESetFromID(EMODEL_ELEMENT__EANNOTATIONS, l)
+		o.ESetFromID(EMODEL_ELEMENT__EANNOTATIONS, ToAnyList[EAnnotation](mockList))
 		// checks
 		assert.Equal(t, 1, o.GetEAnnotations().Size())
 		assert.Equal(t, mockValue, o.GetEAnnotations().Get(0))
-		mock.AssertExpectationsForObjects(t, mockValue)
+		mock.AssertExpectationsForObjects(t, mockList, mockIterator, mockValue)
 	}
 
 }
@@ -87,7 +91,7 @@ func TestEModelElementEUnsetFromID(t *testing.T) {
 		o.EUnsetFromID(EMODEL_ELEMENT__EANNOTATIONS)
 		v := o.EGetFromID(EMODEL_ELEMENT__EANNOTATIONS, false)
 		assert.NotNil(t, v)
-		l := v.(EList)
+		l := v.(EList[any])
 		assert.True(t, l.Empty())
 	}
 }
@@ -106,7 +110,7 @@ func TestEModelElementEBasicInverseAdd(t *testing.T) {
 		assert.Equal(t, mockNotifications, o.EBasicInverseAdd(mockObject, -1, mockNotifications))
 	}
 	{
-		mockObject := new(MockEAnnotation)
+		mockObject := &MockEAnnotation{}
 		o.EBasicInverseAdd(mockObject, EMODEL_ELEMENT__EANNOTATIONS, nil)
 		l := o.GetEAnnotations()
 		assert.True(t, l.Contains(mockObject))
@@ -124,7 +128,7 @@ func TestEModelElementEBasicInverseRemove(t *testing.T) {
 	}
 	{
 		// initialize list with a mock object
-		mockObject := new(MockEAnnotation)
+		mockObject := &MockEAnnotation{}
 		mockObject.On("EInverseAdd", o, EANNOTATION__EMODEL_ELEMENT, mock.Anything).Return(nil).Once()
 
 		l := o.GetEAnnotations()

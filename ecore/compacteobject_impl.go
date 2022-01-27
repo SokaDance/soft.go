@@ -168,22 +168,22 @@ func (o *CompactEObjectImpl) ESetDeliver(deliver bool) {
 	}
 }
 
-func (o *CompactEObjectImpl) EAdapters() EList {
+func (o *CompactEObjectImpl) EAdapters() EList[EAdapter] {
 	adapters := o.getField(adapters_flag)
 	if adapters == nil {
 		adapters = newNotifierAdapterList(&o.AbstractENotifier)
 		o.setField(adapters_flag, adapters)
 	}
-	return adapters.(EList)
+	return adapters.(EList[EAdapter])
 }
 
 func (o *CompactEObjectImpl) EBasicHasAdapters() bool {
 	return o.hasField(adapters_flag)
 }
 
-func (o *CompactEObjectImpl) EBasicAdapters() EList {
+func (o *CompactEObjectImpl) EBasicAdapters() EList[EAdapter] {
 	if adapters := o.getField(adapters_flag); adapters != nil {
-		return adapters.(EList)
+		return adapters.(EList[EAdapter])
 	}
 	return nil
 }
@@ -206,25 +206,25 @@ func (o *CompactEObjectImpl) ESetProxyURI(uri *URI) {
 }
 
 // EContents ...
-func (o *CompactEObjectImpl) EContents() EList {
+func (o *CompactEObjectImpl) EContents() EList[EObject] {
 	contents := o.getField(contents_flag)
 	if contents == nil {
 		eObject := o.AsEObject()
-		contents = newEContentsList(eObject, eObject.EClass().GetEContainmentFeatures(), true)
+		contents = newEContentsList[EObject](eObject, eObject.EClass().GetEContainmentFeatures(), true)
 		o.setField(contents_flag, contents)
 	}
-	return contents.(EList)
+	return contents.(EList[EObject])
 }
 
 // ECrossReferences ...
-func (o *CompactEObjectImpl) ECrossReferences() EList {
+func (o *CompactEObjectImpl) ECrossReferences() EList[EObject] {
 	crossReferences := o.getField(cross_flag)
 	if crossReferences == nil {
 		eObject := o.AsEObject()
-		crossReferences = newEContentsList(eObject, eObject.EClass().GetECrossReferenceFeatures(), true)
+		crossReferences = newEContentsList[EObject](eObject, eObject.EClass().GetECrossReferenceFeatures(), true)
 		o.setField(cross_flag, crossReferences)
 	}
-	return crossReferences.(EList)
+	return crossReferences.(EList[EObject])
 }
 
 // ESetContainer ...

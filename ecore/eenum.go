@@ -19,7 +19,7 @@ type EEnum interface {
 	GetEEnumLiteralByValue(int) EEnumLiteral
 	GetEEnumLiteralByLiteral(string) EEnumLiteral
 
-	GetELiterals() EList
+	GetELiterals() EList[EEnumLiteral]
 
 	// Start of user code EEnum
 	// End of user code

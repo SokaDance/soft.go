@@ -173,9 +173,9 @@ func TestEStoreEObjectImpl_GetAttribute_Many(t *testing.T) {
 	list := o.EGetFromID(0, true)
 	mock.AssertExpectationsForObjects(t, mockClass, mockAttribute, mockStore)
 
-	eobjectlist, _ := list.(EObjectList)
+	eobjectlist := list.(EObjectList[any])
 	assert.NotNil(t, eobjectlist)
-	enotifyinglist, _ := list.(ENotifyingList)
+	enotifyinglist, _ := list.(ENotifyingList[any])
 	assert.NotNil(t, enotifyinglist)
 }
 

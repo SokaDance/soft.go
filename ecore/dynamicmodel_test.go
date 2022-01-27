@@ -122,7 +122,7 @@ func instanciateDynamicModel(mm *DynamicMetaModel) *DynamicModel {
 	 */
 	m.bookStoreObject.ESet(mm.bookStoreOwner, "David Brown")
 	m.bookStoreObject.ESet(mm.bookStoreLocation, "Street#12, Top Town, NY")
-	allBooks := m.bookStoreObject.EGet(mm.bookStoreBooks).(EList)
+	allBooks := m.bookStoreObject.EGet(mm.bookStoreBooks).(EList[any])
 	allBooks.Add(m.bookObject)
 
 	/*

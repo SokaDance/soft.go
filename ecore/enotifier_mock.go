@@ -19,15 +19,15 @@ type MockENotifier struct {
 }
 
 // EAdapters provides a mock function with given fields:
-func (_m *MockENotifier) EAdapters() EList {
+func (_m *MockENotifier) EAdapters() EList[EAdapter] {
 	ret := _m.Called()
 
-	var r0 EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r0 EList[EAdapter]
+	if rf, ok := ret.Get(0).(func() EList[EAdapter]); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(EList)
+			r0 = ret.Get(0).(EList[EAdapter])
 		}
 	}
 

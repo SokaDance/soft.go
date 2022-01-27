@@ -24,7 +24,7 @@ func discardMockEEnumLiteral() {
 // TestMockEEnumLiteralGetEEnum tests method GetEEnum
 func TestMockEEnumLiteralGetEEnum(t *testing.T) {
 	o := &MockEEnumLiteral{}
-	r := new(MockEEnum)
+	r := &MockEEnum{}
 	o.On("GetEEnum").Once().Return(r)
 	o.On("GetEEnum").Once().Return(func() EEnum {
 		return r
@@ -37,9 +37,9 @@ func TestMockEEnumLiteralGetEEnum(t *testing.T) {
 // TestMockEEnumLiteralGetInstance tests method GetInstance
 func TestMockEEnumLiteralGetInstance(t *testing.T) {
 	o := &MockEEnumLiteral{}
-	r := interface{}(nil)
+	r := any(nil)
 	o.On("GetInstance").Once().Return(r)
-	o.On("GetInstance").Once().Return(func() interface{} {
+	o.On("GetInstance").Once().Return(func() any {
 		return r
 	})
 	assert.Equal(t, r, o.GetInstance())
@@ -50,7 +50,7 @@ func TestMockEEnumLiteralGetInstance(t *testing.T) {
 // TestMockEEnumLiteralSetInstance tests method SetInstance
 func TestMockEEnumLiteralSetInstance(t *testing.T) {
 	o := &MockEEnumLiteral{}
-	v := interface{}(nil)
+	v := any(nil)
 	o.On("SetInstance", v).Once()
 	o.SetInstance(v)
 	o.AssertExpectations(t)
@@ -59,7 +59,7 @@ func TestMockEEnumLiteralSetInstance(t *testing.T) {
 // TestMockEEnumLiteralGetLiteral tests method GetLiteral
 func TestMockEEnumLiteralGetLiteral(t *testing.T) {
 	o := &MockEEnumLiteral{}
-	r := string("Test String")
+	r := "Test String"
 	o.On("GetLiteral").Once().Return(r)
 	o.On("GetLiteral").Once().Return(func() string {
 		return r
@@ -72,7 +72,7 @@ func TestMockEEnumLiteralGetLiteral(t *testing.T) {
 // TestMockEEnumLiteralSetLiteral tests method SetLiteral
 func TestMockEEnumLiteralSetLiteral(t *testing.T) {
 	o := &MockEEnumLiteral{}
-	v := string("Test String")
+	v := "Test String"
 	o.On("SetLiteral", v).Once()
 	o.SetLiteral(v)
 	o.AssertExpectations(t)

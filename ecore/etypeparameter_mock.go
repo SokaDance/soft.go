@@ -16,15 +16,15 @@ type MockETypeParameter struct {
 }
 
 // GetEBounds get the value of eBounds
-func (eTypeParameter *MockETypeParameter) GetEBounds() EList {
+func (eTypeParameter *MockETypeParameter) GetEBounds() EList[EGenericType] {
 	ret := eTypeParameter.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EGenericType]
+	if rf, ok := ret.Get(0).(func() EList[EGenericType]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EGenericType])
 		}
 	}
 

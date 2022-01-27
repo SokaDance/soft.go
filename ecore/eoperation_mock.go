@@ -32,15 +32,15 @@ func (eOperation *MockEOperation) GetEContainingClass() EClass {
 }
 
 // GetEExceptions get the value of eExceptions
-func (eOperation *MockEOperation) GetEExceptions() EList {
+func (eOperation *MockEOperation) GetEExceptions() EList[EClassifier] {
 	ret := eOperation.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EClassifier]
+	if rf, ok := ret.Get(0).(func() EList[EClassifier]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EClassifier])
 		}
 	}
 
@@ -53,15 +53,15 @@ func (eOperation *MockEOperation) UnsetEExceptions() {
 }
 
 // GetEParameters get the value of eParameters
-func (eOperation *MockEOperation) GetEParameters() EList {
+func (eOperation *MockEOperation) GetEParameters() EList[EParameter] {
 	ret := eOperation.Called()
 
-	var r EList
-	if rf, ok := ret.Get(0).(func() EList); ok {
+	var r EList[EParameter]
+	if rf, ok := ret.Get(0).(func() EList[EParameter]); ok {
 		r = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r = ret.Get(0).(EList)
+			r = ret.Get(0).(EList[EParameter])
 		}
 	}
 

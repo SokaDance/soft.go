@@ -18,7 +18,7 @@ import (
 
 // TestGetELiterals tests method GetELiterals
 func TestMockEIteratorHasNext(t *testing.T) {
-	o := &MockEIterator{}
+	o := &MockEIterator[int]{}
 	v := true
 	o.On("HasNext").Once().Return(v)
 	assert.Equal(t, v, o.HasNext())
@@ -31,7 +31,7 @@ func TestMockEIteratorHasNext(t *testing.T) {
 }
 
 func TestMockEIteratorNext(t *testing.T) {
-	o := &MockEIterator{}
+	o := &MockEIterator[interface{}]{}
 	v := &mock.Mock{}
 	o.On("Next").Once().Return(v)
 	assert.Equal(t, v, o.Next())

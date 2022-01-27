@@ -10,8 +10,8 @@
 package ecore
 
 // ENotifyingList ...
-type ENotifyingList interface {
-	EList
+type ENotifyingList[T any] interface {
+	EList[T]
 
 	GetNotifier() ENotifier
 
@@ -19,9 +19,9 @@ type ENotifyingList interface {
 
 	GetFeatureID() int
 
-	AddWithNotification(object interface{}, notifications ENotificationChain) ENotificationChain
+	AddWithNotification(object T, notifications ENotificationChain) ENotificationChain
 
-	RemoveWithNotification(object interface{}, notifications ENotificationChain) ENotificationChain
+	RemoveWithNotification(object T, notifications ENotificationChain) ENotificationChain
 
-	SetWithNotification(index int, object interface{}, notifications ENotificationChain) ENotificationChain
+	SetWithNotification(index int, object T, notifications ENotificationChain) ENotificationChain
 }

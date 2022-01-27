@@ -6,13 +6,13 @@ import (
 )
 
 type EURIConverterImpl struct {
-	uriHandlers EList
+	uriHandlers EList[EURIHandler]
 	uriMap      map[URI]URI
 }
 
 func NewEURIConverterImpl() *EURIConverterImpl {
 	r := new(EURIConverterImpl)
-	r.uriHandlers = NewImmutableEList([]interface{}{new(FileURIHandler), new(MemoryURIHandler)})
+	r.uriHandlers = NewImmutableEList([]EURIHandler{new(FileURIHandler), new(MemoryURIHandler)})
 	r.uriMap = make(map[URI]URI)
 	return r
 }
@@ -59,7 +59,7 @@ func (r *EURIConverterImpl) getURIFromMap(uri *URI) *URI {
 func (r *EURIConverterImpl) GetURIHandler(uri *URI) EURIHandler {
 	if uri != nil {
 		for it := r.uriHandlers.Iterator(); it.HasNext(); {
-			uriHandler := it.Next().(EURIHandler)
+			uriHandler := it.Next()
 			if uriHandler.CanHandle(uri) {
 				return uriHandler
 			}
@@ -68,6 +68,6 @@ func (r *EURIConverterImpl) GetURIHandler(uri *URI) EURIHandler {
 	return nil
 }
 
-func (r *EURIConverterImpl) GetURIHandlers() EList {
+func (r *EURIConverterImpl) GetURIHandlers() EList[EURIHandler] {
 	return r.uriHandlers
 }

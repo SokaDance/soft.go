@@ -21,7 +21,7 @@ func TestEClassifierExtClassifierID(t *testing.T) {
 	assert.Equal(t, -1, c.GetClassifierID())
 
 	mockPackage := &MockEPackage{}
-	mockClassifiers := &MockEList{}
+	mockClassifiers := &MockEList[EClassifier]{}
 	c.ESetInternalContainer(mockPackage, ECLASSIFIER__EPACKAGE)
 	mockPackage.On("GetEClassifiers").Return(mockClassifiers).Once()
 	mockPackage.On("EIsProxy").Return(false).Once()

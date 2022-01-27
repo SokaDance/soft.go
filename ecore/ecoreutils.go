@@ -154,7 +154,7 @@ func Copy(eObject EObject) EObject {
 	return c
 }
 
-func CopyAll(l EList) EList {
+func CopyAll(l EList[EObject]) EList[EObject] {
 	dC := newDeepCopy(true, true)
 	c := dC.copyAll(l)
 	dC.copyReferences()
@@ -166,7 +166,7 @@ func Equals(eObj1 EObject, eObj2 EObject) bool {
 	return dE.equals(eObj1, eObj2)
 }
 
-func EqualsAll(l1 EList, l2 EList) bool {
+func EqualsAll(l1 EList[EObject], l2 EList[EObject]) bool {
 	dE := newDeepEqual()
 	return dE.equalsAll(l1, l2)
 }
@@ -176,7 +176,7 @@ func Remove(eObject EObject) {
 		if eContainer := eObjectInternal.EInternalContainer(); eContainer != nil {
 			if eFeature := eObject.EContainmentFeature(); eFeature != nil {
 				if eFeature.IsMany() {
-					l := eContainer.EGet(eFeature).(EList)
+					l := eContainer.EGet(eFeature).(EList[any])
 					l.Remove(eObject)
 				} else {
 					eContainer.EUnset(eFeature)

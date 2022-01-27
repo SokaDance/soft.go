@@ -32,31 +32,31 @@ type EClass interface {
 	IsInterface() bool
 	SetInterface(bool)
 
-	GetEStructuralFeatures() EList
+	GetEStructuralFeatures() EList[EStructuralFeature]
 
-	GetEAttributes() EList
+	GetEAttributes() EList[EAttribute]
 
-	GetEReferences() EList
+	GetEReferences() EList[EReference]
 
-	GetESuperTypes() EList
+	GetESuperTypes() EList[EClass]
 
-	GetEOperations() EList
+	GetEOperations() EList[EOperation]
 
-	GetEContainmentFeatures() EList
+	GetEContainmentFeatures() EList[EStructuralFeature]
 
-	GetECrossReferenceFeatures() EList
+	GetECrossReferenceFeatures() EList[EStructuralFeature]
 
-	GetEAllAttributes() EList
+	GetEAllAttributes() EList[EAttribute]
 
-	GetEAllReferences() EList
+	GetEAllReferences() EList[EReference]
 
-	GetEAllContainments() EList
+	GetEAllContainments() EList[EReference]
 
-	GetEAllOperations() EList
+	GetEAllOperations() EList[EOperation]
 
-	GetEAllStructuralFeatures() EList
+	GetEAllStructuralFeatures() EList[EStructuralFeature]
 
-	GetEAllSuperTypes() EList
+	GetEAllSuperTypes() EList[EClass]
 
 	GetEIDAttribute() EAttribute
 
