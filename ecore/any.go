@@ -19,6 +19,28 @@ func FromAny[T any](a any) T {
 	return a.(T)
 }
 
+func ToAnyCollection[T any](c ECollection[T]) any {
+	switch c := any(c).(type) {
+	case ECollection[any]:
+		return c
+	case ECollection[T]:
+		return ToCollection(c, ToAny[T], FromAny[T])
+	default:
+		return nil
+	}
+}
+
+func FromAnyCollection[T any](v any) ECollection[T] {
+	switch c := v.(type) {
+	case ECollection[T]:
+		return c
+	case ECollection[any]:
+		return ToCollection(c, FromAny[T], ToAny[T])
+	default:
+		return nil
+	}
+}
+
 func ToAnyList[T any](l EList[T]) any {
 	switch c := any(l).(type) {
 	case EList[any]:
