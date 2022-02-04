@@ -180,18 +180,18 @@ func (ePackage *ePackageImpl) EGetFromID(featureID int, resolve bool) any {
 func (ePackage *ePackageImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EPACKAGE__ECLASSIFIERS:
-		newList := FromAnyList[EClassifier](value)
+		newCollection := FromAnyCollection[EClassifier](value)
 		l := ePackage.asEPackage().GetEClassifiers()
 		l.Clear()
-		l.AddAll(newList)
+		l.AddAll(newCollection)
 	case EPACKAGE__EFACTORY_INSTANCE:
 		newValue := FromAny[EFactory](value)
 		ePackage.asEPackage().SetEFactoryInstance(newValue)
 	case EPACKAGE__ESUB_PACKAGES:
-		newList := FromAnyList[EPackage](value)
+		newCollection := FromAnyCollection[EPackage](value)
 		l := ePackage.asEPackage().GetESubPackages()
 		l.Clear()
-		l.AddAll(newList)
+		l.AddAll(newCollection)
 	case EPACKAGE__NS_PREFIX:
 		newValue := FromAny[string](value)
 		ePackage.asEPackage().SetNsPrefix(newValue)

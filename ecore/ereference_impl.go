@@ -171,10 +171,10 @@ func (eReference *eReferenceImpl) ESetFromID(featureID int, value any) {
 		newValue := FromAny[bool](value)
 		eReference.asEReference().SetContainment(newValue)
 	case EREFERENCE__EKEYS:
-		newList := FromAnyList[EAttribute](value)
+		newCollection := FromAnyCollection[EAttribute](value)
 		l := eReference.asEReference().GetEKeys()
 		l.Clear()
-		l.AddAll(newList)
+		l.AddAll(newCollection)
 	case EREFERENCE__EOPPOSITE:
 		newValue := FromAny[EReference](value)
 		eReference.asEReference().SetEOpposite(newValue)

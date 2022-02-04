@@ -160,23 +160,23 @@ func (eAnnotation *eAnnotationImpl) EGetFromID(featureID int, resolve bool) any 
 func (eAnnotation *eAnnotationImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EANNOTATION__CONTENTS:
-		newList := FromAnyList[EObject](value)
+		newCollection := FromAnyCollection[EObject](value)
 		l := eAnnotation.asEAnnotation().GetContents()
 		l.Clear()
-		l.AddAll(newList)
+		l.AddAll(newCollection)
 	case EANNOTATION__DETAILS:
-		newMap := FromAnyMap[string, string](value)
+		newCollection := FromAnyCollection[any](value)
 		m := eAnnotation.asEAnnotation().GetDetails()
 		m.Clear()
-		m.AddAll(newMap)
+		m.AddAll(newCollection)
 	case EANNOTATION__EMODEL_ELEMENT:
 		newValue := FromAny[EModelElement](value)
 		eAnnotation.asEAnnotation().SetEModelElement(newValue)
 	case EANNOTATION__REFERENCES:
-		newList := FromAnyList[EObject](value)
+		newCollection := FromAnyCollection[EObject](value)
 		l := eAnnotation.asEAnnotation().GetReferences()
 		l.Clear()
-		l.AddAll(newList)
+		l.AddAll(newCollection)
 	case EANNOTATION__SOURCE:
 		newValue := FromAny[string](value)
 		eAnnotation.asEAnnotation().SetSource(newValue)

@@ -88,10 +88,10 @@ func (eEnum *eEnumImpl) EGetFromID(featureID int, resolve bool) any {
 func (eEnum *eEnumImpl) ESetFromID(featureID int, value any) {
 	switch featureID {
 	case EENUM__ELITERALS:
-		newList := FromAnyList[EEnumLiteral](value)
+		newCollection := FromAnyCollection[EEnumLiteral](value)
 		l := eEnum.asEEnum().GetELiterals()
 		l.Clear()
-		l.AddAll(newList)
+		l.AddAll(newCollection)
 	default:
 		eEnum.eDataTypeExt.ESetFromID(featureID, value)
 	}

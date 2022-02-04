@@ -240,10 +240,10 @@ func (eGenericType *eGenericTypeImpl) ESetFromID(featureID int, value any) {
 		newValue := FromAny[EGenericType](value)
 		eGenericType.asEGenericType().SetELowerBound(newValue)
 	case EGENERIC_TYPE__ETYPE_ARGUMENTS:
-		newList := FromAnyList[EGenericType](value)
+		newCollection := FromAnyCollection[EGenericType](value)
 		l := eGenericType.asEGenericType().GetETypeArguments()
 		l.Clear()
-		l.AddAll(newList)
+		l.AddAll(newCollection)
 	case EGENERIC_TYPE__ETYPE_PARAMETER:
 		newValue := FromAny[ETypeParameter](value)
 		eGenericType.asEGenericType().SetETypeParameter(newValue)
