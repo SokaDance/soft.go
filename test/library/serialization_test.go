@@ -12,11 +12,11 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func diagnosticError(errors ecore.EList) string {
+func diagnosticError(errors ecore.EList[ecore.EDiagnostic]) string {
 	if errors.Empty() {
 		return ""
 	} else {
-		return errors.Get(0).(ecore.EDiagnostic).GetMessage()
+		return errors.Get(0).GetMessage()
 	}
 }
 
