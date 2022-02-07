@@ -55,6 +55,10 @@ func TestToAnyList(t *testing.T) {
 	assert.NotNil(t, anyC3)
 	_, isNotifyingList := anyC3.(ENotifyingList[any])
 	assert.True(t, isNotifyingList)
+
+	var c4 EList[EObject]
+	anyC4 := ToAnyList(c4)
+	assert.Nil(t, anyC4)
 }
 
 func TestFromAnyList(t *testing.T) {
@@ -72,6 +76,10 @@ func TestFromAnyList(t *testing.T) {
 	assert.NotNil(t, objectC3)
 	_, isNotifyingList := objectC3.(ENotifyingList[EObject])
 	assert.True(t, isNotifyingList)
+
+	var c4 EList[any]
+	objectC4 := FromAnyList[EObject](c4)
+	assert.Nil(t, objectC4)
 }
 
 func TestToAnyMap(t *testing.T) {

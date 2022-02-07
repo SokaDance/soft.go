@@ -50,7 +50,7 @@ func TestEContentAdapter_SetTarget_EObject(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.SetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
+	mock.AssertExpectationsForObjects(t, ToAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 
 	// unset adapter target -> this should recursively unregister adapter on all object children
@@ -62,7 +62,7 @@ func TestEContentAdapter_SetTarget_EObject(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.UnSetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
+	mock.AssertExpectationsForObjects(t, ToAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 }
 
@@ -94,7 +94,7 @@ func TestEContentAdapter_SetTarget_EObject_ResolveProxies(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.SetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
+	mock.AssertExpectationsForObjects(t, ToAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 
 	// unset adapter target -> this should recursively unregister adapter on all object children
@@ -106,7 +106,7 @@ func TestEContentAdapter_SetTarget_EObject_ResolveProxies(t *testing.T) {
 	}
 	mockObject.On("EContents").Return(mockChildren).Once()
 	adapter.UnSetTarget(mockObject)
-	mock.AssertExpectationsForObjects(t, toAnyList[EObject](mockChildren).ToArray()...)
+	mock.AssertExpectationsForObjects(t, ToAnyList[EObject](mockChildren).ToArray()...)
 	mock.AssertExpectationsForObjects(t, mockObject)
 }
 

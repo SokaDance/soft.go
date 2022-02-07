@@ -19,7 +19,7 @@ func FromAny[T any](a any) T {
 	return a.(T)
 }
 
-func ToAnyCollection[T any](c ECollection[T]) any {
+func ToAnyCollection[T any](c ECollection[T]) ECollection[any] {
 	switch c := any(c).(type) {
 	case ECollection[any]:
 		return c
@@ -41,7 +41,7 @@ func FromAnyCollection[T any](v any) ECollection[T] {
 	}
 }
 
-func ToAnyList[T any](l EList[T]) any {
+func ToAnyList[T any](l EList[T]) EList[any] {
 	switch c := any(l).(type) {
 	case EList[any]:
 		return c
@@ -71,7 +71,7 @@ func FromAnyList[T any](v any) EList[T] {
 	}
 }
 
-func ToAnyMap[K comparable, V any](m EMap[K, V]) any {
+func ToAnyMap[K comparable, V any](m EMap[K, V]) EMap[any, any] {
 	switch c := any(m).(type) {
 	case EMap[any, any]:
 		return c
