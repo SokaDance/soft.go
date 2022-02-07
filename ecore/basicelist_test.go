@@ -93,6 +93,13 @@ func TestBasicEListRemoveAll(t *testing.T) {
 	assert.Equal(t, []int{7}, arr.ToArray())
 }
 
+func TestBasicEListRetainAll(t *testing.T) {
+	arr := NewBasicEList([]int{3, 5, 7})
+	arr2 := NewBasicEList([]int{3, 5})
+	assert.True(t, arr.RetainAll(arr2))
+	assert.Equal(t, []int{3, 5}, arr.ToArray())
+}
+
 func TestBasicEListMoveObjectBefore(t *testing.T) {
 	arr := NewBasicEList([]int{2, 4, 6, 8, 10})
 	arr.MoveObject(3, 4)
