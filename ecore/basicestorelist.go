@@ -325,7 +325,15 @@ func (list *BasicEStoreList) RemoveAll(collection ECollection[any]) bool {
 }
 
 func (list *BasicEStoreList) RetainAll(collection ECollection[any]) bool {
-	panic("to be implemented")
+	modified := false
+	for i := list.Size(); i-1 >= 0; i-- {
+		element := list.store.Get(list.owner, list.feature, i-1)
+		if !collection.Contains(element) {
+			list.RemoveAt(i - 1)
+			modified = true
+		}
+	}
+	return modified
 }
 
 func (list *BasicEStoreList) Size() int {
