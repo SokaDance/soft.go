@@ -51,6 +51,18 @@ func TestMockEObjectIDManagerGetID(t *testing.T) {
 	mock.AssertExpectationsForObjects(t, rm, o)
 }
 
+func TestMockEObjectIDManagerSetID(t *testing.T) {
+	rm := &MockEObjectIDManager{}
+	o := &MockEObject{}
+	rm.On("SetID", o, 1).Return(nil).Once()
+	rm.On("SetID", o, 1).Return(func(EObject, any) error {
+		return nil
+	}).Once()
+	assert.Nil(t, rm.SetID(o, 1))
+	assert.Nil(t, rm.SetID(o, 1))
+	mock.AssertExpectationsForObjects(t, rm, o)
+}
+
 func TestMockEObjectIDManagerGetDetachedID(t *testing.T) {
 	rm := &MockEObjectIDManager{}
 	o := &MockEObject{}
