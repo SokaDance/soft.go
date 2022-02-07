@@ -55,6 +55,13 @@ func TestEParameterEOperationGet(t *testing.T) {
 func TestEParameterEGetFromID(t *testing.T) {
 	o := newEParameterImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
+	{
+		// set a mock container
+		v := &MockEOperation{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, EPARAMETER__EOPERATION)
+		assert.Equal(t, v, o.EGetFromID(EPARAMETER__EOPERATION, false))
+	}
 }
 
 func TestEParameterEIsSetFromID(t *testing.T) {

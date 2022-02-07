@@ -220,6 +220,13 @@ func TestEStructuralFeatureEGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
 	assert.Panics(t, func() { o.EGetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE, true) })
 	assert.Panics(t, func() { o.EGetFromID(ESTRUCTURAL_FEATURE__DEFAULT_VALUE, false) })
+	{
+		// set a mock container
+		v := &MockEClass{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, ESTRUCTURAL_FEATURE__ECONTAINING_CLASS)
+		assert.Equal(t, v, o.EGetFromID(ESTRUCTURAL_FEATURE__ECONTAINING_CLASS, false))
+	}
 }
 
 func TestEStructuralFeatureESetFromID(t *testing.T) {

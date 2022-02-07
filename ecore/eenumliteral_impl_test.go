@@ -118,6 +118,13 @@ func TestEEnumLiteralValueSet(t *testing.T) {
 func TestEEnumLiteralEGetFromID(t *testing.T) {
 	o := newEEnumLiteralImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
+	{
+		// set a mock container
+		v := &MockEEnum{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, EENUM_LITERAL__EENUM)
+		assert.Equal(t, v, o.EGetFromID(EENUM_LITERAL__EENUM, false))
+	}
 }
 
 func TestEEnumLiteralESetFromID(t *testing.T) {

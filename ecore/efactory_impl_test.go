@@ -126,6 +126,13 @@ func TestEFactoryCreateFromStringOperation(t *testing.T) {
 func TestEFactoryEGetFromID(t *testing.T) {
 	o := newEFactoryImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
+	{
+		// set a mock container
+		v := &MockEPackage{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, EFACTORY__EPACKAGE)
+		assert.Equal(t, v, o.EGetFromID(EFACTORY__EPACKAGE, false))
+	}
 }
 
 func TestEFactoryESetFromID(t *testing.T) {

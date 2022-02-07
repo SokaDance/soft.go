@@ -131,6 +131,13 @@ func TestEClassifierEGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
 	assert.Panics(t, func() { o.EGetFromID(ECLASSIFIER__DEFAULT_VALUE, true) })
 	assert.Panics(t, func() { o.EGetFromID(ECLASSIFIER__DEFAULT_VALUE, false) })
+	{
+		// set a mock container
+		v := &MockEPackage{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, ECLASSIFIER__EPACKAGE)
+		assert.Equal(t, v, o.EGetFromID(ECLASSIFIER__EPACKAGE, false))
+	}
 }
 
 func TestEClassifierESetFromID(t *testing.T) {

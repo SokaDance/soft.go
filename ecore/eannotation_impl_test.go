@@ -151,6 +151,13 @@ func TestEAnnotationEGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
 	assert.Equal(t, o.GetContents(), FromAnyList[EObject](o.EGetFromID(EANNOTATION__CONTENTS, true)))
 	assert.Equal(t, o.GetDetails(), FromAnyMap[string, string](o.EGetFromID(EANNOTATION__DETAILS, true)))
+	{
+		// set a mock container
+		v := &MockEModelElement{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, EANNOTATION__EMODEL_ELEMENT)
+		assert.Equal(t, v, o.EGetFromID(EANNOTATION__EMODEL_ELEMENT, false))
+	}
 	assert.Equal(t, o.GetReferences(), FromAnyList[EObject](o.EGetFromID(EANNOTATION__REFERENCES, true)))
 	assert.Equal(t, o.GetReferences().(EObjectList[EObject]).GetUnResolvedList(), FromAnyList[EObject](o.EGetFromID(EANNOTATION__REFERENCES, false)))
 }

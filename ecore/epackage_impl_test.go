@@ -168,6 +168,13 @@ func TestEPackageEGetFromID(t *testing.T) {
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
 	assert.Equal(t, o.GetEClassifiers(), FromAnyList[EClassifier](o.EGetFromID(EPACKAGE__ECLASSIFIERS, true)))
 	assert.Equal(t, o.GetESubPackages(), FromAnyList[EPackage](o.EGetFromID(EPACKAGE__ESUB_PACKAGES, true)))
+	{
+		// set a mock container
+		v := &MockEPackage{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, EPACKAGE__ESUPER_PACKAGE)
+		assert.Equal(t, v, o.EGetFromID(EPACKAGE__ESUPER_PACKAGE, false))
+	}
 }
 
 func TestEPackageESetFromID(t *testing.T) {

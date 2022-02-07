@@ -98,6 +98,13 @@ func TestEOperationIsOverrideOfOperation(t *testing.T) {
 func TestEOperationEGetFromID(t *testing.T) {
 	o := newEOperationImpl()
 	assert.Panics(t, func() { o.EGetFromID(-1, true) })
+	{
+		// set a mock container
+		v := &MockEClass{}
+		v.On("EIsProxy").Return(false)
+		o.ESetInternalContainer(v, EOPERATION__ECONTAINING_CLASS)
+		assert.Equal(t, v, o.EGetFromID(EOPERATION__ECONTAINING_CLASS, false))
+	}
 	assert.Equal(t, o.GetEExceptions(), FromAnyList[EClassifier](o.EGetFromID(EOPERATION__EEXCEPTIONS, true)))
 	assert.Equal(t, o.GetEExceptions().(EObjectList[EClassifier]).GetUnResolvedList(), FromAnyList[EClassifier](o.EGetFromID(EOPERATION__EEXCEPTIONS, false)))
 	assert.Equal(t, o.GetEParameters(), FromAnyList[EParameter](o.EGetFromID(EOPERATION__EPARAMETERS, true)))
