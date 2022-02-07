@@ -16,6 +16,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func TestBasicEListSetInterfaces(t *testing.T) {
+	arr := NewBasicEList([]int{3, 5, 7})
+	arr.SetInterfaces(arr)
+	assert.Equal(t, arr, arr.interfaces)
+}
+
 func TestBasicEListGet(t *testing.T) {
 	arr := NewBasicEList([]int{3, 5, 7})
 	assert.Equal(t, arr.Get(0), 3)
