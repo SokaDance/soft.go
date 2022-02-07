@@ -75,17 +75,19 @@ func ToAnyMap[K comparable, V any](m EMap[K, V]) any {
 	switch c := any(m).(type) {
 	case EMap[any, any]:
 		return c
-	default:
+	case EMap[K, V]:
 		return ToMap(m, ToAny[K], FromAny[K], ToAny[V], FromAny[V])
+	default:
+		return nil
 	}
 }
 
 func FromAnyMap[K comparable, V any](v any) EMap[K, V] {
 	switch m := v.(type) {
-	case EMap[any, any]:
-		return ToMap(m, FromAny[K], ToAny[K], FromAny[V], ToAny[V])
 	case EMap[K, V]:
 		return m
+	case EMap[any, any]:
+		return ToMap(m, FromAny[K], ToAny[K], FromAny[V], ToAny[V])
 	default:
 		return nil
 	}
