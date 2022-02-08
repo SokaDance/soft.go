@@ -19,8 +19,10 @@ func ToArray[T, U any](c ECollection[T], convertTo func(T) U) []U {
 }
 
 func ToCollection[T, U any](c ECollection[T], convertTo func(T) U, convertFrom func(U) T) ECollection[U] {
-	if cd, isDelegate := c.(eCollectionDelegate[U, T]); isDelegate {
-		return cd.GetDelegate()
+	if dp, isDelegateProvider := c.(EDelegateProvider); isDelegateProvider {
+		if delegate, isCollection := dp.GetDelegate().(ECollection[U]); isCollection {
+			return delegate
+		}
 	}
 	return &eCollectionDelegateImpl[T, U, ECollection[T]]{delegate: c, convertTo: convertTo, convertFrom: convertFrom}
 }
@@ -31,7 +33,7 @@ type eCollectionDelegateImpl[T any, U any, C ECollection[T]] struct {
 	convertFrom func(U) T
 }
 
-func (l *eCollectionDelegateImpl[T, U, C]) GetDelegate() ECollection[T] {
+func (l *eCollectionDelegateImpl[T, U, C]) GetDelegate() any {
 	return l.delegate
 }
 

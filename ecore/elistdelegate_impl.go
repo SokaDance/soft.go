@@ -10,23 +10,20 @@
 package ecore
 
 func ToList[T, U any](l EList[T], convertTo func(T) U, convertFrom func(U) T) EList[U] {
-	if ld, isDelegate := l.(eListDelegate[U, T]); isDelegate {
-		return ld.GetDelegate()
-	} else {
-		r := &eListDelegateImpl[T, U, EList[T]]{}
-		r.delegate = l
-		r.convertTo = convertTo
-		r.convertFrom = convertFrom
-		return r
+	if dp, isDelegateProvider := l.(EDelegateProvider); isDelegateProvider {
+		if list, isList := dp.GetDelegate().(EList[U]); isList {
+			return list
+		}
 	}
+	r := &eListDelegateImpl[T, U, EList[T]]{}
+	r.delegate = l
+	r.convertTo = convertTo
+	r.convertFrom = convertFrom
+	return r
 }
 
 type eListDelegateImpl[T any, U any, C EList[T]] struct {
 	eCollectionDelegateImpl[T, U, C]
-}
-
-func (l *eListDelegateImpl[T, U, C]) GetDelegate() EList[T] {
-	return l.delegate
 }
 
 func (l *eListDelegateImpl[T, U, C]) Insert(index int, u U) bool {

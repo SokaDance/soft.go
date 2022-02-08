@@ -15,8 +15,10 @@ func ToMap[KO comparable, KT comparable, VO any, VT any](
 	convertKeyFrom func(KT) KO,
 	convertValueTo func(VO) VT,
 	convertValueFrom func(VT) VO) EMap[KT, VT] {
-	if md, isDelegate := delegate.(eMapDelegate[KT, KO, VT, VO]); isDelegate {
-		return md.GetDelegate()
+	if dp, isDelegateProvider := delegate.(EDelegateProvider); isDelegateProvider {
+		if m, isMap := dp.GetDelegate().(EMap[KT, VT]); isMap {
+			return m
+		}
 	}
 	return &eMapDelegateImpl[KO, KT, VO, VT]{
 		delegate:         delegate,
@@ -35,7 +37,7 @@ type eMapDelegateImpl[KO comparable, KT comparable, VO any, VT any] struct {
 	convertValueFrom func(VT) VO
 }
 
-func (m *eMapDelegateImpl[KO, KT, VO, VT]) GetDelegate() EMap[KO, VO] {
+func (m *eMapDelegateImpl[KO, KT, VO, VT]) GetDelegate() any {
 	return m.delegate
 }
 

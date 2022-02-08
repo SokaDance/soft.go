@@ -10,23 +10,20 @@
 package ecore
 
 func ToNotifyingList[T, U any](l ENotifyingList[T], convertTo func(T) U, convertFrom func(U) T) ENotifyingList[U] {
-	if ld, isDelegate := l.(eNotifyingListDelegate[U, T]); isDelegate {
-		return ld.GetDelegate()
-	} else {
-		r := &eNotifyingListDelegateImpl[T, U, ENotifyingList[T]]{}
-		r.delegate = l
-		r.convertTo = convertTo
-		r.convertFrom = convertFrom
-		return r
+	if dp, isDelegateProvider := l.(EDelegateProvider); isDelegateProvider {
+		if list, isList := dp.GetDelegate().(ENotifyingList[U]); isList {
+			return list
+		}
 	}
+	r := &eNotifyingListDelegateImpl[T, U, ENotifyingList[T]]{}
+	r.delegate = l
+	r.convertTo = convertTo
+	r.convertFrom = convertFrom
+	return r
 }
 
 type eNotifyingListDelegateImpl[T any, U any, C ENotifyingList[T]] struct {
 	eListDelegateImpl[T, U, C]
-}
-
-func (l *eNotifyingListDelegateImpl[T, U, C]) GetDelegate() ENotifyingList[T] {
-	return l.delegate
 }
 
 func (l *eNotifyingListDelegateImpl[T, U, C]) GetNotifier() ENotifier {
