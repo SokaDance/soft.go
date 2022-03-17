@@ -9,7 +9,7 @@
 
 package ecore
 
-type EMap[K comparable, V any] interface {
+type EMap[K, V any] interface {
 	EList[any]
 
 	GetValue(key K) (V, bool)
@@ -22,5 +22,5 @@ type EMap[K comparable, V any] interface {
 
 	ContainsKey(key K) bool
 
-	ToMap() map[K]V
+	ToMap() map[any]any
 }

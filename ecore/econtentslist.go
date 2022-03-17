@@ -9,14 +9,14 @@
 
 package ecore
 
-type eContentsList[T EObjectConstraints] struct {
+type eContentsList[T EObject] struct {
 	emptyImmutableEList[T]
 	o        EObject
 	features EList[EStructuralFeature]
 	resolve  bool
 }
 
-type eContentsListIterator[T EObjectConstraints] struct {
+type eContentsListIterator[T EObject] struct {
 	l             *eContentsList[T]
 	prepared      int
 	next          T
@@ -84,7 +84,7 @@ func (it *eContentsListIterator[T]) HasNext() bool {
 	}
 }
 
-func newEContentsList[T EObjectConstraints](o EObject, features EList[EStructuralFeature], resolve bool) *eContentsList[T] {
+func newEContentsList[T EObject](o EObject, features EList[EStructuralFeature], resolve bool) *eContentsList[T] {
 	return &eContentsList[T]{
 		o:        o,
 		features: features,
@@ -141,7 +141,7 @@ func (l *eContentsList[T]) Empty() bool {
 // Contains return if an array contains or not an element
 func (l *eContentsList[T]) Contains(elem T) bool {
 	for it := l.Iterator(); it.HasNext(); {
-		if e := it.Next(); e == elem {
+		if e := it.Next(); equal(e, elem) {
 			return true
 		}
 	}
@@ -152,7 +152,7 @@ func (l *eContentsList[T]) Contains(elem T) bool {
 func (l *eContentsList[T]) IndexOf(elem T) int {
 	index := 0
 	for it := l.Iterator(); it.HasNext(); {
-		if e := it.Next(); e == elem {
+		if e := it.Next(); equal(e, elem) {
 			return index
 		}
 		index++

@@ -9,13 +9,13 @@
 
 package ecore
 
-type basicEDataTypeList[T comparable] struct {
+type basicEDataTypeList[T any] struct {
 	BasicENotifyingList[T]
 	owner     EObjectInternal
 	featureID int
 }
 
-func NewBasicEDataTypeList[T comparable](owner EObjectInternal, featureID int, isUnique bool) *basicEDataTypeList[T] {
+func NewBasicEDataTypeList[T any](owner EObjectInternal, featureID int, isUnique bool) *basicEDataTypeList[T] {
 	l := new(basicEDataTypeList[T])
 	l.interfaces = l
 	l.data = []T{}

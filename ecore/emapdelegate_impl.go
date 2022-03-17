@@ -9,7 +9,7 @@
 
 package ecore
 
-func ToMap[KO comparable, KT comparable, VO any, VT any](
+func ToMap[KO any, KT any, VO any, VT any](
 	delegate EMap[KO, VO],
 	convertKeyTo func(KO) KT,
 	convertKeyFrom func(KT) KO,
@@ -29,7 +29,7 @@ func ToMap[KO comparable, KT comparable, VO any, VT any](
 	}
 }
 
-type eMapDelegateImpl[KO comparable, KT comparable, VO any, VT any] struct {
+type eMapDelegateImpl[KO any, KT any, VO any, VT any] struct {
 	delegate         EMap[KO, VO]
 	convertKeyTo     func(KO) KT
 	convertKeyFrom   func(KT) KO
@@ -142,11 +142,11 @@ func (m *eMapDelegateImpl[KO, KT, VO, VT]) ContainsKey(key KT) bool {
 	return m.delegate.ContainsKey(m.convertKeyFrom(key))
 }
 
-func (m *eMapDelegateImpl[KO, KT, VO, VT]) ToMap() map[KT]VT {
+func (m *eMapDelegateImpl[KO, KT, VO, VT]) ToMap() map[any]any {
 	d := m.delegate.ToMap()
-	r := map[KT]VT{}
+	r := map[any]any{}
 	for k, v := range d {
-		r[m.convertKeyTo(k)] = m.convertValueTo(v)
+		r[m.convertKeyTo(k.(KO))] = m.convertValueTo(v.(VO))
 	}
 	return r
 }

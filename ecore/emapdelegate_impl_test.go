@@ -204,7 +204,7 @@ func TestMapDelegate_ContainsKey(t *testing.T) {
 func TestMapDelegate_ToMap(t *testing.T) {
 	m := &MockEMap[string, string]{}
 	d := ToAnyMap[string, string](m)
-	m.On("ToMap").Once().Return(map[string]string{"key": "value"})
+	m.On("ToMap").Once().Return(map[any]any{"key": "value"})
 	assert.Equal(t, map[any]any{"key": "value"}, d.ToMap())
 }
 

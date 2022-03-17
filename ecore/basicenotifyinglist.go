@@ -18,12 +18,12 @@ type eNotifyingListInternal[T any] interface {
 }
 
 // BasicENotifyingList ...
-type BasicENotifyingList[T comparable] struct {
+type BasicENotifyingList[T any] struct {
 	basicEList[T]
 }
 
 // NewBasicENotifyingList ...
-func NewBasicENotifyingList[T comparable]() *BasicENotifyingList[T] {
+func NewBasicENotifyingList[T any]() *BasicENotifyingList[T] {
 	l := new(BasicENotifyingList[T])
 	l.interfaces = l
 	l.data = []T{}
@@ -31,7 +31,7 @@ func NewBasicENotifyingList[T comparable]() *BasicENotifyingList[T] {
 	return l
 }
 
-func newBasicENotifyingListFromData[T comparable](data []T) *BasicENotifyingList[T] {
+func newBasicENotifyingListFromData[T any](data []T) *BasicENotifyingList[T] {
 	l := new(BasicENotifyingList[T])
 	l.interfaces = l
 	l.data = data
@@ -54,7 +54,7 @@ func (list *BasicENotifyingList[T]) GetFeatureID() int {
 	return -1
 }
 
-type notifyingListNotification[T comparable] struct {
+type notifyingListNotification[T any] struct {
 	AbstractNotification
 	list *BasicENotifyingList[T]
 }
@@ -191,7 +191,7 @@ func (list *BasicENotifyingList[T]) doInsertAll(index int, c ECollection[T]) boo
 
 func (list *BasicENotifyingList[T]) doSet(index int, newObject T) T {
 	oldObject := list.basicEList.doSet(index, newObject)
-	if newObject != oldObject {
+	if !equal(newObject, oldObject) {
 		var notifications ENotificationChain
 		notifications = list.interfaces.(eNotifyingListInternal[T]).inverseRemove(oldObject, notifications)
 		notifications = list.interfaces.(eNotifyingListInternal[T]).inverseAdd(newObject, notifications)

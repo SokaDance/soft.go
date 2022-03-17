@@ -11,7 +11,7 @@ package ecore
 
 import "strconv"
 
-type basicEObjectList[T comparable] struct {
+type basicEObjectList[T any] struct {
 	BasicENotifyingList[T]
 	owner            EObjectInternal
 	featureID        int
@@ -23,7 +23,7 @@ type basicEObjectList[T comparable] struct {
 	unset            bool
 }
 
-func NewBasicEObjectList[T comparable](owner EObjectInternal, featureID int, inverseFeatureID int, containment, inverse, opposite, proxies, unset bool) *basicEObjectList[T] {
+func NewBasicEObjectList[T any](owner EObjectInternal, featureID int, inverseFeatureID int, containment, inverse, opposite, proxies, unset bool) *basicEObjectList[T] {
 	l := new(basicEObjectList[T])
 	l.interfaces = l
 	l.data = []T{}
@@ -70,7 +70,7 @@ func (list *basicEObjectList[T]) GetUnResolvedList() EObjectList[T] {
 func (list *basicEObjectList[T]) IndexOf(elem T) int {
 	if list.proxies {
 		for i, value := range list.data {
-			if value == elem || list.resolve(i, value) == elem {
+			if equal(value, elem) || equal(list.resolve(i, value), elem) {
 				return i
 			}
 		}
@@ -85,7 +85,7 @@ func (list *basicEObjectList[T]) doGet(index int) T {
 
 func (list *basicEObjectList[T]) resolve(index int, object T) T {
 	resolved := list.resolveProxy(any(object).(EObject)).(T)
-	if resolved != object {
+	if !equal(resolved, object) {
 		list.basicEList.doSet(index, resolved)
 		var notifications ENotificationChain
 		if list.containment {
@@ -131,7 +131,7 @@ func (list *basicEObjectList[T]) inverseRemove(object T, notifications ENotifica
 	return notifications
 }
 
-type unResolvedBasicEObjectList[T comparable] struct {
+type unResolvedBasicEObjectList[T any] struct {
 	delegate *basicEObjectList[T]
 }
 

@@ -199,7 +199,7 @@ func TestEAnnotationESetFromID(t *testing.T) {
 
 		// set list with new contents
 		o.ESetFromID(EANNOTATION__DETAILS, ToAnyMap[string, string](mockMap))
-		assert.Equal(t, map[string]string{mockKey: mockValue}, o.GetDetails().ToMap())
+		assert.Equal(t, map[any]any{mockKey: mockValue}, o.GetDetails().ToMap())
 		mock.AssertExpectationsForObjects(t, mockMap, mockEntry)
 	}
 	{

@@ -96,21 +96,21 @@ func (rc *resourceContents) inverseRemove(object EObject, notifications ENotific
 	return n
 }
 
-func (rc *resourceContents) didAdd(index int, elem interface{}) {
+func (rc *resourceContents) didAdd(index int, elem EObject) {
 	rc.BasicENotifyingList.didAdd(index, elem)
 	if index == rc.Size()-1 {
 		rc.loaded()
 	}
 }
 
-func (rc *resourceContents) didRemove(index int, old interface{}) {
+func (rc *resourceContents) didRemove(index int, old EObject) {
 	rc.BasicENotifyingList.didRemove(index, old)
 	if rc.Size() == 0 {
 		rc.unloaded()
 	}
 }
 
-func (rc *resourceContents) didClear(oldObjects []interface{}) {
+func (rc *resourceContents) didClear(oldObjects []EObject) {
 	rc.BasicENotifyingList.didClear(oldObjects)
 	rc.unloaded()
 }

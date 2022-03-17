@@ -71,7 +71,7 @@ func FromAnyList[T any](v any) EList[T] {
 	}
 }
 
-func ToAnyMap[K comparable, V any](m EMap[K, V]) EMap[any, any] {
+func ToAnyMap[K any, V any](m EMap[K, V]) EMap[any, any] {
 	switch c := any(m).(type) {
 	case EMap[any, any]:
 		return c
@@ -82,7 +82,7 @@ func ToAnyMap[K comparable, V any](m EMap[K, V]) EMap[any, any] {
 	}
 }
 
-func FromAnyMap[K comparable, V any](v any) EMap[K, V] {
+func FromAnyMap[K any, V any](v any) EMap[K, V] {
 	switch m := v.(type) {
 	case EMap[K, V]:
 		return m

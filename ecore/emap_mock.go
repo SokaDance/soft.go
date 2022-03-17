@@ -9,7 +9,7 @@
 
 package ecore
 
-type MockEMap[K comparable, V any] struct {
+type MockEMap[K any, V any] struct {
 	MockEList[any]
 }
 
@@ -80,15 +80,15 @@ func (_m *MockEMap[K, V]) RemoveKey(key K) V {
 }
 
 // ToMap provides a mock function with given fields:
-func (_m *MockEMap[K, V]) ToMap() map[K]V {
+func (_m *MockEMap[K, V]) ToMap() map[any]any {
 	ret := _m.Called()
 
-	var r0 map[K]V
-	if rf, ok := ret.Get(0).(func() map[K]V); ok {
+	var r0 map[any]any
+	if rf, ok := ret.Get(0).(func() map[any]any); ok {
 		r0 = rf()
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(map[K]V)
+			r0 = ret.Get(0).(map[any]any)
 		}
 	}
 

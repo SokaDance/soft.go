@@ -9,12 +9,12 @@
 
 package ecore
 
-type BasicEObjectMap[K comparable, V comparable] struct {
+type BasicEObjectMap[K any, V any] struct {
 	BasicEMap[K, V]
 	entryClass EClass
 }
 
-func NewBasicEObjectMap[K comparable, V comparable](entryClass EClass) *BasicEObjectMap[K, V] {
+func NewBasicEObjectMap[K any, V any](entryClass EClass) *BasicEObjectMap[K, V] {
 	basicEObjectMap := &BasicEObjectMap[K, V]{}
 	basicEObjectMap.Initialize()
 	basicEObjectMap.entryClass = entryClass

@@ -101,13 +101,13 @@ func NewEmptyImmutableEList[T any]() *emptyImmutableEList[T] {
 	return &emptyImmutableEList[T]{}
 }
 
-type immutableEList[T comparable] struct {
+type immutableEList[T any] struct {
 	emptyImmutableEList[T]
 	data []T
 }
 
 // NewImmutableEList return a new ImmutableEList
-func NewImmutableEList[T comparable](data []T) *immutableEList[T] {
+func NewImmutableEList[T any](data []T) *immutableEList[T] {
 	return &immutableEList[T]{data: data}
 }
 
@@ -137,7 +137,7 @@ func (l *immutableEList[T]) Contains(t T) bool {
 // IndexOf return the index on an element in an array, else return -1
 func (l *immutableEList[T]) IndexOf(t T) int {
 	for i, value := range l.data {
-		if value == t {
+		if equal(value, t) {
 			return i
 		}
 	}

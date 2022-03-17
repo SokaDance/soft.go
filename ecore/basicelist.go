@@ -11,7 +11,7 @@ package ecore
 
 import "strconv"
 
-type abstractEList[T comparable] interface {
+type abstractEList[T any] interface {
 	doGet(index int) T
 
 	doSet(index int, t T) T
@@ -44,14 +44,14 @@ type abstractEList[T comparable] interface {
 }
 
 // basicEList is an array of a dynamic size
-type basicEList[T comparable] struct {
+type basicEList[T any] struct {
 	interfaces interface{}
 	data       []T
 	isUnique   bool
 }
 
 // NewEmptyBasicEList return a new ArrayEList
-func NewEmptyBasicEList[T comparable]() *basicEList[T] {
+func NewEmptyBasicEList[T any]() *basicEList[T] {
 	a := new(basicEList[T])
 	a.interfaces = a
 	a.data = []T{}
@@ -60,7 +60,7 @@ func NewEmptyBasicEList[T comparable]() *basicEList[T] {
 }
 
 // NewBasicEList return a new ArrayEList
-func NewBasicEList[T comparable](data []T) *basicEList[T] {
+func NewBasicEList[T any](data []T) *basicEList[T] {
 	a := new(basicEList[T])
 	a.interfaces = a
 	a.data = data
@@ -69,7 +69,7 @@ func NewBasicEList[T comparable](data []T) *basicEList[T] {
 }
 
 // NewUniqueBasicEList return a new ArrayEList with isUnique set as true
-func NewUniqueBasicEList[T comparable](data []T) *basicEList[T] {
+func NewUniqueBasicEList[T any](data []T) *basicEList[T] {
 	a := new(basicEList[T])
 	a.interfaces = a
 	a.data = data
@@ -90,7 +90,7 @@ func (list *basicEList[T]) asEList() EList[T] {
 }
 
 // Remove all elements in collection that already are in list
-func getNonDuplicates[T comparable](l EList[T], c ECollection[T]) ECollection[T] {
+func getNonDuplicates[T any](l EList[T], c ECollection[T]) ECollection[T] {
 	newList := NewBasicEList([]T{})
 	for it := c.Iterator(); it.HasNext(); {
 		value := it.Next()
@@ -349,7 +349,7 @@ func (list *basicEList[T]) Contains(t T) bool {
 // IndexOf return the index on an element in an array, else return -1
 func (list *basicEList[T]) IndexOf(t T) int {
 	for i, value := range list.data {
-		if value == t {
+		if equal(value, t) {
 			return i
 		}
 	}
