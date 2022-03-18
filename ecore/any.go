@@ -9,7 +9,9 @@
 
 package ecore
 
-func ToAny[T any](t T) any { return t }
+func ToAny[T any](t T) any {
+	return t
+}
 
 func FromAny[T any](a any) T {
 	if a == nil {
