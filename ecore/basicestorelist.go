@@ -9,7 +9,11 @@
 
 package ecore
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/youthlin/stream"
+)
 
 type BasicEStoreList struct {
 	interfaces  interface{}
@@ -391,6 +395,10 @@ func (list *BasicEStoreList) Iterator() EIterator {
 
 func (list *BasicEStoreList) ToArray() []interface{} {
 	return list.store.ToArray(list.owner, list.feature)
+}
+
+func (list *BasicEStoreList) Stream() stream.Stream {
+	return stream.OfSlice(list.store.ToArray(list.owner, list.feature))
 }
 
 func (list *BasicEStoreList) inverseAdd(object interface{}, notifications ENotificationChain) ENotificationChain {

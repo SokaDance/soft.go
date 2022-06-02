@@ -9,6 +9,8 @@
 
 package ecore
 
+import "github.com/youthlin/stream"
+
 // EList is the interface for dynamic containers
 type EList interface {
 	Add(interface{}) bool
@@ -46,4 +48,6 @@ type EList interface {
 	Iterator() EIterator
 
 	ToArray() []interface{}
+
+	Stream() stream.Stream
 }

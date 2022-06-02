@@ -9,7 +9,11 @@
 
 package ecore
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/youthlin/stream"
+)
 
 type basicEObjectList struct {
 	BasicENotifyingList
@@ -108,7 +112,7 @@ func (list *basicEObjectList) resolve(index int, object interface{}) interface{}
 
 func (list *basicEObjectList) resolveProxy(eObject EObject) EObject {
 	if list.proxies && eObject.EIsProxy() {
-		return list.owner.(EObjectInternal).EResolveProxy(eObject)
+		return list.owner.EResolveProxy(eObject)
 	}
 	return eObject
 }
@@ -277,6 +281,10 @@ func (l *unResolvedBasicEObjectList) Iterator() EIterator {
 
 func (l *unResolvedBasicEObjectList) ToArray() []interface{} {
 	return l.delegate.ToArray()
+}
+
+func (l *unResolvedBasicEObjectList) Stream() stream.Stream {
+	return l.delegate.Stream()
 }
 
 func (l *unResolvedBasicEObjectList) GetNotifier() ENotifier {

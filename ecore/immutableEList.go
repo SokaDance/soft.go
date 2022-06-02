@@ -9,7 +9,11 @@
 
 package ecore
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/youthlin/stream"
+)
 
 type emptyImmutableEList struct {
 }
@@ -91,6 +95,10 @@ func (l *emptyImmutableEList) Iterator() EIterator {
 // ToArray convert to array
 func (l *emptyImmutableEList) ToArray() []interface{} {
 	return []interface{}{}
+}
+
+func (l *emptyImmutableEList) Stream() stream.Stream {
+	return stream.Of()
 }
 
 func (l *emptyImmutableEList) GetUnResolvedList() EList {

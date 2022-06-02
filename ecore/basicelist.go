@@ -9,7 +9,11 @@
 
 package ecore
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/youthlin/stream"
+)
 
 type abstractEList interface {
 	doGet(index int) interface{}
@@ -349,6 +353,10 @@ func (list *basicEList) Iterator() EIterator {
 
 func (list *basicEList) ToArray() []interface{} {
 	return list.data
+}
+
+func (list *basicEList) Stream() stream.Stream {
+	return stream.OfSlice(list.data)
 }
 
 func (list *basicEList) didAdd(index int, elem interface{}) {
