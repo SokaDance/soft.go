@@ -52,13 +52,37 @@ func (s *stream) Filter(predicate func(any) bool) Stream {
 }
 
 func (s *stream) AnyMatch(predicate func(any) bool) bool {
-	return false
+	return evaluate[bool](s, newMatchOperation(matchAny, predicate))
 }
 
-func (s *stream) evaluate(op operation) {
+func evaluate[R any](s *stream, op operation[R]) R {
 	if s.parallel {
-		op.evaluateParallel(s.source.iterator)
+		return op.evaluateParallel(s, s.source.iterator)
 	} else {
-		op.evaluateSequential(s.source.iterator)
+		return op.evaluateSequential(s, s.source.iterator)
 	}
+}
+
+func wrapAndCopyInto[S sink](stream *stream, s S, iterator Iterator) S {
+	copyInto(wrapSink(stream, s), iterator)
+	return s
+}
+
+func copyInto[S sink](s S, iterator Iterator) bool {
+	canceled := false
+	s.Begin(iterator.EstimateSize())
+	for finished := false; !finished; {
+		canceled = s.CancelationRequested()
+		finished = canceled || !iterator.TryAdvance(s.Accept)
+	}
+	s.End()
+	return canceled
+}
+
+func wrapSink[S sink](stream *stream, s S) S {
+	var result sink = s
+	for c := stream; c != nil; c = c.previous {
+		result = c.wrap(result)
+	}
+	return result.(S)
 }
