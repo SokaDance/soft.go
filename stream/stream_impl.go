@@ -1,70 +1,64 @@
 package stream
 
-type streamImpl struct {
-	interfaces any
-	source     *streamImpl
-	iterator   Iterator
-	previous   *streamImpl
-	next       *streamImpl
-	depth      int
-	parallel   bool
-	stateFull  bool
+type stream struct {
+	source   *stream
+	previous *stream
+	iterator Iterator
+	parallel bool
+	wrap     func(sink) sink
 }
 
-func newSourceStreamImpl(iterator Iterator, parallel bool) *streamImpl {
-	s := &streamImpl{}
-	s.interfaces = s
+func newHead(iterator Iterator, wrap func(sink) sink) *stream {
+	s := &stream{}
 	s.iterator = iterator
-	s.parallel = parallel
 	s.source = s
 	return s
 }
 
-func newNextStreamImpl(previous *streamImpl, stateFull bool) *streamImpl {
-	s := &streamImpl{}
-	s.interfaces = s
-	s.stateFull = stateFull
-	s.depth = previous.depth + 1
+func newStream(previous *stream, wrap func(sink) sink) *stream {
+	s := &stream{}
 	s.previous = previous
 	s.source = previous.source
-	previous.next = s
 	return s
 }
 
-func (s *streamImpl) asStream() Stream {
-	return s.interfaces.(Stream)
-}
-
-func (s *streamImpl) IsParallel() bool {
+func (s *stream) IsParallel() bool {
 	return s.parallel
 }
 
-func (s *streamImpl) Parallel() Stream {
+func (s *stream) Parallel() Stream {
 	s.source.parallel = true
-	return s.asStream()
+	return s
 }
 
-func (s *streamImpl) Sequential() Stream {
+func (s *stream) Sequential() Stream {
 	s.source.parallel = false
-	return s.asStream()
+	return s
 }
 
-type head struct {
-	*streamImpl
+func (s *stream) Filter(predicate func(any) bool) Stream {
+	return newStream(s, func(down sink) sink {
+		return newChainedSink(down,
+			begin(func(int) {
+				down.Begin(-1)
+			}),
+			accept(func(a any) {
+				if predicate(a) {
+					down.Accept(a)
+				}
+			}),
+		)
+	})
 }
 
-func newHead(iterator Iterator, parallel bool) *head {
-	h := &head{
-		streamImpl: newSourceStreamImpl(iterator, parallel),
+func (s *stream) AnyMatch(predicate func(any) bool) bool {
+	return false
+}
+
+func (s *stream) evaluate(op operation) {
+	if s.parallel {
+		op.evaluateParallel(s.source.iterator)
+	} else {
+		op.evaluateSequential(s.source.iterator)
 	}
-	h.interfaces = h
-	return h
-}
-
-type statelessOp struct {
-	*streamImpl
-}
-
-type statefullOp struct {
-	*streamImpl
 }
