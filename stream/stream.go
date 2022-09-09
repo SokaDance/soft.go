@@ -15,4 +15,14 @@ type Stream interface {
 	// terminal operation
 	// ForEach(action func(any))
 	AnyMatch(predicate func(any) bool) bool
+	AllMatch(predicate func(any) bool) bool
+	NoneMatch(predicate func(any) bool) bool
+}
+
+func OfIterator(it Iterator) Stream {
+	return newHead(it)
+}
+
+func OfSlice(slice []any) Stream {
+	return OfIterator(NewSliceIterator(slice))
 }

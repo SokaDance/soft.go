@@ -38,7 +38,7 @@ type matchOperation struct {
 }
 
 func newMatchOperation(kind matchKind, predicate func(any) bool) *matchOperation {
-	return &matchOperation{kind: kind}
+	return &matchOperation{kind: kind, predicate: predicate}
 }
 
 func (op *matchOperation) evaluateSequential(stream *stream, iterator Iterator) bool {

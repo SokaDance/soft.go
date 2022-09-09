@@ -8,7 +8,7 @@ type stream struct {
 	wrap     func(sink) sink
 }
 
-func newHead(iterator Iterator, wrap func(sink) sink) *stream {
+func newHead(iterator Iterator) *stream {
 	s := &stream{}
 	s.iterator = iterator
 	s.source = s
@@ -23,7 +23,7 @@ func newStream(previous *stream, wrap func(sink) sink) *stream {
 }
 
 func (s *stream) IsParallel() bool {
-	return s.parallel
+	return s.source.parallel
 }
 
 func (s *stream) Parallel() Stream {
@@ -55,16 +55,24 @@ func (s *stream) AnyMatch(predicate func(any) bool) bool {
 	return evaluate[bool](s, newMatchOperation(matchAny, predicate))
 }
 
-func evaluate[R any](s *stream, op operation[R]) R {
-	if s.parallel {
-		return op.evaluateParallel(s, s.source.iterator)
+func (s *stream) AllMatch(predicate func(any) bool) bool {
+	return evaluate[bool](s, newMatchOperation(matchAll, predicate))
+}
+
+func (s *stream) NoneMatch(predicate func(any) bool) bool {
+	return evaluate[bool](s, newMatchOperation(matchNone, predicate))
+}
+
+func evaluate[R any](stream *stream, op operation[R]) R {
+	if stream.IsParallel() {
+		return op.evaluateParallel(stream, stream.source.iterator)
 	} else {
-		return op.evaluateSequential(s, s.source.iterator)
+		return op.evaluateSequential(stream, stream.source.iterator)
 	}
 }
 
-func wrapAndCopyInto[S sink](stream *stream, s S, iterator Iterator) S {
-	copyInto(wrapSink(stream, s), iterator)
+func wrapAndCopyInto[S sink](st *stream, s S, iterator Iterator) S {
+	copyInto(wrapSink[S](st, s), iterator)
 	return s
 }
 
@@ -81,7 +89,7 @@ func copyInto[S sink](s S, iterator Iterator) bool {
 
 func wrapSink[S sink](stream *stream, s S) S {
 	var result sink = s
-	for c := stream; c != nil; c = c.previous {
+	for c := stream; c.previous != nil; c = c.previous {
 		result = c.wrap(result)
 	}
 	return result.(S)
