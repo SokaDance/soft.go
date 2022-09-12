@@ -1,6 +1,9 @@
 package stream
 
 type Stream interface {
+	// Iterator Returns an iterator for the elements of this stream.
+	Iterator() Iterator
+
 	// Parallel returns an equivalent stream that is parallel.  May return
 	// itself, either because the stream was already parallel, or because
 	// the underlying stream state was modified to be parallel.

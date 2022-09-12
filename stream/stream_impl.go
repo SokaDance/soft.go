@@ -22,6 +22,14 @@ func newStream(previous *stream, wrap func(sink) sink) *stream {
 	return s
 }
 
+func (s *stream) Iterator() Iterator {
+	if s == s.source {
+		return s.iterator
+	} else {
+
+	}
+}
+
 func (s *stream) IsParallel() bool {
 	return s.source.parallel
 }
