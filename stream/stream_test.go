@@ -18,6 +18,12 @@ func TestStream_IsParallel(t *testing.T) {
 	assert.False(t, s.IsParallel())
 }
 
+func TestStream_ForEach_Sequential(t *testing.T) {
+	res := 0
+	OfSlice([]any{1, 2, 3}).ForEach(func(a any) { res += a.(int) })
+	assert.Equal(t, 6, res)
+}
+
 func TestStream_AnyMatch_Sequential(t *testing.T) {
 	assert.True(t, OfSlice([]any{1, 2, 3}).AnyMatch(func(a any) bool { return a == 2 }))
 	assert.False(t, OfSlice([]any{1, 2, 3}).AnyMatch(func(a any) bool { return a == 0 }))
