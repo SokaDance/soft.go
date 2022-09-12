@@ -28,7 +28,7 @@ type Stream interface {
 	// Skip(int) Stream
 
 	// terminal operation
-	// ForEach(action func(any))
+	ForEach(action func(any))
 	AnyMatch(predicate func(any) bool) bool
 	AllMatch(predicate func(any) bool) bool
 	NoneMatch(predicate func(any) bool) bool

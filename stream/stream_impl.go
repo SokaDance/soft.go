@@ -61,6 +61,10 @@ func (s *stream) Map(mapper func(any) any) Stream {
 	})
 }
 
+func (s *stream) ForEach(action func(any)) {
+	evaluate[any](s, newForEachOperation(action))
+}
+
 func (s *stream) AnyMatch(predicate func(any) bool) bool {
 	return evaluate[bool](s, newMatchOperation(matchAny, predicate))
 }
