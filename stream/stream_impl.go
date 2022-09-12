@@ -51,6 +51,16 @@ func (s *stream) Filter(predicate func(any) bool) Stream {
 	})
 }
 
+func (s *stream) Map(mapper func(any) any) Stream {
+	return newStream(s, func(down sink) sink {
+		return newChainedSink(down,
+			accept(func(a any) {
+				down.Accept(mapper(a))
+			}),
+		)
+	})
+}
+
 func (s *stream) AnyMatch(predicate func(any) bool) bool {
 	return evaluate[bool](s, newMatchOperation(matchAny, predicate))
 }
@@ -71,8 +81,8 @@ func evaluate[R any](stream *stream, op operation[R]) R {
 	}
 }
 
-func wrapAndCopyInto[S sink](st *stream, s S, iterator Iterator) S {
-	copyInto(wrapSink[S](st, s), iterator)
+func wrapAndCopyInto[S sink](stream *stream, s S, iterator Iterator) S {
+	copyInto(wrapSink[S](stream, s), iterator)
 	return s
 }
 
