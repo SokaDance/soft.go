@@ -97,11 +97,21 @@ func (s *stream) FindAny() optional.Optional[any] {
 }
 
 func (s *stream) Min(comparator func(any, any) int) optional.Optional[any] {
-	return optional.Empty[any]()
+	return s.Reduce(func(a, b any) any {
+		if comparator(a, b) <= 0 {
+			return a
+		}
+		return b
+	})
 }
 
 func (s *stream) Max(comparator func(any, any) int) optional.Optional[any] {
-	return optional.Empty[any]()
+	return s.Reduce(func(a, b any) any {
+		if comparator(a, b) >= 0 {
+			return a
+		}
+		return b
+	})
 }
 
 func (s *stream) Reduce(accumulator func(any, any) any) optional.Optional[any] {
