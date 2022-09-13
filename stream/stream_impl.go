@@ -19,6 +19,7 @@ func newStream(previous *stream, wrap func(sink) sink) *stream {
 	s := &stream{}
 	s.previous = previous
 	s.source = previous.source
+	s.wrap = wrap
 	return s
 }
 
@@ -26,7 +27,7 @@ func (s *stream) Iterator() Iterator {
 	if s == s.source {
 		return s.iterator
 	} else {
-
+		return nil
 	}
 }
 
@@ -83,6 +84,10 @@ func (s *stream) AllMatch(predicate func(any) bool) bool {
 
 func (s *stream) NoneMatch(predicate func(any) bool) bool {
 	return evaluate[bool](s, newMatchOperation(matchNone, predicate))
+}
+
+func (s *stream) Count() int {
+	return evaluate[int](s, newCountOperation())
 }
 
 func evaluate[R any](stream *stream, op operation[R]) R {

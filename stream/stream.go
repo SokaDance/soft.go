@@ -35,6 +35,8 @@ type Stream interface {
 	AnyMatch(predicate func(any) bool) bool
 	AllMatch(predicate func(any) bool) bool
 	NoneMatch(predicate func(any) bool) bool
+
+	Count() int
 }
 
 func OfIterator(it Iterator) Stream {
