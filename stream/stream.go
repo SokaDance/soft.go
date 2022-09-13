@@ -1,5 +1,7 @@
 package stream
 
+import "4d63.com/optional"
+
 type Stream interface {
 	// Iterator Returns an iterator for the elements of this stream.
 	Iterator() Iterator
@@ -35,7 +37,12 @@ type Stream interface {
 	AnyMatch(predicate func(any) bool) bool
 	AllMatch(predicate func(any) bool) bool
 	NoneMatch(predicate func(any) bool) bool
-
+	FindFirst() optional.Optional[any]
+	FindAny() optional.Optional[any]
+	Min(comparator func(any, any) int) optional.Optional[any]
+	Max(comparator func(any, any) int) optional.Optional[any]
+	Reduce(accumulator func(any, any) any) optional.Optional[any]
+	ReduceWith(initValue any, accumulator func(any, any) any) any
 	Count() int
 }
 
