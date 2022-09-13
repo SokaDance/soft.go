@@ -9,7 +9,10 @@ func newCountSink() *countSink {
 	s := &countSink{}
 	s.terminalSink = newTerminalSink(func(a any) {
 		s.count++
-	})
+	}, begin(func(i int) {
+		s.count = 0
+	},
+	))
 	return s
 }
 

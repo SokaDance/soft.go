@@ -99,11 +99,11 @@ func evaluate[R any](stream *stream, op operation[R]) R {
 }
 
 func wrapAndCopyInto[S sink](stream *stream, s S, iterator Iterator) S {
-	copyInto(wrapSink[S](stream, s), iterator)
+	copyInto(wrapSink(stream, s), iterator)
 	return s
 }
 
-func copyInto[S sink](s S, iterator Iterator) bool {
+func copyInto(s sink, iterator Iterator) bool {
 	canceled := false
 	s.Begin(iterator.EstimateSize())
 	for finished := false; !finished; {
@@ -114,10 +114,10 @@ func copyInto[S sink](s S, iterator Iterator) bool {
 	return canceled
 }
 
-func wrapSink[S sink](stream *stream, s S) S {
+func wrapSink(stream *stream, s sink) sink {
 	var result sink = s
 	for c := stream; c.previous != nil; c = c.previous {
 		result = c.wrap(result)
 	}
-	return result.(S)
+	return result
 }

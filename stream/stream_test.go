@@ -28,9 +28,11 @@ func TestStream_Count_Sequential(t *testing.T) {
 	assert.Equal(t, 3, OfSlice([]any{1, 2, 3}).Count())
 }
 
-// func TestStream_Filter_Sequential(t *testing.T) {
-// 	assert.True(t, OfSlice([]any{1, 2, 3}).Filter(func(a any) bool { return a == 2 }).AllMatch(func(a any) bool { return a == 2 }))
-// }
+func TestStream_Filter_Sequential(t *testing.T) {
+	assert.Equal(t, 0, OfSlice([]any{1, 3}).Filter(func(a any) bool { return a == 2 }).Count())
+	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).Filter(func(a any) bool { return a == 2 }).Count())
+	assert.Equal(t, 2, OfSlice([]any{1, 2, 3, 2}).Filter(func(a any) bool { return a == 2 }).Count())
+}
 
 func TestStream_AnyMatch_Sequential(t *testing.T) {
 	assert.True(t, OfSlice([]any{1, 2, 3}).AnyMatch(func(a any) bool { return a == 2 }))
