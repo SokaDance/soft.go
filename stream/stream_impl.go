@@ -1,5 +1,7 @@
 package stream
 
+import "4d63.com/optional"
+
 type stream struct {
 	source   *stream
 	previous *stream
@@ -86,6 +88,30 @@ func (s *stream) NoneMatch(predicate func(any) bool) bool {
 	return evaluate[bool](s, newMatchOperation(matchNone, predicate))
 }
 
+func (s *stream) FindFirst() optional.Optional[any] {
+	return evaluate[optional.Optional[any]](s, newFindOperation(true))
+}
+
+func (s *stream) FindAny() optional.Optional[any] {
+	return evaluate[optional.Optional[any]](s, newFindOperation(false))
+}
+
+func (s *stream) Min(comparator func(any, any) int) optional.Optional[any] {
+	return optional.Empty[any]()
+}
+
+func (s *stream) Max(comparator func(any, any) int) optional.Optional[any] {
+	return optional.Empty[any]()
+}
+
+func (s *stream) Reduce(accumulator func(any, any) any) optional.Optional[any] {
+	return optional.Empty[any]()
+}
+
+func (s *stream) ReduceWith(initValue any, accumulator func(any, any) any) any {
+	return optional.Empty[any]()
+}
+
 func (s *stream) Count() int {
 	return evaluate[int](s, newCountOperation())
 }
@@ -96,11 +122,6 @@ func evaluate[R any](stream *stream, op operation[R]) R {
 	} else {
 		return op.evaluateSequential(stream, stream.source.iterator)
 	}
-}
-
-func wrapAndCopyInto[S sink](stream *stream, s S, iterator Iterator) S {
-	copyInto(wrapSink(stream, s), iterator)
-	return s
 }
 
 func copyInto(s sink, iterator Iterator) bool {
@@ -120,4 +141,9 @@ func wrapSink(stream *stream, s sink) sink {
 		result = c.wrap(result)
 	}
 	return result
+}
+
+func wrapAndCopyInto[S sink](stream *stream, s S, iterator Iterator) S {
+	copyInto(wrapSink(stream, s), iterator)
+	return s
 }
