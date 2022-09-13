@@ -115,11 +115,11 @@ func (s *stream) Max(comparator func(any, any) int) optional.Optional[any] {
 }
 
 func (s *stream) Reduce(accumulator func(any, any) any) optional.Optional[any] {
-	return optional.Empty[any]()
+	return evaluate[optional.Optional[any]](s, newReducingOperation(accumulator))
 }
 
 func (s *stream) ReduceWith(initValue any, accumulator func(any, any) any) any {
-	return optional.Empty[any]()
+	return evaluate[any](s, newReducingOperationWithIdentity(initValue, accumulator))
 }
 
 func (s *stream) Count() int {
