@@ -25,7 +25,7 @@ func newFindSink() *findSink {
 
 func (s *findSink) get() optional.Optional[any] {
 	if s.hasValue {
-		return optional.Of[any](s.value)
+		return optional.Of(s.value)
 	}
 	return optional.Empty[any]()
 }
