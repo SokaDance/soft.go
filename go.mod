@@ -3,6 +3,7 @@ module github.com/masagroup/soft.go
 go 1.19
 
 require (
+	4d63.com/optional v0.2.0
 	github.com/OneOfOne/go-utils v0.0.0-20180319162427-6019ff89a94e
 	github.com/stretchr/testify v1.6.1
 	github.com/vmihailenco/msgpack/v5 v5.3.5
@@ -10,7 +11,6 @@ require (
 )
 
 require (
-	4d63.com/optional v0.2.0 // indirect
 	github.com/davecgh/go-spew v1.1.0 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/stretchr/objx v0.1.0 // indirect
