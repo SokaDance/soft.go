@@ -98,6 +98,17 @@ func (s *stream) Map(mapper func(any) any) Stream {
 	})
 }
 
+func (s *stream) Peek(action func(any)) Stream {
+	return newStream(s, func(down sink) sink {
+		return newChainedSink(down,
+			accept(func(a any) {
+				action(a)
+				down.Accept(a)
+			}),
+		)
+	})
+}
+
 func (s *stream) ForEach(action func(any)) {
 	evaluate[any](s, newForEachOperation(action))
 }
