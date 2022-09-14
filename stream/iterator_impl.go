@@ -138,3 +138,79 @@ func (it *concatIterator) EstimateSize() int {
 	}
 	return it.it2.EstimateSize()
 }
+
+type wrappingIterator struct {
+	stream        *stream
+	iterator      Iterator
+	isParallel    bool
+	isFinished    bool
+	buffer        []any
+	bufferSink    sink
+	nextToConsume int
+}
+
+func newWrappingIterator(stream *stream, iterator Iterator, isParallel bool) *wrappingIterator {
+	return &wrappingIterator{stream: stream, iterator: iterator, isParallel: isParallel}
+}
+
+func (it *wrappingIterator) TrySplit() Iterator {
+	if it.isParallel && it.buffer == nil && !it.isFinished {
+		if split := it.iterator.TrySplit(); split != nil {
+			return newWrappingIterator(it.stream, split, it.isParallel)
+		}
+	}
+	return nil
+}
+
+func (it *wrappingIterator) TryAdvance(action func(any)) bool {
+	hasNext := false
+	if it.buffer == nil {
+		it.nextToConsume = 0
+		it.buffer = []any{}
+		it.bufferSink = wrapSink(it.stream, newTerminalSink(func(a any) {
+			it.buffer = append(it.buffer, a)
+		}))
+		it.bufferSink.Begin(it.iterator.EstimateSize())
+		hasNext = it.fillBuffer()
+	} else {
+		it.nextToConsume++
+		hasNext = it.nextToConsume < len(it.buffer)
+		if !hasNext {
+			it.nextToConsume = 0
+			it.buffer = []any{}
+			hasNext = it.fillBuffer()
+		}
+	}
+	if hasNext {
+		action(it.buffer[it.nextToConsume])
+	}
+	return hasNext
+}
+
+func (it *wrappingIterator) fillBuffer() bool {
+	for len(it.buffer) == 0 {
+		if it.bufferSink.CancelationRequested() || !it.iterator.TryAdvance(it.bufferSink.Accept) {
+			if it.isFinished {
+				return false
+			} else {
+				it.bufferSink.End() // might trigger more elements
+				it.isFinished = true
+			}
+		}
+	}
+	return true
+}
+
+func (it *wrappingIterator) ForEachRemaining(action func(any)) {
+	if it.buffer == nil && !it.isFinished {
+		wrapAndCopyInto(it.stream, newTerminalSink(action), it.iterator)
+		it.isFinished = true
+	} else {
+		for it.TryAdvance(action) {
+		}
+	}
+}
+
+func (it *wrappingIterator) EstimateSize() int {
+	return it.iterator.EstimateSize()
+}

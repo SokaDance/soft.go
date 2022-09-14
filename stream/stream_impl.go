@@ -32,7 +32,7 @@ func (s *stream) Iterator() Iterator {
 	if s == s.source {
 		return s.iterator
 	} else {
-		return nil
+		return newWrappingIterator(s, s.source.iterator, s.source.parallel)
 	}
 }
 

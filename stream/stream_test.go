@@ -126,3 +126,19 @@ func TestStream_FindAny(t *testing.T) {
 	assert.False(t, OfSlice([]any{}).FindAny().IsPresent())
 	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).FindAny().ElseZero())
 }
+
+func TestStream_Iterator_Source(t *testing.T) {
+	result := []any{}
+	it := OfSlice([]any{1, 2, 3}).Iterator()
+	for it.TryAdvance(func(a any) { result = append(result, a) }) {
+	}
+	assert.Equal(t, []any{1, 2, 3}, result)
+}
+
+func TestStream_Iterator_Chained(t *testing.T) {
+	result := []any{}
+	it := OfSlice([]any{1, 2, 3}).Map(func(a any) any { return -a.(int) }).Iterator()
+	for it.TryAdvance(func(a any) { result = append(result, a) }) {
+	}
+	assert.Equal(t, []any{-1, -2, -3}, result)
+}
