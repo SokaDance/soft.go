@@ -62,6 +62,32 @@ func (s *stream) Filter(predicate func(any) bool) Stream {
 	})
 }
 
+func (s *stream) FlatMap(mapper func(any) Stream) Stream {
+	return newStream(s, func(down sink) sink {
+		cancellationRequestedCalled := false
+		return newChainedSink(down,
+			begin(func(int) {
+				down.Begin(-1)
+			}),
+			accept(func(a any) {
+				if result := mapper(a); result != nil {
+					if !cancellationRequestedCalled {
+						result.Sequential().ForEach(down.Accept)
+					} else {
+						it := result.Sequential().Iterator()
+						for !down.CancelationRequested() && it.TryAdvance(down.Accept) {
+						}
+					}
+				}
+			}),
+			cancelationRequested(func() bool {
+				cancellationRequestedCalled = true
+				return down.CancelationRequested()
+			}),
+		)
+	})
+}
+
 func (s *stream) Map(mapper func(any) any) Stream {
 	return newStream(s, func(down sink) sink {
 		return newChainedSink(down,
