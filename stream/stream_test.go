@@ -105,11 +105,16 @@ func TestStream_Max_Sequential(t *testing.T) {
 }
 
 func TestStream_Reduce(t *testing.T) {
+	assert.False(t, OfSlice([]any{}).Reduce(func(a1, a2 any) any { return a1.(int) + a2.(int) }).IsPresent())
 	assert.Equal(t, 6, OfSlice([]any{1, 2, 3}).Reduce(func(a1, a2 any) any { return a1.(int) + a2.(int) }).ElseZero())
 }
 
 func TestStream_ReduceWith(t *testing.T) {
 	assert.Equal(t, 7, OfSlice([]any{1, 2, 3}).ReduceWith(1, func(a1, a2 any) any { return a1.(int) + a2.(int) }))
+}
+
+func TestStream_Concat(t *testing.T) {
+	assert.Equal(t, []any{1, 2, 3, 4}, Concat(OfSlice([]any{1, 2}), OfSlice([]any{3, 4})).ToSlice())
 }
 
 func TestStream_FindFirst(t *testing.T) {

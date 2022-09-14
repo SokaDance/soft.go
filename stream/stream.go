@@ -55,3 +55,7 @@ func OfIterator(it Iterator) Stream {
 func OfSlice(slice []any) Stream {
 	return OfIterator(NewSliceIterator(slice))
 }
+
+func Concat(s1, s2 Stream) Stream {
+	return OfIterator(NewConcatIterator(s1.Iterator(), s2.Iterator()))
+}
