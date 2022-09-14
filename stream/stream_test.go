@@ -41,6 +41,22 @@ func TestStream_Filter_Sequential(t *testing.T) {
 	assert.Equal(t, 2, OfSlice([]any{1, 2, 3, 2}).Filter(func(a any) bool { return a == 2 }).Count())
 }
 
+func TestStream_Skip(t *testing.T) {
+	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3}).Skip(0).ToSlice())
+	assert.Equal(t, []any{2, 3}, OfSlice([]any{1, 2, 3}).Skip(1).ToSlice())
+	assert.Equal(t, []any{3}, OfSlice([]any{1, 2, 3}).Skip(2).ToSlice())
+	assert.Equal(t, []any{}, OfSlice([]any{1, 2, 3}).Skip(3).ToSlice())
+	assert.Equal(t, []any{}, OfSlice([]any{1, 2, 3}).Skip(4).ToSlice())
+}
+
+func TestStream_Limit(t *testing.T) {
+	assert.Equal(t, []any{}, OfSlice([]any{1, 2, 3}).Limit(0).ToSlice())
+	assert.Equal(t, []any{1}, OfSlice([]any{1, 2, 3}).Limit(1).ToSlice())
+	assert.Equal(t, []any{1, 2}, OfSlice([]any{1, 2, 3}).Limit(2).ToSlice())
+	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3}).Limit(3).ToSlice())
+	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3}).Limit(4).ToSlice())
+}
+
 func TestStream_ForEach_Sequential(t *testing.T) {
 	res := 0
 	OfSlice([]any{1, 2, 3}).ForEach(func(a any) { res += a.(int) })
