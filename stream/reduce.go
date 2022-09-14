@@ -62,7 +62,7 @@ func newReducingSink(reducer func(any, any) any) *reducingSink {
 
 func (s *reducingSink) get() optional.Optional[any] {
 	if s.empty {
-		optional.Empty[any]()
+		return optional.Empty[any]()
 	}
 	return optional.Of(s.state)
 }
