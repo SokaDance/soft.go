@@ -18,6 +18,29 @@ func TestStream_IsParallel(t *testing.T) {
 	assert.False(t, s.IsParallel())
 }
 
+func TestStream_ToSlice(t *testing.T) {
+	assert.Equal(t, []any{}, OfSlice(nil).ToSlice())
+	assert.Equal(t, []any{}, OfSlice([]any{}).ToSlice())
+	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3}).ToSlice())
+}
+
+func TestStream_Map_Sequential(t *testing.T) {
+	assert.Equal(t, []any{-1, -2, -3}, OfSlice([]any{1, 2, 3}).Map(func(a any) any { return -a.(int) }).ToSlice())
+}
+
+func TestStream_FlatMap_Sequential(t *testing.T) {
+	assert.Equal(t, []any{1, 2, 3, 2, 4, 6, 3, 6, 9}, OfSlice([]any{1, 2, 3}).FlatMap(func(a any) Stream {
+		i := a.(int)
+		return OfSlice([]any{i * 1, i * 2, i * 3})
+	}).ToSlice())
+}
+
+func TestStream_Filter_Sequential(t *testing.T) {
+	assert.Equal(t, 0, OfSlice([]any{1, 3}).Filter(func(a any) bool { return a == 2 }).Count())
+	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).Filter(func(a any) bool { return a == 2 }).Count())
+	assert.Equal(t, 2, OfSlice([]any{1, 2, 3, 2}).Filter(func(a any) bool { return a == 2 }).Count())
+}
+
 func TestStream_ForEach_Sequential(t *testing.T) {
 	res := 0
 	OfSlice([]any{1, 2, 3}).ForEach(func(a any) { res += a.(int) })
@@ -26,16 +49,6 @@ func TestStream_ForEach_Sequential(t *testing.T) {
 
 func TestStream_Count_Sequential(t *testing.T) {
 	assert.Equal(t, 3, OfSlice([]any{1, 2, 3}).Count())
-}
-
-func TestStream_Map_Sequential(t *testing.T) {
-	assert.Equal(t, -6, OfSlice([]any{1, 2, 3}).Map(func(a any) any { return -a.(int) }).Reduce(func(a1, a2 any) any { return a1.(int) + a2.(int) }).ElseZero())
-}
-
-func TestStream_Filter_Sequential(t *testing.T) {
-	assert.Equal(t, 0, OfSlice([]any{1, 3}).Filter(func(a any) bool { return a == 2 }).Count())
-	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).Filter(func(a any) bool { return a == 2 }).Count())
-	assert.Equal(t, 2, OfSlice([]any{1, 2, 3, 2}).Filter(func(a any) bool { return a == 2 }).Count())
 }
 
 func TestStream_AnyMatch_Sequential(t *testing.T) {
