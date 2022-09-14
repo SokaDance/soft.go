@@ -57,6 +57,10 @@ func TestStream_Limit(t *testing.T) {
 	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3}).Limit(4).ToSlice())
 }
 
+func TestStream_Sorted(t *testing.T) {
+	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{3, 1, 2}).Sorted(func(a1, a2 any) bool { return a1.(int) < a2.(int) }).ToSlice())
+}
+
 func TestStream_ForEach_Sequential(t *testing.T) {
 	res := 0
 	OfSlice([]any{1, 2, 3}).ForEach(func(a any) { res += a.(int) })
