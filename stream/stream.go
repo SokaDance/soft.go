@@ -28,6 +28,7 @@ type Stream interface {
 	Peek(action func(any)) Stream
 
 	// statefull operation
+	Distinct() Stream
 	// Sorted(comparator func(any, any) int) Stream
 	// Limit(int) Stream
 	// Skip(int) Stream

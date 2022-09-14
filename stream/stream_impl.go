@@ -109,6 +109,28 @@ func (s *stream) Peek(action func(any)) Stream {
 	})
 }
 
+func (s *stream) Distinct() Stream {
+	return newStream(s, func(down sink) sink {
+		var seen map[any]struct{}
+		return newChainedSink(down,
+			begin(func(i int) {
+				seen = map[any]struct{}{}
+				down.Begin(-1)
+			}),
+			end(func() {
+				seen = nil
+			}),
+			accept(func(a any) {
+				_, exists := seen[a]
+				seen[a] = struct{}{}
+				if !exists {
+					down.Accept(a)
+				}
+			}),
+		)
+	})
+}
+
 func (s *stream) ForEach(action func(any)) {
 	evaluate[any](s, newForEachOperation(action))
 }
