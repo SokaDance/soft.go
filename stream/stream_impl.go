@@ -131,6 +131,14 @@ func (s *stream) Distinct() Stream {
 	})
 }
 
+func (s *stream) Limit(limit int) Stream {
+	return newSliceStream(s, 0, limit)
+}
+
+func (s *stream) Skip(skip int) Stream {
+	return newSliceStream(s, skip, -1)
+}
+
 func (s *stream) ToSlice() []any {
 	return evaluate[[]any](s, newToSliceOperation())
 }

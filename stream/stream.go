@@ -30,8 +30,8 @@ type Stream interface {
 	// statefull operation
 	Distinct() Stream
 	// Sorted(comparator func(any, any) int) Stream
-	// Limit(int) Stream
-	// Skip(int) Stream
+	Limit(int) Stream
+	Skip(int) Stream
 
 	// terminal operation
 	ToSlice() []any
