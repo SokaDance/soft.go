@@ -29,7 +29,7 @@ type Stream interface {
 
 	// statefull operation
 	Distinct() Stream
-	// Sorted(comparator func(any, any) int) Stream
+	Sorted(less func(any, any) bool) Stream
 	Limit(int) Stream
 	Skip(int) Stream
 

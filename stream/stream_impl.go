@@ -1,6 +1,9 @@
 package stream
 
-import "4d63.com/optional"
+import (
+	"4d63.com/optional"
+	"golang.org/x/exp/slices"
+)
 
 type stream struct {
 	source   *stream
@@ -137,6 +140,33 @@ func (s *stream) Limit(limit int) Stream {
 
 func (s *stream) Skip(skip int) Stream {
 	return newSliceStream(s, skip, -1)
+}
+
+func (s *stream) Sorted(less func(any, any) bool) Stream {
+	return newStream(s, func(down sink) sink {
+		var l []any
+		return newChainedSink(down,
+			begin(func(size int) {
+				if size >= 0 {
+					l = make([]any, 0, size)
+				} else {
+					l = make([]any, 0)
+				}
+			}),
+			accept(func(a any) {
+				l = append(l, a)
+			}),
+			end(func() {
+				slices.SortFunc(l, less)
+				down.Begin(len(l))
+				for _, v := range l {
+					down.Accept(v)
+				}
+				down.End()
+				l = nil
+			}),
+		)
+	})
 }
 
 func (s *stream) ToSlice() []any {
