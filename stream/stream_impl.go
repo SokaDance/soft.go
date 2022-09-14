@@ -131,6 +131,10 @@ func (s *stream) Distinct() Stream {
 	})
 }
 
+func (s *stream) ToSlice() []any {
+	return evaluate[[]any](s, newToSliceOperation())
+}
+
 func (s *stream) ForEach(action func(any)) {
 	evaluate[any](s, newForEachOperation(action))
 }

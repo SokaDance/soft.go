@@ -34,6 +34,7 @@ type Stream interface {
 	// Skip(int) Stream
 
 	// terminal operation
+	ToSlice() []any
 	ForEach(action func(any))
 	AnyMatch(predicate func(any) bool) bool
 	AllMatch(predicate func(any) bool) bool
