@@ -57,6 +57,16 @@ func TestStream_Limit(t *testing.T) {
 	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3}).Limit(4).ToSlice())
 }
 
+func TestStream_Distinct(t *testing.T) {
+	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3, 2, 3}).Distinct().ToSlice())
+}
+
+func TestStream_Peek(t *testing.T) {
+	result := 0
+	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{1, 2, 3}).Peek(func(a any) { result += a.(int) }).ToSlice())
+	assert.Equal(t, 6, result)
+}
+
 func TestStream_Sorted(t *testing.T) {
 	assert.Equal(t, []any{1, 2, 3}, OfSlice([]any{3, 1, 2}).Sorted(func(a1, a2 any) bool { return a1.(int) < a2.(int) }).ToSlice())
 }
@@ -87,11 +97,11 @@ func TestStream_NoneMatch_Sequential(t *testing.T) {
 }
 
 func TestStream_Min_Sequential(t *testing.T) {
-	assert.Equal(t, 1, OfSlice([]any{3, 2, 1}).Min(func(a1, a2 any) int { return a1.(int) - a2.(int) }).ElseZero())
+	assert.Equal(t, 1, OfSlice([]any{2, 3, 1}).Min(func(a1, a2 any) int { return a1.(int) - a2.(int) }).ElseZero())
 }
 
 func TestStream_Max_Sequential(t *testing.T) {
-	assert.Equal(t, 3, OfSlice([]any{3, 2, 1}).Max(func(a1, a2 any) int { return a1.(int) - a2.(int) }).ElseZero())
+	assert.Equal(t, 3, OfSlice([]any{2, 3, 1}).Max(func(a1, a2 any) int { return a1.(int) - a2.(int) }).ElseZero())
 }
 
 func TestStream_Reduce(t *testing.T) {
@@ -100,4 +110,14 @@ func TestStream_Reduce(t *testing.T) {
 
 func TestStream_ReduceWith(t *testing.T) {
 	assert.Equal(t, 7, OfSlice([]any{1, 2, 3}).ReduceWith(1, func(a1, a2 any) any { return a1.(int) + a2.(int) }))
+}
+
+func TestStream_FindFirst(t *testing.T) {
+	assert.False(t, OfSlice([]any{}).FindFirst().IsPresent())
+	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).FindFirst().ElseZero())
+}
+
+func TestStream_FindAny(t *testing.T) {
+	assert.False(t, OfSlice([]any{}).FindAny().IsPresent())
+	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).FindAny().ElseZero())
 }
