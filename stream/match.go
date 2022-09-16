@@ -49,9 +49,9 @@ func (op *matchOperation) evaluateParallel(stream *stream, iterator Iterator) bo
 	return newRootTask[bool](
 		iterator,
 		func(t *task[bool]) bool {
-			result := wrapAndCopyInto(stream, newMatchSink(op.kind, op.predicate), iterator).value
+			result := wrapAndCopyInto(stream, newMatchSink(op.kind, op.predicate), t.Iterator()).value
 			if result == op.kind.shortCircuitResult {
-				t.setResult(result)
+				t.SetResult(result)
 			}
 			return result
 		},

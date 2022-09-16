@@ -50,7 +50,11 @@ func (t *task[T]) Invoke() T {
 	return result
 }
 
-func (t *task[T]) setResult(value T) {
+func (t *task[T]) Iterator() Iterator {
+	return t.iterator
+}
+
+func (t *task[T]) SetResult(value T) {
 	if any(value) != nil {
 		t.result.Store(value)
 	}
