@@ -86,6 +86,11 @@ func TestStream_AnyMatch_Sequential(t *testing.T) {
 	assert.False(t, OfSlice([]any{1, 2, 3}).AnyMatch(func(a any) bool { return a == 0 }))
 }
 
+func TestStream_AnyMatch_Parallel(t *testing.T) {
+	assert.True(t, OfSlice([]any{1, 2, 3, 4, 5, 6}).Parallel().AnyMatch(func(a any) bool { return a == 2 }))
+	assert.False(t, OfSlice([]any{1, 2, 3, 4, 5, 6}).Parallel().AnyMatch(func(a any) bool { return a == 0 }))
+}
+
 func TestStream_AllMatch_Sequential(t *testing.T) {
 	assert.True(t, OfSlice([]any{2, 2, 2}).AllMatch(func(a any) bool { return a == 2 }))
 	assert.False(t, OfSlice([]any{2, 2, 2}).AllMatch(func(a any) bool { return a == 3 }))
