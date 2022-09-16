@@ -60,14 +60,15 @@ func (it *sliceIterator) TrySplit() Iterator {
 	if lo >= mid {
 		return nil
 	}
-	if it.estimatedSize == -1 {
-		it.index = mid
-		return &sliceIterator{slice: it.slice[lo:it.index], index: 0, estimatedSize: -1}
+	estimatedSize := -1
+	if it.estimatedSize != -1 {
+		estimatedSize = it.estimatedSize >> 1
+		it.estimatedSize -= estimatedSize
 	}
-	prefixEstimatedSize := it.estimatedSize >> 1
-	it.estimatedSize -= prefixEstimatedSize
-	it.index = mid
-	return &sliceIterator{slice: it.slice[lo:it.index], estimatedSize: prefixEstimatedSize}
+	slice := it.slice
+	it.index = 0
+	it.slice = slice[mid:]
+	return &sliceIterator{slice: slice[lo:mid], estimatedSize: estimatedSize}
 }
 
 func (it *sliceIterator) ForEachRemaining(action func(any)) {
