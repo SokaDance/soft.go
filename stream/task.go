@@ -11,19 +11,17 @@ type task[T any] struct {
 	parent        *task[T]
 	targetSize    int
 	result        *atomic.Value
-	stream        *stream
 	iterator      Iterator
-	computeResult func() T
-	defaultResult func() T
+	computeResult func(*task[T]) T
+	defaultResult func(*task[T]) T
 	canceled      bool
 	leftChild     *task[T]
 	rightChild    *task[T]
 }
 
-func newRootTask[T any](stream *stream, iterator Iterator, computeResult func() T, defaultResult func() T) *task[T] {
+func newRootTask[T any](iterator Iterator, computeResult func(*task[T]) T, defaultResult func(*task[T]) T) *task[T] {
 	t := &task[T]{
 		result:        &atomic.Value{},
-		stream:        stream,
 		iterator:      iterator,
 		targetSize:    0,
 		computeResult: computeResult,
@@ -36,7 +34,6 @@ func newChildTask[T any](parent *task[T], iterator Iterator) *task[T] {
 		parent:        parent,
 		targetSize:    parent.targetSize,
 		result:        parent.result,
-		stream:        parent.stream,
 		computeResult: parent.computeResult,
 		defaultResult: parent.defaultResult,
 		iterator:      iterator,
@@ -69,15 +66,15 @@ func (t *task[T]) computeTask(resolve func(T), reject func(error)) {
 	var result T
 	for v := t.result.Load(); v == nil; {
 		if t.taskCanceled() {
-			result = t.defaultResult()
+			result = t.defaultResult(t)
 			break
 		}
 		if sizeEstimate <= sizeThreshold {
-			result = t.computeResult()
+			result = t.computeResult(t)
 			break
 		}
 		if ls = rs.TrySplit(); ls == nil {
-			result = t.computeResult()
+			result = t.computeResult(t)
 			break
 		}
 		t.leftChild = newChildTask(t, ls)
