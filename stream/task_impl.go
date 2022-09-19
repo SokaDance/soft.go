@@ -8,6 +8,7 @@ import (
 )
 
 type taskInternal[T any] interface {
+	computeTask(func(T), func(error))
 	computeResult() T
 	defaultResult() T
 	newChildTask(Iterator) *taskImpl[T]
@@ -53,10 +54,11 @@ func (t *taskImpl[T]) setInternal(internal taskInternal[T]) {
 }
 
 func (t *taskImpl[T]) fork() *promise.Promise[T] {
+	internal := t.asInternal()
 	return promise.Then[T](
-		promise.New[T](t.computeTask),
+		promise.New[T](internal.computeTask),
 		func(result T) T {
-			t.asInternal().onCompletion(result)
+			internal.onCompletion(result)
 			return result
 		},
 	)
@@ -99,18 +101,20 @@ func (t *taskImpl[T]) computeTask(resolve func(T), reject func(error)) {
 			result = internal.computeResult()
 			break
 		}
-		t.leftChild = internal.newChildTask(ls)
-		t.rightChild = internal.newChildTask(rs)
+		leftChild := internal.newChildTask(ls)
+		rightChild := internal.newChildTask(rs)
+		t.leftChild = leftChild
+		t.rightChild = rightChild
 		var taskToFork *taskImpl[T]
 		if forkRight {
 			forkRight = false
 			rs = ls
-			t = t.leftChild
-			taskToFork = t.rightChild
+			t = leftChild
+			taskToFork = rightChild
 		} else {
 			forkRight = true
-			t = t.rightChild
-			taskToFork = t.leftChild
+			t = rightChild
+			taskToFork = leftChild
 		}
 		promise := taskToFork.fork()
 		children = append(children, promise)
