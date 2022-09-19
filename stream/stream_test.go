@@ -132,14 +132,24 @@ func TestStream_Concat(t *testing.T) {
 	assert.Equal(t, []any{1, 2, 3, 4}, Concat(OfSlice([]any{1, 2}), OfSlice([]any{3, 4})).ToSlice())
 }
 
-func TestStream_FindFirst(t *testing.T) {
+func TestStream_FindFirst_Sequential(t *testing.T) {
 	assert.False(t, OfSlice([]any{}).FindFirst().IsPresent())
 	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).FindFirst().ElseZero())
 }
 
-func TestStream_FindAny(t *testing.T) {
+func TestStream_FindFirst_Parallel(t *testing.T) {
+	assert.False(t, OfSlice([]any{}).Parallel().FindFirst().IsPresent())
+	assert.True(t, OfSlice([]any{1, 2, 3}).Parallel().FindFirst().IsPresent())
+}
+
+func TestStream_FindAny_Sequential(t *testing.T) {
 	assert.False(t, OfSlice([]any{}).FindAny().IsPresent())
 	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).FindAny().ElseZero())
+}
+
+func TestStream_FindAny_Parallel(t *testing.T) {
+	assert.False(t, OfSlice([]any{}).Parallel().FindAny().IsPresent())
+	assert.True(t, OfSlice([]any{1, 2, 3}).Parallel().FindAny().IsPresent())
 }
 
 func TestStream_Iterator_Source(t *testing.T) {
