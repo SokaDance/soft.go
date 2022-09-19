@@ -11,7 +11,7 @@ type taskInternal[T any] interface {
 	computeResult() T
 	defaultResult() T
 	newChildTask(Iterator) *taskImpl[T]
-	onCompletion()
+	onCompletion(result T)
 }
 
 type taskImpl[T any] struct {
@@ -53,7 +53,13 @@ func (t *taskImpl[T]) setInternal(internal taskInternal[T]) {
 }
 
 func (t *taskImpl[T]) fork() *promise.Promise[T] {
-	return promise.New[T](t.computeTask)
+	return promise.Then[T](
+		promise.New[T](t.computeTask),
+		func(result T) T {
+			t.asInternal().onCompletion(result)
+			return result
+		},
+	)
 }
 
 func (t *taskImpl[T]) invoke() T {
@@ -173,5 +179,5 @@ func (t *taskImpl[T]) isLeftMost() bool {
 	return true
 }
 
-func (t *taskImpl[T]) onCompletion() {
+func (t *taskImpl[T]) onCompletion(result T) {
 }
