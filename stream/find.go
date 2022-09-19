@@ -30,6 +30,56 @@ func (s *findSink) get() optional.Optional[any] {
 	return optional.Empty[any]()
 }
 
+type findTask struct {
+	*taskImpl[optional.Optional[any]]
+	stream        *stream
+	mustFindFirst bool
+}
+
+func newFindTask(stream *stream, it Iterator, mustFindFirst bool) *findTask {
+	t := &findTask{
+		taskImpl:      newRootTask[optional.Optional[any]](it),
+		stream:        stream,
+		mustFindFirst: mustFindFirst,
+	}
+	t.setInternal(t)
+	return t
+}
+
+func (t *findTask) computeResult() optional.Optional[any] {
+	result := wrapAndCopyInto(t.stream, newFindSink(), t.iterator()).get()
+	if result != nil {
+		if !t.mustFindFirst {
+			t.setSharedResult(result)
+		} else {
+			t.foundResult(result)
+		}
+	}
+	return result
+}
+
+func (t *findTask) foundResult(result optional.Optional[any]) {
+	if t.isLeftMost() {
+		t.setSharedResult(result)
+	} else {
+		t.cancelLaterTasks()
+	}
+}
+
+func (t *findTask) defaultResult() optional.Optional[any] {
+	return optional.Empty[any]()
+}
+
+func (t *findTask) newChildTask(it Iterator) *taskImpl[optional.Optional[any]] {
+	child := &findTask{
+		taskImpl:      newChildTask[optional.Optional[any]](t.taskImpl, it),
+		stream:        t.stream,
+		mustFindFirst: t.mustFindFirst,
+	}
+	child.setInternal(child)
+	return child.taskImpl
+}
+
 type findOperation struct {
 	mustFindFirst bool
 }
@@ -43,5 +93,5 @@ func (op *findOperation) evaluateSequential(stream *stream, iterator Iterator) o
 }
 
 func (op *findOperation) evaluateParallel(stream *stream, iterator Iterator) optional.Optional[any] {
-	return optional.Empty[any]()
+	return newFindTask(stream, iterator, op.mustFindFirst).invoke()
 }
