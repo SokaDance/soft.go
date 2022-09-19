@@ -32,6 +32,44 @@ func newMatchSink(kind matchKind, predicate func(any) bool) *matchSink {
 	return s
 }
 
+type matchTask struct {
+	*taskImpl[bool]
+	op     *matchOperation
+	stream *stream
+}
+
+func newMatchTask(op *matchOperation, stream *stream, it Iterator) *matchTask {
+	t := &matchTask{
+		taskImpl: newRootTask[bool](it),
+		op:       op,
+		stream:   stream,
+	}
+	t.setInternal(t)
+	return t
+}
+
+func (t *matchTask) computeResult() bool {
+	result := wrapAndCopyInto(t.stream, newMatchSink(t.op.kind, t.op.predicate), t.iterator()).value
+	if result == t.op.kind.shortCircuitResult {
+		t.setSharedResult(result)
+	}
+	return result
+}
+
+func (t *matchTask) defaultResult() bool {
+	return !t.op.kind.shortCircuitResult
+}
+
+func (t *matchTask) newChildTask(it Iterator) *taskImpl[bool] {
+	child := &matchTask{
+		taskImpl: newChildTask[bool](t.taskImpl, it),
+		op:       t.op,
+		stream:   t.stream,
+	}
+	child.setInternal(child)
+	return child.taskImpl
+}
+
 type matchOperation struct {
 	kind      matchKind
 	predicate func(any) bool
@@ -46,17 +84,5 @@ func (op *matchOperation) evaluateSequential(stream *stream, iterator Iterator) 
 }
 
 func (op *matchOperation) evaluateParallel(stream *stream, iterator Iterator) bool {
-	return newRootTask[bool](
-		iterator,
-		func(t *task[bool]) bool {
-			result := wrapAndCopyInto(stream, newMatchSink(op.kind, op.predicate), t.Iterator()).value
-			if result == op.kind.shortCircuitResult {
-				t.SetResult(result)
-			}
-			return result
-		},
-		func(t *task[bool]) bool {
-			return !op.kind.shortCircuitResult
-		},
-	).Invoke()
+	return newMatchTask(op, stream, iterator).invoke()
 }
