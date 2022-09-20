@@ -79,8 +79,19 @@ func TestStream_ForEach_Sequential(t *testing.T) {
 
 func TestStream_ForEach_Parallel(t *testing.T) {
 	res := 0
-	OfSlice([]any{1, 2, 3, 4, 5, 6}).ForEach(func(a any) { res += a.(int) })
+	OfSlice([]any{1, 2, 3, 4, 5, 6}).Parallel().ForEach(func(a any) { res += a.(int) })
 	assert.Equal(t, 21, res)
+}
+
+func TestStream_ForEachBig_Parallel(t *testing.T) {
+	res := 0
+	i := 26
+	arr := make([]any, i)
+	for j := 0; j < i; j++ {
+		arr[j] = j + 1
+	}
+	OfSlice(arr).Parallel().ForEach(func(a any) { res += a.(int) })
+	assert.Equal(t, i*(i+1)/2, res)
 }
 
 func TestStream_Count_Sequential(t *testing.T) {
@@ -172,4 +183,28 @@ func TestStream_Iterator_Chained(t *testing.T) {
 	for it.TryAdvance(func(a any) { result = append(result, a) }) {
 	}
 	assert.Equal(t, []any{-1, -2, -3}, result)
+}
+
+func BenchmarkStream_ForEach_Sequential(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		arr := make([]any, i)
+		for j := 0; j < i; j++ {
+			arr[j] = j + 1
+		}
+		res := 0
+		OfSlice(arr).ForEach(func(a any) { res += a.(int) })
+		assert.Equal(b, i*(i+1)/2, res)
+	}
+}
+
+func BenchmarkStream_ForEach_Parallel(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		arr := make([]any, i)
+		for j := 0; j < i; j++ {
+			arr[j] = j + 1
+		}
+		res := 0
+		OfSlice(arr).Parallel().ForEach(func(a any) { res += a.(int) })
+		//assert.Equal(b, i*(i+1)/2, res)
+	}
 }
