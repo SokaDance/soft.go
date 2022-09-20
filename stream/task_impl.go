@@ -129,7 +129,7 @@ func (t *taskImpl[T]) computeTask(resolve func(T), reject func(error)) {
 	resolve(result)
 
 	// wait for children completion
-	promise.All[T](children...).Await()
+	promise.All(children...).Await()
 }
 
 func (t *taskImpl[T]) suggestTargetSize(sizeEstimate int) int {
@@ -184,4 +184,16 @@ func (t *taskImpl[T]) isLeftMost() bool {
 }
 
 func (t *taskImpl[T]) onCompletion(result T) {
+}
+
+func (t *taskImpl[T]) computeResult() T {
+	panic("task::computeResult not implemented")
+}
+
+func (t *taskImpl[T]) defaultResult() T {
+	panic("task::defaultResult not implemented")
+}
+
+func (t *taskImpl[T]) newChildTask(it Iterator) *taskImpl[T] {
+	panic("task::newChildTask not implemented")
 }

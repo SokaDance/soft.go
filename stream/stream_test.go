@@ -77,6 +77,12 @@ func TestStream_ForEach_Sequential(t *testing.T) {
 	assert.Equal(t, 6, res)
 }
 
+func TestStream_ForEach_Parallel(t *testing.T) {
+	res := 0
+	OfSlice([]any{1, 2, 3, 4, 5, 6}).ForEach(func(a any) { res += a.(int) })
+	assert.Equal(t, 21, res)
+}
+
 func TestStream_Count_Sequential(t *testing.T) {
 	assert.Equal(t, 3, OfSlice([]any{1, 2, 3}).Count())
 }
@@ -139,7 +145,7 @@ func TestStream_FindFirst_Sequential(t *testing.T) {
 
 func TestStream_FindFirst_Parallel(t *testing.T) {
 	assert.False(t, OfSlice([]any{}).Parallel().FindFirst().IsPresent())
-	assert.True(t, OfSlice([]any{1, 2, 3}).Parallel().FindFirst().IsPresent())
+	assert.Equal(t, 1, OfSlice([]any{1, 2, 3}).Parallel().FindFirst().ElseZero())
 }
 
 func TestStream_FindAny_Sequential(t *testing.T) {
