@@ -55,8 +55,8 @@ func (t *taskImpl[T]) setInternal(internal taskInternal[T]) {
 
 func (t *taskImpl[T]) fork() *promise.Promise[T] {
 	internal := t.asInternal()
-	return promise.Then[T](
-		promise.New[T](internal.computeTask),
+	return promise.Then(
+		promise.New(internal.computeTask),
 		func(result T) T {
 			internal.onCompletion(result)
 			return result
