@@ -1,6 +1,8 @@
 package stream
 
 import (
+	"fmt"
+	"sync"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -84,14 +86,23 @@ func TestStream_ForEach_Parallel(t *testing.T) {
 }
 
 func TestStream_ForEachBig_Parallel(t *testing.T) {
-	res := 0
-	i := 26
+	res := map[int]struct{}{}
+	m := &sync.Mutex{}
+	expected := map[int]struct{}{}
+	i := 60
 	arr := make([]any, i)
 	for j := 0; j < i; j++ {
-		arr[j] = j + 1
+		arr[j] = j
+		expected[j] = struct{}{}
 	}
-	OfSlice(arr).Parallel().ForEach(func(a any) { res += a.(int) })
-	assert.Equal(t, i*(i+1)/2, res)
+	OfSlice(arr).Parallel().ForEach(func(a any) {
+		m.Lock()
+		res[a.(int)] = struct{}{}
+		m.Unlock()
+	})
+	fmt.Printf("%v\n", res)
+	//time.Sleep(time.Second)
+	assert.Equal(t, expected, res)
 }
 
 func TestStream_Count_Sequential(t *testing.T) {
@@ -193,7 +204,6 @@ func BenchmarkStream_ForEach_Sequential(b *testing.B) {
 		}
 		res := 0
 		OfSlice(arr).ForEach(func(a any) { res += a.(int) })
-		assert.Equal(b, i*(i+1)/2, res)
 	}
 }
 
@@ -201,10 +211,9 @@ func BenchmarkStream_ForEach_Parallel(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		arr := make([]any, i)
 		for j := 0; j < i; j++ {
-			arr[j] = j + 1
+			arr[j] = j
 		}
 		res := 0
 		OfSlice(arr).Parallel().ForEach(func(a any) { res += a.(int) })
-		//assert.Equal(b, i*(i+1)/2, res)
 	}
 }
