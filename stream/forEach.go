@@ -41,7 +41,8 @@ func (t *forEachTask) computeTask(resolve func(any), reject func(error)) {
 	sizeEstimate := rightSplit.EstimateSize()
 	sizeThreshold := t.targetSize
 	if sizeThreshold == 0 {
-		sizeThreshold = t.suggestTargetSize(sizeEstimate)
+		t.targetSize = t.suggestTargetSize(sizeEstimate)
+		sizeThreshold = t.targetSize
 	}
 	forkRight := false
 	taskSink := newForEachSink(t.op.action)
