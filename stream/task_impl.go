@@ -129,7 +129,9 @@ func (t *taskImpl[T]) computeTask(resolve func(T), reject func(error)) {
 	resolve(result)
 
 	// wait for children completion
-	promise.All(children...).Await()
+	if len(children) > 0 {
+		promise.All(children...).Await()
+	}
 }
 
 func (t *taskImpl[T]) suggestTargetSize(sizeEstimate int) int {

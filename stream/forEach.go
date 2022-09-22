@@ -1,6 +1,8 @@
 package stream
 
-import "github.com/chebyrash/promise"
+import (
+	"github.com/chebyrash/promise"
+)
 
 type forEachSink struct {
 	*terminalSink
@@ -76,7 +78,9 @@ func (t *forEachTask) computeTask(resolve func(any), reject func(error)) {
 		children = append(children, promise)
 		sizeEstimate = rightSplit.EstimateSize()
 	}
-	promise.All(children...).Await()
+	if len(children) > 0 {
+		promise.All(children...).Await()
+	}
 	resolve(nil)
 }
 
