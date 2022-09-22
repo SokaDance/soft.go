@@ -72,7 +72,7 @@ func (t *findTask) defaultResult() optional.Optional[any] {
 
 func (t *findTask) newChildTask(it Iterator) *taskImpl[optional.Optional[any]] {
 	child := &findTask{
-		taskImpl:      newChildTask[optional.Optional[any]](t.taskImpl, it),
+		taskImpl:      newChildTask(t.taskImpl, it),
 		stream:        t.stream,
 		mustFindFirst: t.mustFindFirst,
 	}
