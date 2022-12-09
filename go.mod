@@ -15,8 +15,11 @@ require (
 	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/karlseguin/expect v1.0.8 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
+	github.com/segmentio/fasthash v1.0.3 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/vmihailenco/tagparser/v2 v2.0.0 // indirect
+	github.com/zyedidia/generic v1.2.0 // indirect
+	golang.org/x/exp v0.0.0-20220218215828-6cf2b201936e // indirect
 	golang.org/x/text v0.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
