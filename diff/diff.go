@@ -7,7 +7,9 @@ import (
 )
 
 //
+// https://onmyway133.com/posts/diff-algorithm/
 // Paul Heckel's Diff Algorithm
+// IGListDiff algorithm
 //
 
 type MoveIndex struct {
@@ -52,6 +54,8 @@ type Result interface {
 	GetInserts() set.Set[int]
 	GetUpdates() set.Set[int]
 	GetMoves() set.Set[MoveIndex]
+	GetOldIndexFor(uint64) (int, bool)
+	GetNewIndexFor(uint64) (int, bool)
 }
 
 type resultImpl struct {
@@ -59,8 +63,8 @@ type resultImpl struct {
 	inserts     set.Set[int]
 	updates     set.Set[int]
 	moves       set.Set[MoveIndex]
-	oldIndexFor map[any]int
-	newIndexFor map[any]int
+	oldIndexFor map[uint64]int
+	newIndexFor map[uint64]int
 }
 
 func newResultImpl() *resultImpl {
@@ -69,8 +73,8 @@ func newResultImpl() *resultImpl {
 		inserts:     set.NewMapset[int](),
 		updates:     set.NewMapset[int](),
 		moves:       newMoveIndexSet(),
-		oldIndexFor: map[any]int{},
-		newIndexFor: map[any]int{},
+		oldIndexFor: map[uint64]int{},
+		newIndexFor: map[uint64]int{},
 	}
 }
 
@@ -88,6 +92,16 @@ func (r *resultImpl) GetUpdates() set.Set[int] {
 
 func (r *resultImpl) GetMoves() set.Set[MoveIndex] {
 	return r.moves
+}
+
+func (r *resultImpl) GetOldIndexFor(h uint64) (i int, b bool) {
+	i, b = r.oldIndexFor[h]
+	return
+}
+
+func (r *resultImpl) GetNewIndexFor(h uint64) (i int, b bool) {
+	i, b = r.newIndexFor[h]
+	return
 }
 
 type entry struct {
@@ -109,8 +123,8 @@ func newRecord(entry *entry) *record {
 	}
 }
 
-func Compute[T any](oldArray, newArray []T, equals func(a, b T) bool) Result {
-	table := map[any]*entry{}
+func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash generic.HashFn[T]) Result {
+	table := map[uint64]*entry{}
 	oldCount := len(oldArray)
 	newCount := len(newArray)
 
@@ -120,10 +134,11 @@ func Compute[T any](oldArray, newArray []T, equals func(a, b T) bool) Result {
 	// record `nil` for each occurence of the item in the new array
 	newRecords := []*record{}
 	for _, k := range newArray {
-		e, isEntry := table[k]
+		h := hash(k)
+		e, isEntry := table[h]
 		if !isEntry {
 			e = &entry{}
-			table[k] = e
+			table[h] = e
 		}
 		e.newCounter++
 		e.oldIndexes.Push(-1)
@@ -138,10 +153,11 @@ func Compute[T any](oldArray, newArray []T, equals func(a, b T) bool) Result {
 	oldRecords := []*record{}
 	for i := len(oldArray) - 1; i >= 0; i-- {
 		k := oldArray[i]
-		e, isEntry := table[k]
+		h := hash(k)
+		e, isEntry := table[h]
 		if !isEntry {
 			e = &entry{}
-			table[k] = e
+			table[h] = e
 		}
 		e.oldCounter++
 		e.oldIndexes.Push(i)
@@ -181,7 +197,7 @@ func Compute[T any](oldArray, newArray []T, equals func(a, b T) bool) Result {
 			result.deletes.Put(i)
 			runningOffset++
 		}
-		result.oldIndexFor[oldArray[i]] = i
+		result.oldIndexFor[hash(oldArray[i])] = i
 	}
 
 	//reset and track offsets from inserted items to calculate where items have moved
@@ -206,7 +222,7 @@ func Compute[T any](oldArray, newArray []T, equals func(a, b T) bool) Result {
 			result.inserts.Put(i)
 			runningOffset++
 		}
-		result.newIndexFor[newArray[i]] = i
+		result.newIndexFor[hash(newArray[i])] = i
 	}
 
 	return result
