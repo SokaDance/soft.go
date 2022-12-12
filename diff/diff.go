@@ -118,7 +118,7 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 	for i, r := range oldRecords {
 		deleteOffsets[i] = runningOffset
 		if r.index == -1 {
-			operations = append(operations, Delete(i))
+			operations = append([]Operation{Delete(i)}, operations...)
 			runningOffset++
 		}
 		oldIndexFor[hash(oldArray[i])] = i
@@ -137,7 +137,7 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 			// calculate the offset and determine if there was a move
 			// if the indexes match, ignore the index
 			deleteOffset := deleteOffsets[oldIndex]
-			if oldIndex-deleteOffset+runningOffset != i && oldIndex != i {
+			if oldIndex-deleteOffset+runningOffset != i {
 				operations = append(operations, Move{From: oldIndex, To: i})
 			}
 

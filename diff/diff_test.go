@@ -6,6 +6,7 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 	"github.com/zyedidia/generic"
 )
 
@@ -139,8 +140,8 @@ func TestCompute_Update(t *testing.T) {
 	}, result)
 }
 
-const nbIteration = 1
-const collectionSize = 5
+const nbIteration = 50
+const collectionSize = 100
 
 func performRandomActions(original []int, minimumCountAfterActions, maximumCountAfterActions int) []int {
 	destination := make([]int, len(original))
@@ -240,27 +241,27 @@ func applyResult(currentObjects []int, expectedObjects []int, result Result) []i
 			index := int(op)
 			resultObjects = scliceInsert(resultObjects, index, expectedObjects[index])
 		case Move:
-			resultObjects = scliceMove(resultObjects, op.From, op.To)
+			resultObjects[op.To] = currentObjects[op.From]
 		}
 	}
 	return resultObjects
 }
 
-// func TestCompute_Stress(t *testing.T) {
+func TestCompute_Stress(t *testing.T) {
 
-// 	// build objects
-// 	currentObjects := make([]int, collectionSize)
-// 	for i := 0; i < collectionSize; i++ {
-// 		currentObjects[i] = newObject()
-// 	}
+	// build objects
+	currentObjects := make([]int, collectionSize)
+	for i := 0; i < collectionSize; i++ {
+		currentObjects[i] = newObject()
+	}
 
-// 	// perform random actions & compute diff
-// 	for i := 0; i < nbIteration; i++ {
-// 		expectedObjects := performRandomActions(currentObjects, collectionSize/10, collectionSize*10)
-// 		result := Compute(currentObjects, expectedObjects, generic.Equals[int], generic.HashInt)
-// 		resultObjects := applyResult(currentObjects, expectedObjects, result)
-// 		require.Equal(t, expectedObjects, resultObjects)
-// 		currentObjects = resultObjects
-// 	}
+	// perform random actions & compute diff
+	for i := 0; i < nbIteration; i++ {
+		expectedObjects := performRandomActions(currentObjects, collectionSize/10, collectionSize*10)
+		result := Compute(currentObjects, expectedObjects, generic.Equals[int], generic.HashInt)
+		resultObjects := applyResult(currentObjects, expectedObjects, result)
+		require.Equal(t, expectedObjects, resultObjects)
+		currentObjects = resultObjects
+	}
 
-// }
+}
