@@ -2,7 +2,6 @@ package diff
 
 import (
 	"github.com/zyedidia/generic"
-	"github.com/zyedidia/generic/mapset"
 	"github.com/zyedidia/generic/stack"
 )
 
@@ -12,26 +11,17 @@ import (
 // IGListDiff algorithm
 //
 
-type MoveIndex struct {
+type Operation any
+type Insert int
+type Delete int
+type Update int
+type Move struct {
 	From int
 	To   int
 }
 
-func makeMoveIndex(from, to int) MoveIndex {
-	min := from
-	max := to
-	if to < from {
-		min = to
-		max = from
-	}
-	return MoveIndex{From: min, To: max}
-}
-
 type Result struct {
-	Deletes     []int
-	Inserts     []int
-	Updates     []int
-	Moves       []MoveIndex
+	Operations  []Operation
 	OldIndexFor map[uint64]int
 	NewIndexFor map[uint64]int
 }
@@ -116,11 +106,7 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 	}
 
 	// storage for final results
-	deletes := []int{}
-	inserts := []int{}
-	updates := []int{}
-	moves := []MoveIndex{}
-	movesSet := mapset.New[MoveIndex]()
+	operations := []Operation{}
 	oldIndexFor := map[uint64]int{}
 	newIndexFor := map[uint64]int{}
 
@@ -132,7 +118,7 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 	for i, r := range oldRecords {
 		deleteOffsets[i] = runningOffset
 		if r.index == -1 {
-			deletes = append(deletes, i)
+			operations = append(operations, Delete(i))
 			runningOffset++
 		}
 		oldIndexFor[hash(oldArray[i])] = i
@@ -146,33 +132,67 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 		if oldIndex := r.index; oldIndex != -1 {
 			// note that an entry can be updated /and/ moved
 			if r.entry.updated {
-				updates = append(updates, oldIndex)
+				operations = append(operations, Update(oldIndex))
 			}
 			// calculate the offset and determine if there was a move
 			// if the indexes match, ignore the index
 			deleteOffset := deleteOffsets[oldIndex]
 			if oldIndex-deleteOffset+runningOffset != i && oldIndex != i {
-				move := makeMoveIndex(oldIndex, i)
-				if !movesSet.Has(move) {
-					moves = append(moves, move)
-					movesSet.Put(move)
-				}
+				operations = append(operations, Move{From: oldIndex, To: i})
 			}
 
 		} else {
 			// add to inserts if the opposing index is -1
-			inserts = append(inserts, i)
+			operations = append(operations, Insert(i))
 			runningOffset++
 		}
 		newIndexFor[hash(newArray[i])] = i
 	}
 
 	return Result{
-		Deletes:     deletes,
-		Inserts:     inserts,
-		Moves:       moves,
-		Updates:     updates,
+		Operations:  operations,
 		OldIndexFor: oldIndexFor,
 		NewIndexFor: newIndexFor,
+	}
+}
+
+func ComputeOrdered[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash generic.HashFn[T]) Result {
+	result := Compute[T](oldArray, newArray, equals, hash)
+	insertions := []Operation{}
+	updates := []Operation{}
+	deletions := make([]Operation, len(oldArray))
+	trackDeletion := func(index int, op Operation) {
+		if deletions[index] == nil {
+			deletions[index] = op
+		}
+	}
+
+	for _, operation := range result.Operations {
+		switch op := operation.(type) {
+		case Insert:
+			insertions = append(insertions, operation)
+		case Delete:
+			trackDeletion(int(op), operation)
+		case Move:
+			insertions = append(insertions, op.To)
+			trackDeletion(op.From, Delete(op.From))
+		case Update:
+			updates = append(updates, op)
+		}
+
+	}
+
+	ordered := []Operation{}
+	for i := len(deletions) - 1; i >= 0; i-- {
+		if d := deletions[i]; d != nil {
+			ordered = append(ordered, d)
+		}
+	}
+	ordered = append(ordered, insertions...)
+	ordered = append(ordered, updates...)
+	return Result{
+		Operations:  ordered,
+		OldIndexFor: result.OldIndexFor,
+		NewIndexFor: result.NewIndexFor,
 	}
 }
