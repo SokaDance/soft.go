@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 	"github.com/zyedidia/generic"
 	"github.com/zyedidia/generic/set"
 )
@@ -77,4 +78,28 @@ func TestCompute_MoveInsertBis(t *testing.T) {
 	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
 	assert.True(t, result.GetInserts().Equal(set.NewMapset(2)))
 	assert.True(t, result.GetMoves().Equal(newMoveIndexSet(makeMoveIndex(0, 1))))
+}
+
+func TestCompute_Update(t *testing.T) {
+	mockObject1 := &mock.Mock{}
+	mockObject2 := &mock.Mock{}
+	mockObject3 := &mock.Mock{}
+	oldArray := []*mock.Mock{mockObject1, mockObject3}
+	newArray := []*mock.Mock{mockObject2, mockObject3}
+	result := Compute(oldArray, newArray, generic.Equals[*mock.Mock], func(m *mock.Mock) uint64 {
+		switch m {
+		case mockObject1:
+			return 1
+		case mockObject2:
+			return 1
+		case mockObject3:
+			return 2
+		default:
+			return 0
+		}
+	})
+	assert.Equal(t, 0, result.GetInserts().Size())
+	assert.Equal(t, 0, result.GetMoves().Size())
+	assert.Equal(t, 0, result.GetDeletes().Size())
+	assert.True(t, result.GetUpdates().Equal(set.NewMapset(0)))
 }
