@@ -8,78 +8,138 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"github.com/zyedidia/generic"
-	"github.com/zyedidia/generic/set"
 )
+
+func hashInt(i int) uint64 {
+	return uint64(i)
+}
+
+var equalsInt = generic.Equals[int]
 
 func TestCompute_Empty(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{1, 2, 3, 4}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.Equal(t, 0, result.GetDeletes().Size())
-	assert.Equal(t, 0, result.GetInserts().Size())
-	assert.Equal(t, 0, result.GetUpdates().Size())
-	assert.Equal(t, 0, result.GetMoves().Size())
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{},
+		Inserts:     []int{},
+		Moves:       []MoveIndex{},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+	}, result)
 }
 
 func TestCompute_Delete(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{1, 4}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetDeletes().Equal(set.NewMapset(1, 2)))
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{1, 2},
+		Inserts:     []int{},
+		Moves:       []MoveIndex{},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{1: 0, 4: 1},
+	}, result)
 }
 
 func TestCompute_Insert(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{0, 1, 2, 5, 3, 4, 6}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetInserts().Equal(set.NewMapset(0, 3, 6)))
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{},
+		Inserts:     []int{0, 3, 6},
+		Moves:       []MoveIndex{},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{0: 0, 1: 1, 2: 2, 5: 3, 3: 4, 4: 5, 6: 6},
+	}, result)
 }
 
 func TestCompute_Move(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{4, 3, 2, 1}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetMoves().Equal(newMoveIndexSet(makeMoveIndex(0, 3), makeMoveIndex(1, 2))))
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{},
+		Inserts:     []int{},
+		Moves:       []MoveIndex{{From: 0, To: 3}, {From: 1, To: 2}},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{4: 0, 3: 1, 2: 2, 1: 3},
+	}, result)
 }
 
 func TestCompute_MoveBis(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{2, 1, 3, 4}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetMoves().Equal(newMoveIndexSet(makeMoveIndex(0, 1))))
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{},
+		Inserts:     []int{},
+		Moves:       []MoveIndex{{From: 0, To: 1}},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{2: 0, 1: 1, 3: 2, 4: 3},
+	}, result)
 }
 
 func TestCompute_DeleteInsert(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{1, 6, 5, 4}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetDeletes().Equal(set.NewMapset(1, 2)))
-	assert.True(t, result.GetInserts().Equal(set.NewMapset(1, 2)))
-	assert.Equal(t, 0, result.GetMoves().Size())
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{1, 2},
+		Inserts:     []int{1, 2},
+		Moves:       []MoveIndex{},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{1: 0, 6: 1, 5: 2, 4: 3},
+	}, result)
 }
 
 func TestCompute_DeleteMove(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{1, 4, 3}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetDeletes().Equal(set.NewMapset(1)))
-	assert.True(t, result.GetMoves().Equal(newMoveIndexSet(makeMoveIndex(1, 3))))
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{1},
+		Inserts:     []int{},
+		Moves:       []MoveIndex{{From: 1, To: 3}},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{1: 0, 4: 1, 3: 2},
+	}, result)
 }
 
 func TestCompute_MoveInsert(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{1, 5, 2, 4, 3}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetInserts().Equal(set.NewMapset(1)))
-	assert.True(t, result.GetMoves().Equal(newMoveIndexSet(makeMoveIndex(2, 4))))
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{},
+		Inserts:     []int{1},
+		Moves:       []MoveIndex{{From: 2, To: 4}},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{1: 0, 5: 1, 2: 2, 4: 3, 3: 4},
+	}, result)
 }
 
 func TestCompute_MoveInsertBis(t *testing.T) {
 	oldArray := []int{1, 2, 3, 4}
 	newArray := []int{2, 1, 5, 3, 4}
-	result := Compute(oldArray, newArray, generic.Equals[int], generic.HashInt)
-	assert.True(t, result.GetInserts().Equal(set.NewMapset(2)))
-	assert.True(t, result.GetMoves().Equal(newMoveIndexSet(makeMoveIndex(0, 1))))
+	result := Compute(oldArray, newArray, equalsInt, hashInt)
+	assert.Equal(t, Result{
+		Deletes:     []int{},
+		Inserts:     []int{2},
+		Moves:       []MoveIndex{{From: 0, To: 1}},
+		Updates:     []int{},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1, 3: 2, 4: 3},
+		NewIndexFor: map[uint64]int{2: 0, 1: 1, 5: 2, 3: 3, 4: 4},
+	}, result)
 }
 
 func TestCompute_Update(t *testing.T) {
@@ -100,30 +160,30 @@ func TestCompute_Update(t *testing.T) {
 			return 0
 		}
 	})
-	assert.Equal(t, 0, result.GetInserts().Size())
-	assert.Equal(t, 0, result.GetMoves().Size())
-	assert.Equal(t, 0, result.GetDeletes().Size())
-	assert.True(t, result.GetUpdates().Equal(set.NewMapset(0)))
+	assert.Equal(t, Result{
+		Deletes:     []int{},
+		Inserts:     []int{},
+		Moves:       []MoveIndex{},
+		Updates:     []int{0},
+		OldIndexFor: map[uint64]int{1: 0, 2: 1},
+		NewIndexFor: map[uint64]int{1: 0, 2: 1},
+	}, result)
 }
 
 const nbIteration = 1
 const collectionSize = 5
 
-func performRandomActions(original []*mock.Mock, minimumCountAfterActions, maximumCountAfterActions int, objectToID map[*mock.Mock]uint64) []*mock.Mock {
-	destination := make([]*mock.Mock, len(original))
+func performRandomActions(original []int, minimumCountAfterActions, maximumCountAfterActions int) []int {
+	destination := make([]int, len(original))
 	copy(destination, original)
-	destination = performInsertActions(destination, rand.Intn(maximumCountAfterActions)/2, objectToID)
+	destination = performInsertActions(destination, rand.Intn(maximumCountAfterActions)/2)
 	destination = performDeleteActions(destination, rand.Intn(maximumCountAfterActions)/2)
 	destination = performMoveActions(destination, rand.Intn(maximumCountAfterActions)/3)
-	destination = performUpdateActions(destination, rand.Intn(maximumCountAfterActions)/3, objectToID)
 	if len(destination) < minimumCountAfterActions {
-		destination = performInsertActions(destination, minimumCountAfterActions, objectToID)
+		destination = performInsertActions(destination, minimumCountAfterActions)
 	}
 	if len(destination) > maximumCountAfterActions {
-		destination = performInsertActions(destination, minimumCountAfterActions, objectToID)
-	}
-	if len(destination) > maximumCountAfterActions {
-		destination = performDeleteActions(destination, len(destination)-maximumCountAfterActions)
+		destination = performInsertActions(destination, minimumCountAfterActions)
 	}
 	return destination
 }
@@ -157,11 +217,19 @@ func scliceMove[T any](array []T, from, to int) []T {
 	return array
 }
 
-func performInsertActions(array []*mock.Mock, count int, objectToID map[*mock.Mock]uint64) []*mock.Mock {
+var id = 0
+
+func newObject() int {
+	defer func() {
+		id++
+	}()
+	return id
+}
+
+func performInsertActions(array []int, count int) []int {
 	for i := 0; i < count; i++ {
 		// create object
-		mockObject := &mock.Mock{}
-		objectToID[mockObject] = uint64(len(array) + i)
+		mockObject := newObject()
 		// compute random index
 		index := rand.Intn(len(array))
 		// apply to array
@@ -170,7 +238,7 @@ func performInsertActions(array []*mock.Mock, count int, objectToID map[*mock.Mo
 	return array
 }
 
-func performDeleteActions(array []*mock.Mock, count int) []*mock.Mock {
+func performDeleteActions(array []int, count int) []int {
 	for i := 0; i < count; i++ {
 		// compute random index
 		index := rand.Intn(len(array))
@@ -180,21 +248,7 @@ func performDeleteActions(array []*mock.Mock, count int) []*mock.Mock {
 	return array
 }
 
-func performUpdateActions(array []*mock.Mock, count int, objectToID map[*mock.Mock]uint64) []*mock.Mock {
-	for i := 0; i < count; i++ {
-		// create new object
-		mockObject := &mock.Mock{}
-		// compute random index
-		index := rand.Intn(len(array))
-		// apply to array
-		oldObject := array[index]
-		array[index] = mockObject
-		objectToID[mockObject] = objectToID[oldObject]
-	}
-	return array
-}
-
-func performMoveActions(array []*mock.Mock, count int) []*mock.Mock {
+func performMoveActions(array []int, count int) []int {
 	for i := 0; i < count; i++ {
 		// compute random index
 		from := rand.Intn(len(array))
@@ -205,37 +259,33 @@ func performMoveActions(array []*mock.Mock, count int) []*mock.Mock {
 	return array
 }
 
-func applyResult(currentObjects []*mock.Mock, expectedObjects []*mock.Mock, result Result) []*mock.Mock {
-	resultObjects := make([]*mock.Mock, len(currentObjects))
+func applyResult(currentObjects []int, expectedObjects []int, result Result) []int {
+	resultObjects := make([]int, len(currentObjects))
 	copy(resultObjects, currentObjects)
-	result.GetDeletes().Each(func(i int) {
-		resultObjects = scliceDelete(resultObjects, i)
-	})
-	result.GetInserts().Each(func(i int) {
-		resultObjects = scliceInsert(resultObjects, i, expectedObjects[i])
-	})
-	result.GetMoves().Each(func(mi MoveIndex) {
-		resultObjects = scliceMove(resultObjects, mi.From, mi.To)
-	})
+	for _, index := range result.Deletes {
+		resultObjects = scliceDelete(resultObjects, index)
+	}
+	for _, index := range result.Inserts {
+		resultObjects = scliceInsert(resultObjects, index, expectedObjects[index])
+	}
+	for _, m := range result.Moves {
+		resultObjects = scliceMove(resultObjects, m.From, m.To)
+	}
 	return resultObjects
 }
 
 func TestCompute_Stress(t *testing.T) {
 
-	objectToID := map[*mock.Mock]uint64{}
-
 	// build objects
-	currentObjects := make([]*mock.Mock, collectionSize)
+	currentObjects := make([]int, collectionSize)
 	for i := 0; i < collectionSize; i++ {
-		mockObject := &mock.Mock{}
-		objectToID[mockObject] = uint64(i)
-		currentObjects[i] = mockObject
+		currentObjects[i] = newObject()
 	}
 
 	// perform random actions & compute diff
 	for i := 0; i < nbIteration; i++ {
-		expectedObjects := performRandomActions(currentObjects, collectionSize/10, collectionSize*10, objectToID)
-		result := Compute(currentObjects, expectedObjects, generic.Equals[*mock.Mock], func(m *mock.Mock) uint64 { return objectToID[m] })
+		expectedObjects := performRandomActions(currentObjects, collectionSize/10, collectionSize*10)
+		result := Compute(currentObjects, expectedObjects, generic.Equals[int], generic.HashInt)
 		resultObjects := applyResult(currentObjects, expectedObjects, result)
 		require.Equal(t, expectedObjects, resultObjects)
 		currentObjects = resultObjects

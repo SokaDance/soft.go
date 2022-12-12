@@ -2,7 +2,7 @@ package diff
 
 import (
 	"github.com/zyedidia/generic"
-	"github.com/zyedidia/generic/set"
+	"github.com/zyedidia/generic/mapset"
 	"github.com/zyedidia/generic/stack"
 )
 
@@ -27,81 +27,13 @@ func makeMoveIndex(from, to int) MoveIndex {
 	return MoveIndex{From: min, To: max}
 }
 
-func combineHashCode(hashCodes ...uint64) uint64 {
-	var constant uint64 = 23
-	var result uint64 = 17
-	for _, hashCode := range hashCodes {
-		result = result*constant + hashCode
-	}
-	return result
-}
-
-func newMoveIndexSet(in ...MoveIndex) set.Set[MoveIndex] {
-	return set.NewHashset[MoveIndex](
-		0,
-		func(a, b MoveIndex) bool {
-			return a.From == b.From && a.To == b.To
-		},
-		func(mi MoveIndex) uint64 {
-			return combineHashCode(generic.HashInt(mi.From), generic.HashInt(mi.To))
-		},
-		in...,
-	)
-}
-
-type Result interface {
-	GetDeletes() set.Set[int]
-	GetInserts() set.Set[int]
-	GetUpdates() set.Set[int]
-	GetMoves() set.Set[MoveIndex]
-	GetOldIndexFor(uint64) (int, bool)
-	GetNewIndexFor(uint64) (int, bool)
-}
-
-type resultImpl struct {
-	deletes     set.Set[int]
-	inserts     set.Set[int]
-	updates     set.Set[int]
-	moves       set.Set[MoveIndex]
-	oldIndexFor map[uint64]int
-	newIndexFor map[uint64]int
-}
-
-func newResultImpl() *resultImpl {
-	return &resultImpl{
-		deletes:     set.NewMapset[int](),
-		inserts:     set.NewMapset[int](),
-		updates:     set.NewMapset[int](),
-		moves:       newMoveIndexSet(),
-		oldIndexFor: map[uint64]int{},
-		newIndexFor: map[uint64]int{},
-	}
-}
-
-func (r *resultImpl) GetDeletes() set.Set[int] {
-	return r.deletes
-}
-
-func (r *resultImpl) GetInserts() set.Set[int] {
-	return r.inserts
-}
-
-func (r *resultImpl) GetUpdates() set.Set[int] {
-	return r.updates
-}
-
-func (r *resultImpl) GetMoves() set.Set[MoveIndex] {
-	return r.moves
-}
-
-func (r *resultImpl) GetOldIndexFor(h uint64) (i int, b bool) {
-	i, b = r.oldIndexFor[h]
-	return
-}
-
-func (r *resultImpl) GetNewIndexFor(h uint64) (i int, b bool) {
-	i, b = r.newIndexFor[h]
-	return
+type Result struct {
+	Deletes     []int
+	Inserts     []int
+	Updates     []int
+	Moves       []MoveIndex
+	OldIndexFor map[uint64]int
+	NewIndexFor map[uint64]int
 }
 
 type entry struct {
@@ -184,7 +116,13 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 	}
 
 	// storage for final results
-	result := newResultImpl()
+	deletes := []int{}
+	inserts := []int{}
+	updates := []int{}
+	moves := []MoveIndex{}
+	movesSet := mapset.New[MoveIndex]()
+	oldIndexFor := map[uint64]int{}
+	newIndexFor := map[uint64]int{}
 
 	// track offsets from deleted items to calculate where items have moved
 	// iterate old array records checking for deletes
@@ -194,10 +132,10 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 	for i, r := range oldRecords {
 		deleteOffsets[i] = runningOffset
 		if r.index == -1 {
-			result.deletes.Put(i)
+			deletes = append(deletes, i)
 			runningOffset++
 		}
-		result.oldIndexFor[hash(oldArray[i])] = i
+		oldIndexFor[hash(oldArray[i])] = i
 	}
 
 	//reset and track offsets from inserted items to calculate where items have moved
@@ -208,22 +146,33 @@ func Compute[T any](oldArray, newArray []T, equals generic.EqualsFn[T], hash gen
 		if oldIndex := r.index; oldIndex != -1 {
 			// note that an entry can be updated /and/ moved
 			if r.entry.updated {
-				result.updates.Put(oldIndex)
+				updates = append(updates, oldIndex)
 			}
 			// calculate the offset and determine if there was a move
 			// if the indexes match, ignore the index
 			deleteOffset := deleteOffsets[oldIndex]
 			if oldIndex-deleteOffset+runningOffset != i && oldIndex != i {
-				result.moves.Put(makeMoveIndex(oldIndex, i))
+				move := makeMoveIndex(oldIndex, i)
+				if !movesSet.Has(move) {
+					moves = append(moves, move)
+					movesSet.Put(move)
+				}
 			}
 
 		} else {
 			// add to inserts if the opposing index is -1
-			result.inserts.Put(i)
+			inserts = append(inserts, i)
 			runningOffset++
 		}
-		result.newIndexFor[hash(newArray[i])] = i
+		newIndexFor[hash(newArray[i])] = i
 	}
 
-	return result
+	return Result{
+		Deletes:     deletes,
+		Inserts:     inserts,
+		Moves:       moves,
+		Updates:     updates,
+		OldIndexFor: oldIndexFor,
+		NewIndexFor: newIndexFor,
+	}
 }
