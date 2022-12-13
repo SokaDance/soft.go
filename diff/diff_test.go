@@ -58,10 +58,10 @@ func TestDiff(t *testing.T) {
 }
 
 func TestDiff_Accept_Add(t *testing.T) {
-	diff := Diff[int]{
-		Entries: []Entry[int]{{Index: 2, Element: 1, IsAddition: true}, {Index: 2, Element: 2, IsAddition: true}},
-		equals:  equals[int],
-	}
+	diff := MakeDiff[int](
+		[]Entry[int]{{Index: 2, Element: 1, IsAddition: true}, {Index: 2, Element: 2, IsAddition: true}},
+		equals[int],
+	)
 	mockVisitor := NewMockVisitor[int](t)
 	mockVisitor.On("HandleAdd", 2, 1).Once()
 	mockVisitor.On("HandleAdd", 2, 2).Once()
@@ -70,10 +70,10 @@ func TestDiff_Accept_Add(t *testing.T) {
 }
 
 func TestDiff_Accept_Remove(t *testing.T) {
-	diff := Diff[int]{
-		Entries: []Entry[int]{{Index: 2, Element: 1, IsAddition: false}, {Index: 2, Element: 2, IsAddition: false}},
-		equals:  equals[int],
-	}
+	diff := MakeDiff[int](
+		[]Entry[int]{{Index: 2, Element: 1, IsAddition: false}, {Index: 2, Element: 2, IsAddition: false}},
+		equals[int],
+	)
 	mockVisitor := NewMockVisitor[int](t)
 	mockVisitor.On("HandleRemove", 2, 1).Once()
 	mockVisitor.On("HandleRemove", 2, 2).Once()
@@ -82,10 +82,10 @@ func TestDiff_Accept_Remove(t *testing.T) {
 }
 
 func TestDiff_Accept_AddRemove_Same(t *testing.T) {
-	diff := Diff[int]{
-		Entries: []Entry[int]{{Index: 2, Element: 5, IsAddition: true}, {Index: 2, Element: 5, IsAddition: false}},
-		equals:  equals[int],
-	}
+	diff := MakeDiff[int](
+		[]Entry[int]{{Index: 2, Element: 5, IsAddition: true}, {Index: 2, Element: 5, IsAddition: false}},
+		equals[int],
+	)
 	mockVisitor := NewMockVisitor[int](t)
 	mockVisitor.On("HandleAdd", 2, 5).Once()
 	mockVisitor.On("HandleRemove", 2, 5).Once()
@@ -94,10 +94,10 @@ func TestDiff_Accept_AddRemove_Same(t *testing.T) {
 }
 
 func TestDiff_Accept_AddRemove_After(t *testing.T) {
-	diff := Diff[int]{
-		Entries: []Entry[int]{{Index: 4, Element: 5, IsAddition: true}, {Index: 2, Element: 5, IsAddition: false}},
-		equals:  equals[int],
-	}
+	diff := MakeDiff[int](
+		[]Entry[int]{{Index: 4, Element: 5, IsAddition: true}, {Index: 2, Element: 5, IsAddition: false}},
+		equals[int],
+	)
 	mockVisitor := NewMockVisitor[int](t)
 	mockVisitor.On("HandleMove", 2, 3, 5).Once()
 	diff.Accept(mockVisitor)

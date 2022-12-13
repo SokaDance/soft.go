@@ -13,6 +13,13 @@ type Diff[T any] struct {
 	equals  EqualsFn[T]
 }
 
+func MakeDiff[T any](entries []Entry[T], equals EqualsFn[T]) Diff[T] {
+	return Diff[T]{
+		Entries: entries,
+		equals:  equals,
+	}
+}
+
 type Visitor[T any] interface {
 	HandleAdd(index int, element T)
 	HandleMove(oldIndex int, newIndex int, element T)
