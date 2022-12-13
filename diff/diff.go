@@ -144,12 +144,9 @@ func Compute[T any](immutableOldArray []T, immutableNewArray []T, equals EqualsF
 							// moving oldValue from list[index] to
 							// [newIndexOfOldValue]
 							if len(oldArray) <= newIndexOfOldValue {
-								// The element cannot be moved to the
-								// correct index
-								// now, however later iterations will insert
-								// elements
-								// in front of it, eventually moving it into
-								// the
+								// The element cannot be moved to the correct index
+								// now, however later iterations will insert elements
+								// in front of it, eventually moving it into the
 								// correct spot.
 								newIndexOfOldValue = len(oldArray) - 1
 							}
@@ -177,7 +174,7 @@ func Compute[T any](immutableOldArray []T, immutableNewArray []T, equals EqualsF
 		}
 		index++
 	}
-	for i := len(oldArray) - 1; i >= index; {
+	for i := len(oldArray) - 1; i >= index; i-- {
 		// remove excess trailing elements not present in newArray
 		entries = append(entries, Entry[T]{Index: i, Element: oldArray[i], IsAddition: false})
 	}
