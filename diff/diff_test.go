@@ -1,6 +1,7 @@
 package diff
 
 import (
+	"math/rand"
 	"testing"
 
 	"github.com/stretchr/testify/require"
@@ -101,4 +102,135 @@ func TestDiff_Accept_AddRemove_After(t *testing.T) {
 	mockVisitor.On("HandleMove", 2, 3, 5).Once()
 	diff.Accept(mockVisitor)
 	mockVisitor.AssertExpectations(t)
+}
+
+const nbIteration = 30
+const collectionSize = 100
+
+func performRandomActions(original []int, minimumCountAfterActions, maximumCountAfterActions int) []int {
+	destination := make([]int, len(original))
+	copy(destination, original)
+	destination = performInsertActions(destination, rand.Intn(maximumCountAfterActions)/2)
+	destination = performDeleteActions(destination, rand.Intn(maximumCountAfterActions)/2)
+	destination = performMoveActions(destination, rand.Intn(maximumCountAfterActions)/3)
+	if len(destination) < minimumCountAfterActions {
+		destination = performInsertActions(destination, minimumCountAfterActions)
+	}
+	if len(destination) > maximumCountAfterActions {
+		destination = performInsertActions(destination, minimumCountAfterActions)
+	}
+	return destination
+}
+
+func scliceInsert[T any](array []T, i int, v T) []T {
+	var empty T
+	array = append(array, empty)
+	copy(array[i+1:], array[i:])
+	array[i] = v
+	return array
+}
+
+func scliceRemove[T any](array []T, i int) []T {
+	var empty T
+	copy(array[i:], array[i+1:])
+	array[len(array)-1] = empty
+	return array[:len(array)-1]
+}
+
+func scliceMove[T any](array []T, from, to int) []T {
+	if from != to {
+		object := array[from]
+		if to < from {
+			copy(array[to+1:], array[to:from])
+		} else {
+			copy(array[from:], array[from+1:to+1])
+		}
+		array[to] = object
+	}
+	return array
+}
+
+var id = 0
+
+func newID() int {
+	defer func() {
+		id++
+	}()
+	return id
+}
+
+func performInsertActions(array []int, count int) []int {
+	for i := 0; i < count; i++ {
+		// create object
+		id := newID()
+		if len(array) == 0 {
+			array = append(array, id)
+		} else {
+			// compute random index
+			index := rand.Intn(len(array))
+			// apply to array
+			array = scliceInsert(array, index, id)
+		}
+	}
+	return array
+}
+
+func performDeleteActions(array []int, count int) []int {
+	for i := 0; i < count && len(array) > 0; i++ {
+		// compute random index
+		index := rand.Intn(len(array))
+		// apply to array
+		array = scliceRemove(array, index)
+	}
+	return array
+}
+
+func performMoveActions(array []int, count int) []int {
+	for i := 0; i < count && len(array) > 0; i++ {
+		// compute random index
+		from := rand.Intn(len(array))
+		to := rand.Intn(len(array))
+		// apply to array
+		array = scliceMove(array, from, to)
+	}
+	return array
+}
+
+type applyDiff[T any] struct {
+	array []T
+}
+
+func newApplyDiff[T any](array []T) *applyDiff[T] {
+	newArray := make([]T, len(array))
+	copy(newArray, array)
+	return &applyDiff[T]{array: newArray}
+}
+
+func (ad *applyDiff[T]) HandleAdd(index int, element T) {
+	ad.array = scliceInsert[T](ad.array, index, element)
+}
+
+func (ad *applyDiff[T]) HandleMove(oldIndex int, newIndex int, element T) {
+	ad.array = scliceMove[T](ad.array, oldIndex, newIndex)
+}
+
+func (ad *applyDiff[T]) HandleRemove(index int, element T) {
+	ad.array = scliceRemove[T](ad.array, index)
+}
+
+func (ad *applyDiff[T]) HandleReplace(index int, oldElement T, newElement T) {
+	ad.array[index] = newElement
+}
+
+func TestCompute_Stress(t *testing.T) {
+	// perform random actions & compute diff
+	currentObjects := []int{}
+	for i := 0; i < nbIteration; i++ {
+		expectedObjects := performRandomActions(currentObjects, collectionSize/10, collectionSize*10)
+		diff := Compute(currentObjects, expectedObjects, equals[int])
+		apply := newApplyDiff[int](currentObjects)
+		diff.Accept(apply)
+		require.Equal(t, expectedObjects, apply.array)
+		currentObjects = expectedObjects
+	}
 }
