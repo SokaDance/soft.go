@@ -13,14 +13,14 @@ type Diff[T any] struct {
 	equals  EqualsFn[T]
 }
 
-type DiffVisitor[T any] interface {
+type Visitor[T any] interface {
 	HandleAdd(index int, element T)
 	HandleMove(oldIndex int, newIndex int, element T)
 	HandleRemove(index int, element T)
 	HandleReplace(index int, oldElement T, newElement T)
 }
 
-func (d Diff[T]) Accept(visitor DiffVisitor[T]) {
+func (d Diff[T]) Accept(visitor Visitor[T]) {
 	for i := 0; i < len(d.Entries); i++ {
 		entry := d.Entries[i]
 		elem := entry.Element
