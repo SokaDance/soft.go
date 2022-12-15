@@ -43,6 +43,8 @@ type EList interface {
 
 	IndexOf(any) int
 
+	SubList(from int, to int) EList
+
 	Iterator() EIterator
 
 	ToArray() []any

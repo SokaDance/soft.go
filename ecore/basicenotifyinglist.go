@@ -281,3 +281,7 @@ func (list *BasicENotifyingList) doRemoveAll(collection EList, getAndCompare fun
 
 	return removed != nil
 }
+
+func (list *BasicENotifyingList) SubList(from int, to int) EList {
+	return nil
+}

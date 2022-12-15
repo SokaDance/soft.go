@@ -287,6 +287,10 @@ func (l *unResolvedBasicEObjectList) Iterator() EIterator {
 	return &listIterator{list: l}
 }
 
+func (list *unResolvedBasicEObjectList) SubList(from int, to int) EList {
+	return nil
+}
+
 func (l *unResolvedBasicEObjectList) ToArray() []any {
 	return l.delegate.data
 }

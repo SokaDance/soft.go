@@ -342,6 +342,10 @@ func (list *BasicEList) IndexOf(elem any) int {
 	return -1
 }
 
+func (list *BasicEList) SubList(from int, to int) EList {
+	return nil
+}
+
 // Iterator through the array
 func (list *BasicEList) Iterator() EIterator {
 	return &listIterator{list: list}

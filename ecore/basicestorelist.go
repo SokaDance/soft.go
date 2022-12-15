@@ -389,6 +389,10 @@ func (list *BasicEStoreList) Iterator() EIterator {
 	return &listIterator{list: list}
 }
 
+func (list *BasicEStoreList) SubList(from int, to int) EList {
+	return nil
+}
+
 func (list *BasicEStoreList) ToArray() []any {
 	return list.store.ToArray(list.owner, list.feature)
 }

@@ -88,6 +88,10 @@ func (l *emptyImmutableEList) Iterator() EIterator {
 	return &listIterator{list: l}
 }
 
+func (l *emptyImmutableEList) SubList(from int, to int) EList {
+	return nil
+}
+
 // ToArray convert to array
 func (l *emptyImmutableEList) ToArray() []any {
 	return []any{}
