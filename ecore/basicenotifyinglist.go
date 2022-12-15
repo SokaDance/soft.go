@@ -151,7 +151,7 @@ func (list *BasicENotifyingList) doAdd(object any) {
 }
 
 func (list *BasicENotifyingList) doAddAll(l EList) bool {
-	return list.interfaces.(abstractEList).doInsertAll(list.Size(), l)
+	return list.asAbstractEList().doInsertAll(list.Size(), l)
 }
 
 func (list *BasicENotifyingList) doInsert(index int, object any) {
