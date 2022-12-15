@@ -30,6 +30,8 @@ type abstractEList interface {
 
 	doRemove(index int) any
 
+	doRemoveRange(fromIndex, toIndex int)
+
 	DidAdd(index int, elem any)
 
 	DidSet(index int, newElem any, oldElem any)
@@ -91,6 +93,10 @@ func getNonDuplicates(list EList, ref EList) *BasicEList {
 
 func (list *BasicEList) SetInterfaces(interfaces any) {
 	list.interfaces = interfaces
+}
+
+func (list *BasicEList) asEList() EList {
+	return list.interfaces.(EList)
 }
 
 func (list *BasicEList) asAbstractEList() abstractEList {
@@ -190,7 +196,7 @@ func (list *BasicEList) doInsertAll(index int, collection EList) bool {
 
 // Move an element to the given index
 func (list *BasicEList) MoveObject(newIndex int, elem any) {
-	oldIndex := list.interfaces.(EList).IndexOf(elem)
+	oldIndex := list.asEList().IndexOf(elem)
 	if oldIndex == -1 {
 		panic("Object not found")
 	}
@@ -232,7 +238,7 @@ func (list *BasicEList) RemoveAt(index int) any {
 
 // Remove an element in an array
 func (list *BasicEList) Remove(elem any) bool {
-	index := list.interfaces.(EList).IndexOf(elem)
+	index := list.asEList().IndexOf(elem)
 	if index == -1 {
 		return false
 	}
@@ -262,7 +268,7 @@ func (list *BasicEList) doRemove(index int) any {
 func (list *BasicEList) RemoveAll(collection EList) bool {
 	modified := false
 	for i := list.Size() - 1; i >= 0; i-- {
-		if collection.Contains(list.Get(i)) {
+		if collection.Contains(list.asEList().Get(i)) {
 			list.RemoveAt(i)
 			modified = true
 		}
@@ -321,8 +327,7 @@ func (list *BasicEList) doClear() []any {
 	list.data = make([]any, 0)
 
 	// events
-	interfaces := list.asAbstractEList()
-	interfaces.DidClear(oldData)
+	list.asAbstractEList().DidClear(oldData)
 	return oldData
 }
 
@@ -333,7 +338,7 @@ func (list *BasicEList) Empty() bool {
 
 // Contains return if an array contains or not an element
 func (list *BasicEList) Contains(elem any) bool {
-	return list.interfaces.(EList).IndexOf(elem) != -1
+	return list.asEList().IndexOf(elem) != -1
 }
 
 // IndexOf return the index on an element in an array, else return -1
@@ -347,7 +352,7 @@ func (list *BasicEList) IndexOf(elem any) int {
 }
 
 func (list *BasicEList) SubList(from int, to int) EList {
-	return nil
+	return newBasicSubEList(list, from, to)
 }
 
 // Iterator through the array
@@ -380,5 +385,152 @@ func (list *BasicEList) DidMove(newIndex int, movedObject any, oldIndex int) {
 }
 
 func (list *BasicEList) DidChange() {
+
+}
+
+type basicSubEList struct {
+	interfaces any
+	offset     int
+	size       int
+	root       *BasicEList
+	parent     *basicSubEList
+}
+
+func newBasicSubEList(root *BasicEList, fromIndex int, toIndex int) *basicSubEList {
+	l := &basicSubEList{
+		root:   root,
+		offset: fromIndex,
+		size:   toIndex - fromIndex,
+	}
+	l.interfaces = l
+	return l
+}
+
+func (list *basicSubEList) asEList() EList {
+	return list.interfaces.(EList)
+}
+
+func (list *basicSubEList) updateSize(sizeChange int) {
+	for slist := list; slist != nil; slist = slist.parent {
+		slist.size += sizeChange
+	}
+}
+
+func (list *basicSubEList) Get(index int) any {
+	return list.root.asEList().Get(list.offset + index)
+}
+
+func (list *basicSubEList) Set(index int, elem any) any {
+	return list.root.asEList().Set(list.offset+index, elem)
+}
+
+func (list *basicSubEList) Add(elem any) bool {
+	return list.asEList().Insert(list.offset+list.size, elem)
+}
+
+func (list *basicSubEList) AddAll(other EList) bool {
+	return list.asEList().InsertAll(list.offset+list.size, other)
+}
+
+func (list *basicSubEList) Insert(index int, elem any) bool {
+	b := list.root.asEList().Insert(list.offset+index, elem)
+	if b {
+		list.updateSize(1)
+	}
+	return b
+}
+
+func (list *basicSubEList) InsertAll(index int, collection EList) bool {
+	if index < 0 || index > list.size {
+		panic("Index out of bounds: index=" + strconv.Itoa(index) + " size=" + strconv.Itoa(list.Size()))
+	}
+	if list.root.isUnique {
+		collection = getNonDuplicates(collection, list)
+		if collection.Size() == 0 {
+			return false
+		}
+	}
+	b := list.root.asEList().InsertAll(list.offset+index, collection)
+	if b {
+		list.updateSize(collection.Size())
+	}
+	return b
+}
+
+func (list *basicSubEList) MoveObject(index int, elem any) {
+	list.root.asEList().MoveObject(list.offset+index, elem)
+}
+
+func (list *basicSubEList) Move(oldIndex int, newIndex int) any {
+	return list.root.asEList().Move(list.offset+oldIndex, list.offset+newIndex)
+}
+
+func (list *basicSubEList) RemoveAt(index int) any {
+	e := list.root.asEList().RemoveAt(list.offset + index)
+	list.updateSize(-1)
+	return e
+}
+
+func (list *basicSubEList) Remove(elem any) bool {
+	index := list.asEList().IndexOf(elem)
+	if index != -1 {
+		list.asEList().RemoveAt(index)
+		return true
+	}
+	return false
+}
+
+func (list *basicSubEList) RemoveAll(collection EList) bool {
+	modified := false
+	for i := list.Size() - 1; i >= 0; i-- {
+		if collection.Contains(list.asEList().Get(i)) {
+			list.asEList().RemoveAt(i)
+			modified = true
+		}
+	}
+	return modified
+}
+
+func (list *basicSubEList) Size() int {
+	return list.size
+}
+
+func (list *basicSubEList) Clear() {
+
+}
+
+func (list *basicSubEList) Empty() bool {
+	return list.size == 0
+}
+
+func (list *basicSubEList) Contains(elem any) bool {
+	return list.interfaces.(EList).IndexOf(elem) != -1
+}
+
+func (list *basicSubEList) IndexOf(elem any) int {
+	for i := list.offset; i < list.size; i++ {
+		if value := list.root.asEList(); value == elem {
+			return i - list.offset
+		}
+	}
+	return -1
+}
+
+func (list *basicSubEList) SubList(fromIndex int, toIndex int) EList {
+	l := &basicSubEList{
+		root:   list.root,
+		parent: list,
+		offset: list.offset + fromIndex,
+		size:   toIndex - fromIndex,
+	}
+	l.interfaces = l
+	return l
+}
+
+func (list *basicSubEList) Iterator() EIterator {
+
+}
+
+func (list *basicSubEList) ToArray() []any {
 
 }
