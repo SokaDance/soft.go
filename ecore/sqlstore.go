@@ -6,6 +6,7 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/chebyrash/promise"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitex"
 )
@@ -1446,7 +1447,7 @@ func (s *SQLStore) ToArray(object EObject, feature EStructuralFeature) []any {
 		return nil
 	}
 
-	values := []any{}
+	var decoding []*promise.Promise[any]
 	if err := sqlitex.Execute(
 		conn,
 		s.getManyQueries(featureSchema.table).getSelectAllQuery(),
@@ -1454,15 +1455,34 @@ func (s *SQLStore) ToArray(object EObject, feature EStructuralFeature) []any {
 			Args: []any{sqlID},
 			ResultFunc: func(stmt *sqlite.Stmt) error {
 				value := decodeAny(stmt, 0)
-				decoded, err := s.decodeFeatureValue(conn, featureSchema, value)
-				if err != nil {
-					return err
-				}
-				values = append(values, decoded)
+				decoding = append(decoding, promise.New(func(resolve func(any), reject func(error)) {
+					conn, err := s.pool.Take(context.Background())
+					if err != nil {
+						reject(err)
+						return
+					}
+					defer s.pool.Put(conn)
+
+					decoded, err := s.decodeFeatureValue(conn, featureSchema, value)
+					if err != nil {
+						reject(err)
+					} else {
+						resolve(decoded)
+					}
+				}))
 				return nil
 			}}); err != nil {
 		s.errorHandler(err)
 		return nil
 	}
-	return values
+	if decoding == nil {
+		return []any{}
+	} else {
+		values, err := promise.All(context.Background(), decoding...).Await(context.Background())
+		if err != nil {
+			s.errorHandler(err)
+			return nil
+		}
+		return *values
+	}
 }
