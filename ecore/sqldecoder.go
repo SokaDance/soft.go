@@ -1,10 +1,10 @@
 package ecore
 
 import (
+	"bytes"
 	"context"
 	"fmt"
 	"io"
-	"os"
 	"path/filepath"
 	"strconv"
 	"time"
@@ -652,25 +652,31 @@ type SQLDecoder struct {
 func NewSQLReaderDecoder(r io.Reader, resource EResource, options map[string]any) *SQLDecoder {
 	return newSQLDecoder(
 		func() (*sqlitex.Pool, error) {
-			fileName := filepath.Base(resource.GetURI().Path())
-			dbPath, err := sqlTmpDB(fileName)
+			dbName := filepath.Base(resource.GetURI().Path())
+			dbURI := fmt.Sprintf("file:%s?mode=memory&cache=shared", dbName)
+
+			pool, err := sqlitex.NewPool(dbURI, sqlitex.PoolOptions{Flags: sqlite.OpenCreate | sqlite.OpenReadOnly | sqlite.OpenURI})
 			if err != nil {
 				return nil, err
 			}
 
-			dbFile, err := os.Create(dbPath)
+			conn, err := pool.Take(context.Background())
 			if err != nil {
 				return nil, err
 			}
 
-			_, err = io.Copy(dbFile, r)
-			if err != nil {
-				dbFile.Close()
+			// retrieve all bytes
+			var bytes bytes.Buffer
+			if _, err := io.Copy(&bytes, r); err != nil {
 				return nil, err
 			}
-			dbFile.Close()
 
-			return sqlitex.NewPool(dbPath, sqlitex.PoolOptions{Flags: sqlite.OpenReadOnly})
+			// deserialize into memory buffer
+			if err := conn.Deserialize("main", bytes.Bytes()); err != nil {
+				return nil, err
+			}
+
+			return pool, nil
 
 		},
 		func(connPool *sqlitex.Pool) error {
