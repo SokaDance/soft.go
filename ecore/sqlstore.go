@@ -22,7 +22,7 @@ import (
 )
 
 // log queries
-var logQuery bool = false
+var logQuery bool = true
 
 type sqlSingleQueries struct {
 	column      *sqlColumn
@@ -588,14 +588,13 @@ func newSQLStore(
 	executeQuery := sqlitex.Execute
 	if logQuery {
 		executeQuery = func(conn *sqlite.Conn, query string, opts *sqlitex.ExecOptions) error {
+			logger := logger.Named("query").With(zap.String("query", query), zap.Any("args", opts.Args))
+			logger.Debug("start")
 			start := time.Now()
 			if err := sqlitex.Execute(conn, query, opts); err != nil {
 				return err
 			}
-			logger.Debug("execute",
-				zap.String("query", query),
-				zap.Any("args", opts.Args),
-				zap.Duration("duration", time.Since(start)))
+			logger.Debug("end", zap.Duration("duration", time.Since(start)))
 			return nil
 		}
 	}
@@ -796,7 +795,13 @@ func (e *SQLStore) encodeFeatureValue(conn *sqlite.Conn, featureData *sqlEncoder
 func (s *SQLStore) executeTableQuery(conn *sqlite.Conn, table *sqlTable, queryType queryType, queryCmd string, opts *sqlitex.ExecOptions) error {
 	if s.isScheduledQueries {
 		// schedule execute query
-		p := s.scheduleTableQuery(table, queryType, queryCmd, func() error {
+		p := s.scheduleTableQuery(table, queryType, queryCmd, func() (err error) {
+			conn, err = s.pool.Take(context.Background())
+			if err != nil {
+				return
+			}
+			defer s.pool.Put(conn)
+
 			return s.executeQuery(conn, queryCmd, opts)
 		})
 		// wait for scheduled query if read query
@@ -817,14 +822,24 @@ func (s *SQLStore) scheduleTableQuery(table *sqlTable, queryType queryType, quer
 
 	// compute previous queries to wait for
 	previous := []*promise.Promise[any]{}
-	for i := len(queries) - 1; i >= 0; i-- {
-		query := queries[i]
-		previous = append(previous, query.promise_)
-		if query.type_ == writeQuery {
-			break
+	switch queryType {
+	case readQuery:
+		for i := len(queries) - 1; i >= 0; i-- {
+			query := queries[i]
+			if query.type_ == writeQuery {
+				previous = append(previous, query.promise_)
+				break
+			}
+		}
+	case writeQuery:
+		for i := len(queries) - 1; i >= 0; i-- {
+			query := queries[i]
+			previous = append(previous, query.promise_)
+			if query.type_ == writeQuery {
+				break
+			}
 		}
 	}
-
 	// create query
 	q := &query{
 		type_: queryType,
@@ -854,23 +869,29 @@ func (s *SQLStore) scheduleTableQuery(table *sqlTable, queryType queryType, quer
 	s.queries[table] = append(queries, q)
 	s.mutex.Unlock()
 
-	// remove query from table queries when finished
-	return promise.Then(q.promise_, context.Background(), func(a any) (any, error) {
+	// remove query from table queries when finished with result or error
+	return promise.New(func(resolve func(any), reject func(error)) {
+		r, err := q.promise_.Await(context.Background())
 		s.mutex.Lock()
 		queries := s.queries[table]
 		// retrieve query index
 		index := slices.Index(queries, q)
 		if index == -1 {
-			return nil, fmt.Errorf("unable to find query : %s", q.desc_)
+			reject(fmt.Errorf("unable to find query : %s", q.desc_))
+			return
 		}
 		// remove query from collection
 		copy(queries[index:], queries[index+1:])
 		queries[len(queries)-1] = nil
 		s.queries[table] = queries[:len(queries)-1]
 		s.mutex.Unlock()
-		return nil, nil
-	})
 
+		if err != nil {
+			reject(err)
+		} else {
+			resolve(r)
+		}
+	})
 }
 
 func (s *SQLStore) runExclusive(ctx context.Context, queryType queryType, op func() error) error {
