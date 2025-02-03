@@ -1694,7 +1694,7 @@ func TestSQLStore_GetContainer(t *testing.T) {
 
 }
 
-func TestSQLStore_ScheduledQueries(t *testing.T) {
+func TestSQLStore_Async(t *testing.T) {
 	ePackage := loadPackage("library.complex.ecore")
 	require.NotNil(t, ePackage)
 
@@ -1710,7 +1710,7 @@ func TestSQLStore_ScheduledQueries(t *testing.T) {
 	require.Nil(t, err)
 
 	// store
-	s, err := NewSQLStore(dbPath, NewURI(""), nil, nil, map[string]any{SQL_OPTION_SCHEDULED_QUERIES: true})
+	s, err := NewSQLStore(dbPath, NewURI(""), nil, nil, map[string]any{SQL_OPTION_ASYNC: true})
 	require.NoError(t, err)
 	require.NotNil(t, s)
 	defer s.Close()
@@ -1766,7 +1766,7 @@ func TestSQLStore_Serialize_ScheduleQueries(t *testing.T) {
 	require.Nil(t, err)
 
 	// store
-	s, err := NewSQLStore(dbPath, NewURI(""), nil, nil, map[string]any{SQL_OPTION_SCHEDULED_QUERIES: true})
+	s, err := NewSQLStore(dbPath, NewURI(""), nil, nil, map[string]any{SQL_OPTION_ASYNC: true})
 	require.NoError(t, err)
 	require.NotNil(t, s)
 	defer s.Close()
@@ -1794,7 +1794,7 @@ func TestSQLStore_Serialize_ScheduleQueries_WithTables(t *testing.T) {
 	require.Nil(t, err)
 
 	// store
-	s, err := NewSQLStore(dbPath, NewURI(""), nil, nil, map[string]any{SQL_OPTION_SCHEDULED_QUERIES: true})
+	s, err := NewSQLStore(dbPath, NewURI(""), nil, nil, map[string]any{SQL_OPTION_ASYNC: true})
 	require.NoError(t, err)
 	require.NotNil(t, s)
 	defer s.Close()
