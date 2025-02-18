@@ -213,26 +213,30 @@ func (list *EStoreList) scheduleTask(objects []any, taskType TaskType, desc stri
 	}
 }
 
-func (list *EStoreList) performAdd(object any) {
+func (list *EStoreList) performAdd(value any) {
 	// add to cache
 	if list.data != nil {
-		list.BasicENotifyingList.performAdd(object)
+		list.BasicENotifyingList.performAdd(value)
 	}
 	// add to store
 	if list.store != nil {
 		index := list.size
 		operation := list.scheduleTask(
-			[]any{list.asEList(), object},
+			[]any{list.asEList(), value},
 			TaskWrite,
-			fmt.Sprintf("%v.%s(%p).Add(%d,%v)", list.owner, list.feature.GetName(), list.asEList(), index, object),
+			fmt.Sprintf("%v.%s(%p).Add(%d,%v)", list.owner, list.feature.GetName(), list.asEList(), index, value),
 			func() (any, error) {
-				list.store.Add(list.owner, list.feature, index, object)
+				list.store.Add(list.owner, list.feature, index, value)
 				return nil, nil
 			},
 		)
 		if list.data == nil {
 			_ = awaitPromise[any](operation)
 		}
+	}
+	// set value store
+	if storeObject, isStoreObject := value.(EStoreEObject); isStoreObject {
+		storeObject.SetEStore(list.store)
 	}
 	// size
 	list.size++
@@ -261,29 +265,39 @@ func (list *EStoreList) performAddAll(c Collection) {
 			_ = awaitPromise[any](operation)
 		}
 	}
+	// set objects store
+	for value := range c.All() {
+		if storeObject, isStoreObject := value.(EStoreEObject); isStoreObject {
+			storeObject.SetEStore(list.store)
+		}
+	}
 	// size
 	list.size += c.Size()
 }
 
-func (list *EStoreList) performInsert(index int, object any) {
+func (list *EStoreList) performInsert(index int, value any) {
 	// add to cache
 	if list.data != nil {
-		list.BasicENotifyingList.performInsert(index, object)
+		list.BasicENotifyingList.performInsert(index, value)
 	}
 	// add to store
 	if list.store != nil {
 		operation := list.scheduleTask(
-			[]any{list.asEList(), object},
+			[]any{list.asEList(), value},
 			TaskWrite,
-			fmt.Sprintf("%v.%s(%p).Insert(%v,%v)", list.owner, list.feature.GetName(), list.asEList(), index, object),
+			fmt.Sprintf("%v.%s(%p).Insert(%v,%v)", list.owner, list.feature.GetName(), list.asEList(), index, value),
 			func() (any, error) {
-				list.store.Add(list.owner, list.feature, index, object)
+				list.store.Add(list.owner, list.feature, index, value)
 				return nil, nil
 			},
 		)
 		if list.data == nil {
 			_ = awaitPromise[any](operation)
 		}
+	}
+	// set objects store
+	if storeObject, isStoreObject := value.(EStoreEObject); isStoreObject {
+		storeObject.SetEStore(list.store)
 	}
 	// size
 	list.size++
@@ -309,6 +323,12 @@ func (list *EStoreList) performInsertAll(index int, c Collection) bool {
 		)
 		if list.data == nil {
 			_ = awaitPromise[any](operation)
+		}
+	}
+	// set values store
+	for value := range c.All() {
+		if storeObject, isStoreObject := value.(EStoreEObject); isStoreObject {
+			storeObject.SetEStore(list.store)
 		}
 	}
 	// size
@@ -343,6 +363,12 @@ func (list *EStoreList) performClear() []any {
 			result = awaitPromise[[]any](operation)
 		}
 	}
+	// set result store
+	for _, value := range result {
+		if storeObject, isStoreObject := value.(EStoreEObject); isStoreObject {
+			storeObject.SetEStore(nil)
+		}
+	}
 	// size
 	list.size = 0
 	return result
@@ -367,6 +393,10 @@ func (list *EStoreList) performRemove(index int) any {
 		if list.data == nil {
 			result = awaitPromise[any](operation)
 		}
+	}
+	// set result store
+	if storeObject, isStoreObject := result.(EStoreEObject); isStoreObject {
+		storeObject.SetEStore(nil)
 	}
 	// size
 	list.size--
@@ -396,28 +426,42 @@ func (list *EStoreList) performRemoveRange(fromIndex int, toIndex int) []any {
 			result = awaitPromise[[]any](operation)
 		}
 	}
+	// set result store
+	for _, value := range result {
+		if storeObject, isStoreObject := value.(EStoreEObject); isStoreObject {
+			storeObject.SetEStore(nil)
+		}
+	}
 	list.size -= len(result)
 	return result
 }
 
-func (list *EStoreList) performSet(index int, object any) any {
+func (list *EStoreList) performSet(index int, value any) any {
 	var result any
 	if list.data != nil {
-		result = list.BasicENotifyingList.performSet(index, object)
+		result = list.BasicENotifyingList.performSet(index, value)
 	}
 	if list.store != nil {
 		oldValue := list.data == nil
 		operation := list.scheduleTask(
-			[]any{list.asEList(), object},
+			[]any{list.asEList(), value},
 			TaskWrite,
-			fmt.Sprintf("%v.%s(%p).Set(%v,%v)", list.owner, list.feature.GetName(), list.asEList(), index, object),
+			fmt.Sprintf("%v.%s(%p).Set(%v,%v)", list.owner, list.feature.GetName(), list.asEList(), index, value),
 			func() (any, error) {
-				return list.store.Set(list.owner, list.feature, index, object, oldValue), nil
+				return list.store.Set(list.owner, list.feature, index, value, oldValue), nil
 			},
 		)
 		if oldValue {
 			result = awaitPromise[any](operation)
 		}
+	}
+	// set result store
+	if storeObject, isStoreObject := value.(EStoreEObject); isStoreObject {
+		storeObject.SetEStore(list.store)
+	}
+	// set result store
+	if storeObject, isStoreObject := result.(EStoreEObject); isStoreObject {
+		storeObject.SetEStore(nil)
 	}
 	return result
 }
