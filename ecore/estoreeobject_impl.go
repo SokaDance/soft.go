@@ -9,12 +9,15 @@
 
 package ecore
 
+import "sync"
+
 var unitializedContainer EObject = newEObjectImpl()
 
 type EStoreEObjectImpl struct {
 	ReflectiveEObjectImpl
 	store EStore
 	cache bool
+	mutex sync.RWMutex
 }
 
 func NewEStoreEObjectImpl(cache bool) *EStoreEObjectImpl {
@@ -26,15 +29,36 @@ func NewEStoreEObjectImpl(cache bool) *EStoreEObjectImpl {
 	return o
 }
 
+func (o *EStoreEObjectImpl) Lock() {
+	o.mutex.Lock()
+}
+
+func (o *EStoreEObjectImpl) Unlock() {
+	o.mutex.Unlock()
+}
+
+func (o *EStoreEObjectImpl) RLock() {
+	o.mutex.RLock()
+}
+
+func (o *EStoreEObjectImpl) RUnlock() {
+	o.mutex.RUnlock()
+}
+
 func (o *EStoreEObjectImpl) AsEStoreEObject() EStoreEObject {
 	return o.GetInterfaces().(EStoreEObject)
 }
 
 func (o *EStoreEObjectImpl) GetEStore() EStore {
+	o.mutex.RLock()
+	defer o.mutex.RUnlock()
 	return o.store
 }
 
 func (o *EStoreEObjectImpl) SetEStore(newStore EStore) {
+	o.mutex.Lock()
+	defer o.mutex.Unlock()
+
 	if oldStore := o.store; newStore != oldStore {
 		// set store to object and its children
 		o.store = newStore
@@ -64,6 +88,9 @@ func (o *EStoreEObjectImpl) SetEStore(newStore EStore) {
 }
 
 func (o *EStoreEObjectImpl) SetCache(cache bool) {
+	o.mutex.Lock()
+	defer o.mutex.Unlock()
+
 	if o.cache != cache {
 		o.cache = cache
 
@@ -107,6 +134,9 @@ func (o *EStoreEObjectImpl) initializeContainer() {
 }
 
 func (o *EStoreEObjectImpl) EDynamicIsSet(dynamicFeatureID int) bool {
+	o.mutex.RLock()
+	defer o.mutex.RUnlock()
+
 	if o.properties != nil && o.properties[dynamicFeatureID] != nil {
 		return true
 	}
@@ -118,6 +148,9 @@ func (o *EStoreEObjectImpl) EDynamicIsSet(dynamicFeatureID int) bool {
 }
 
 func (o *EStoreEObjectImpl) EDynamicGet(dynamicFeatureID int) any {
+	o.mutex.RLock()
+	defer o.mutex.RUnlock()
+
 	// retrieve value
 	var result any
 	if o.properties != nil {
@@ -153,6 +186,9 @@ func (o *EStoreEObjectImpl) EDynamicGet(dynamicFeatureID int) any {
 }
 
 func (o *EStoreEObjectImpl) EDynamicSet(dynamicFeatureID int, value any) {
+	o.mutex.Lock()
+	defer o.mutex.Unlock()
+
 	// retrieve properties
 	var properties []any
 	eFeature := o.eDynamicFeature(dynamicFeatureID)
@@ -175,6 +211,9 @@ func (o *EStoreEObjectImpl) EDynamicSet(dynamicFeatureID int, value any) {
 }
 
 func (o *EStoreEObjectImpl) EDynamicUnset(dynamicFeatureID int) {
+	o.mutex.Lock()
+	defer o.mutex.Unlock()
+
 	// retrieve previous value and unset properties
 	if o.properties != nil {
 		o.properties[dynamicFeatureID] = nil
@@ -191,14 +230,14 @@ func (o *EStoreEObjectImpl) eDynamicFeature(dynamicFeatureID int) EStructuralFea
 }
 
 func (o *EStoreEObjectImpl) createList(eFeature EStructuralFeature) EList {
-	l := NewEStoreList(o.AsEObject(), eFeature, o.AsEStoreEObject().GetEStore())
+	l := NewEStoreList(o.AsEStoreEObject(), eFeature, o.AsEStoreEObject().GetEStore())
 	l.SetCache(o.cache)
 	return l
 }
 
 func (o *EStoreEObjectImpl) createMap(eFeature EStructuralFeature) EMap {
 	eClass := eFeature.GetEType().(EClass)
-	m := NewEStoreMap(eClass, o.AsEObject(), eFeature, o.AsEStoreEObject().GetEStore())
+	m := NewEStoreMap(eClass, o.AsEStoreEObject(), eFeature, o.AsEStoreEObject().GetEStore())
 	m.SetCache(o.cache)
 	return m
 }

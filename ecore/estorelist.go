@@ -16,7 +16,7 @@ import (
 
 type EStoreList struct {
 	BasicENotifyingList
-	owner       EObject
+	owner       EStoreEObject
 	feature     EStructuralFeature
 	cache       bool
 	size        int
@@ -29,14 +29,14 @@ type EStoreList struct {
 	unset       bool
 }
 
-func NewEStoreList(owner EObject, feature EStructuralFeature, store EStore) *EStoreList {
+func NewEStoreList(owner EStoreEObject, feature EStructuralFeature, store EStore) *EStoreList {
 	list := &EStoreList{}
 	list.Initialize(owner, feature, store)
 	list.SetInterfaces(list)
 	return list
 }
 
-func (list *EStoreList) Initialize(owner EObject, feature EStructuralFeature, store EStore) {
+func (list *EStoreList) Initialize(owner EStoreEObject, feature EStructuralFeature, store EStore) {
 	list.isUnique = feature.IsUnique()
 	list.owner = owner
 	list.feature = feature
@@ -165,6 +165,9 @@ func (list *EStoreList) IsCache() bool {
 }
 
 func (list *EStoreList) performAdd(object any) {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	// add to cache
 	if list.data != nil {
 		list.BasicENotifyingList.performAdd(object)
@@ -178,6 +181,9 @@ func (list *EStoreList) performAdd(object any) {
 }
 
 func (list *EStoreList) performAddAll(c Collection) {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	// index computed now before list potentially modified
 	// add to cache
 	if list.data != nil {
@@ -193,6 +199,9 @@ func (list *EStoreList) performAddAll(c Collection) {
 }
 
 func (list *EStoreList) performInsert(index int, object any) {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	// add to cache
 	if list.data != nil {
 		list.BasicENotifyingList.performInsert(index, object)
@@ -206,6 +215,9 @@ func (list *EStoreList) performInsert(index int, object any) {
 }
 
 func (list *EStoreList) performInsertAll(index int, c Collection) bool {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	// add to cache
 	if list.data != nil {
 		if !list.BasicENotifyingList.performInsertAll(index, c) {
@@ -222,6 +234,9 @@ func (list *EStoreList) performInsertAll(index int, c Collection) bool {
 }
 
 func (list *EStoreList) performClear() []any {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	var result []any
 	//cache
 	if list.data != nil {
@@ -241,6 +256,9 @@ func (list *EStoreList) performClear() []any {
 }
 
 func (list *EStoreList) performRemove(index int) any {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	var result any
 	//cache
 	if list.data != nil {
@@ -260,6 +278,9 @@ func (list *EStoreList) performRemove(index int) any {
 }
 
 func (list *EStoreList) performRemoveRange(fromIndex int, toIndex int) []any {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	var result []any
 	// cache
 	if list.data != nil {
@@ -282,6 +303,9 @@ func (list *EStoreList) performRemoveRange(fromIndex int, toIndex int) []any {
 }
 
 func (list *EStoreList) performSet(index int, object any) any {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	// cache
 	var result any
 	if list.data != nil {
@@ -299,6 +323,9 @@ func (list *EStoreList) performSet(index int, object any) any {
 }
 
 func (list *EStoreList) performMove(oldIndex, newIndex int) any {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	var result any
 	if list.data != nil {
 		result = list.BasicENotifyingList.performMove(oldIndex, newIndex)
@@ -314,6 +341,9 @@ func (list *EStoreList) performMove(oldIndex, newIndex int) any {
 }
 
 func (list *EStoreList) doGet(index int) any {
+	list.owner.RLock()
+	defer list.owner.RUnlock()
+
 	return list.resolve(index, list.get(index))
 }
 
@@ -357,6 +387,9 @@ func (list *EStoreList) resolveProxy(eObject EObject) EObject {
 
 func (list *EStoreList) All() iter.Seq[any] {
 	return func(yield func(any) bool) {
+		list.owner.RLock()
+		defer list.owner.RUnlock()
+
 		if list.data != nil {
 			for i, v := range list.data {
 				if d := list.resolve(i, v); !yield(d) {
@@ -376,6 +409,9 @@ func (list *EStoreList) All() iter.Seq[any] {
 }
 
 func (list *EStoreList) ToArray() []any {
+	list.owner.Lock()
+	defer list.owner.Unlock()
+
 	if list.data != nil {
 		if list.proxies {
 			for i := len(list.data) - 1; i >= 0; i-- {
@@ -396,14 +432,20 @@ func (list *EStoreList) ToArray() []any {
 }
 
 func (list *EStoreList) Size() int {
+	list.owner.RLock()
+	defer list.owner.RUnlock()
 	return list.size
 }
 
 func (list *EStoreList) Empty() bool {
+	list.owner.RLock()
+	defer list.owner.RUnlock()
 	return list.size == 0
 }
 
 func (list *EStoreList) IndexOf(element any) int {
+	list.owner.RLock()
+	defer list.owner.RUnlock()
 	if list.data != nil {
 		for i, value := range list.data {
 			if value == element || (list.resolve(i, value) == element) {
@@ -429,6 +471,8 @@ func (list *EStoreList) IndexOf(element any) int {
 }
 
 func (list *EStoreList) Contains(element any) bool {
+	list.owner.RLock()
+	defer list.owner.RUnlock()
 	if list.data != nil {
 		return list.BasicENotifyingList.Contains(element)
 	} else if list.store != nil {
@@ -496,6 +540,8 @@ func newUnResolvedEStoreList(delegate *EStoreList) *unResolvedEStoreList {
 }
 
 func (list *unResolvedEStoreList) doGet(index int) any {
+	list.delegate.owner.RLock()
+	defer list.delegate.owner.RUnlock()
 	return list.delegate.get(index)
 }
 
@@ -505,6 +551,8 @@ func (list *unResolvedEStoreList) IndexOf(elem any) int {
 
 func (list *unResolvedEStoreList) All() iter.Seq[any] {
 	if list.delegate.data != nil {
+		list.delegate.owner.RLock()
+		defer list.delegate.owner.RUnlock()
 		return slices.Values(list.delegate.data)
 	}
 	if list.delegate.store != nil {
@@ -515,6 +563,8 @@ func (list *unResolvedEStoreList) All() iter.Seq[any] {
 
 func (list *unResolvedEStoreList) ToArray() []any {
 	if list.delegate.data != nil {
+		list.delegate.owner.RLock()
+		defer list.delegate.owner.RUnlock()
 		return list.delegate.data
 	}
 	if list.delegate.store != nil {
