@@ -164,6 +164,7 @@ type sqlEncoder struct {
 	classDataMap     map[EClass]*sqlEncoderClassData
 	sqlIDManager     SQLEncoderIDManager
 	sqlObjectManager sqlObjectManager
+	sqlObjectLocker  SQLObjectLocker
 	sqlLockManager   *sqlEncoderLockManager
 }
 
@@ -312,6 +313,11 @@ func (e *sqlEncoder) encodeObject(eObject EObject, sqlContainerID int64, contain
 
 		// register object in registry
 		e.sqlIDManager.SetObjectID(eObject, sqlObjectID)
+
+		// lock object to avoid modifications while serializing its features
+		if e.sqlObjectLocker != nil {
+			defer e.sqlObjectLocker.Lock(eObject)(&err)
+		}
 
 		// for all object hierarchy classes
 		for _, eClass := range classData.hierarchy {

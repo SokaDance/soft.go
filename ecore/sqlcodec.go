@@ -14,10 +14,11 @@ const (
 	SQL_OPTION_KEEP_DEFAULTS      = "KEEP_DEFAULTS"      // keep default values
 	SQL_OPTION_CODEC_VERSION      = "CODEC_VERSION"      // codec version ( int64 )
 	SQL_OPTION_OBJECT_ID          = "OBJECT_ID"          // object id column name ( string )
+	SQL_OPTION_OBJECT_LOCKER      = "LOCK_MANAGER"       // object locker
 	SQL_OPTION_CONTAINER_ID       = "CONTAINER_ID"       // container id ( boolean ) if true, encode object's container and container feature id
 	SQL_OPTION_SQL_ID_MANAGER     = "SQL_ID_MANAGER"     // SQL id manager
 	SQL_OPTION_IN_MEMORY_DATABASE = "IN_MEMORY_DATABASE" // uses a memory database
-	SQL_OPTION_LOGGER             = "LOGGER"
+	SQL_OPTION_LOGGER             = "LOGGER"             // logger
 )
 
 type SQLCodec struct {
@@ -151,4 +152,8 @@ type SQLCodecIDManager interface {
 	SetObjectID(EObject, int64)
 	SetClassID(EClass, int64)
 	SetEnumLiteralID(EEnumLiteral, int64)
+}
+
+type SQLObjectLocker interface {
+	Lock(object EObject) func(*error)
 }
