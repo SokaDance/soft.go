@@ -1,6 +1,7 @@
 package ecore
 
 import (
+	"context"
 	"crypto/rand"
 	"encoding/hex"
 	"io"
@@ -155,5 +156,5 @@ type SQLCodecIDManager interface {
 }
 
 type SQLObjectLocker interface {
-	Lock(object EObject) func(*error)
+	Lock(ctx context.Context, object EObject) func(*error)
 }

@@ -316,7 +316,7 @@ func (e *sqlEncoder) encodeObject(eObject EObject, sqlContainerID int64, contain
 
 		// lock object to avoid modifications while serializing its features
 		if e.sqlObjectLocker != nil {
-			defer e.sqlObjectLocker.Lock(eObject)(&err)
+			defer e.sqlObjectLocker.Lock(context.Background(), eObject)(&err)
 		}
 
 		// for all object hierarchy classes
