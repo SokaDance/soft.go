@@ -7,10 +7,12 @@
 //
 // *****************************************************************************
 
-package ecore
+package bin
 
 import (
 	"io"
+
+	"github.com/masagroup/soft.go/ecore"
 )
 
 const (
@@ -21,10 +23,10 @@ const (
 type BinaryCodec struct {
 }
 
-func (bc *BinaryCodec) NewEncoder(resource EResource, w io.Writer, options map[string]any) EEncoder {
+func (bc *BinaryCodec) NewEncoder(resource ecore.EResource, w io.Writer, options map[string]any) ecore.EEncoder {
 	return NewBinaryEncoder(resource, w, options)
 }
-func (bc *BinaryCodec) NewDecoder(resource EResource, r io.Reader, options map[string]any) EDecoder {
+func (bc *BinaryCodec) NewDecoder(resource ecore.EResource, r io.Reader, options map[string]any) ecore.EDecoder {
 	return NewBinaryDecoder(resource, r, options)
 }
 
@@ -57,8 +59,8 @@ const (
 	bfkDate
 )
 
-func getBinaryCodecFeatureKind(eFeature EStructuralFeature) binaryFeatureKind {
-	if eReference, _ := eFeature.(EReference); eReference != nil {
+func getBinaryCodecFeatureKind(eFeature ecore.EStructuralFeature) binaryFeatureKind {
+	if eReference, _ := eFeature.(ecore.EReference); eReference != nil {
 		if eReference.IsContainment() {
 			if eReference.IsResolveProxies() {
 				if eReference.IsMany() {
@@ -92,12 +94,12 @@ func getBinaryCodecFeatureKind(eFeature EStructuralFeature) binaryFeatureKind {
 				return bfkObject
 			}
 		}
-	} else if eAttribute, _ := eFeature.(EAttribute); eAttribute != nil {
+	} else if eAttribute, _ := eFeature.(ecore.EAttribute); eAttribute != nil {
 		if eAttribute.IsMany() {
 			return bfkDataList
 		} else {
 			eDataType := eAttribute.GetEAttributeType()
-			if eEnum, _ := eDataType.(EEnum); eEnum != nil {
+			if eEnum, _ := eDataType.(ecore.EEnum); eEnum != nil {
 				return bfkEnum
 			}
 

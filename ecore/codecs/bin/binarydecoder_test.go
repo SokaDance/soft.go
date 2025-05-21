@@ -1,4 +1,4 @@
-package ecore
+package bin
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/google/uuid"
+	"github.com/masagroup/soft.go/ecore"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
@@ -18,9 +19,9 @@ func TestBinaryDecoder_Invalid(t *testing.T) {
 	f, err := os.Open("testdata/invalid.bin")
 	require.Nil(t, err)
 
-	mockErrors := NewMockEList(t)
-	mockResource := NewMockEResource(t)
-	mockResource.EXPECT().GetURI().Return(NewURI("testdata/invalid.bin"))
+	mockErrors := ecore.NewMockEList(t)
+	mockResource := ecore.NewMockEResource(t)
+	mockResource.EXPECT().GetURI().Return(ecore.NewURI("testdata/invalid.bin"))
 	mockResource.EXPECT().GetErrors().Return(mockErrors).Once()
 	mockErrors.EXPECT().Add(mock.Anything).Return(true).Once()
 	binaryDecoder := NewBinaryDecoder(mockResource, f, nil)
@@ -33,10 +34,10 @@ func TestBinaryDecoder_Complex(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := NewURI("testdata/library.complex.bin")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.bin")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -49,40 +50,40 @@ func TestBinaryDecoder_Complex(t *testing.T) {
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
 	// retrieve document root class , library class & library name attribute
-	eDocumentRootClass, _ := ePackage.GetEClassifier("DocumentRoot").(EClass)
+	eDocumentRootClass, _ := ePackage.GetEClassifier("DocumentRoot").(ecore.EClass)
 	assert.NotNil(t, eDocumentRootClass)
-	eDocumentRootLibraryFeature, _ := eDocumentRootClass.GetEStructuralFeatureFromName("library").(EReference)
+	eDocumentRootLibraryFeature, _ := eDocumentRootClass.GetEStructuralFeatureFromName("library").(ecore.EReference)
 	assert.NotNil(t, eDocumentRootLibraryFeature)
-	eLibraryClass, _ := ePackage.GetEClassifier("Library").(EClass)
+	eLibraryClass, _ := ePackage.GetEClassifier("Library").(ecore.EClass)
 	assert.NotNil(t, eLibraryClass)
-	eLibraryNameAttribute, _ := eLibraryClass.GetEStructuralFeatureFromName("name").(EAttribute)
+	eLibraryNameAttribute, _ := eLibraryClass.GetEStructuralFeatureFromName("name").(ecore.EAttribute)
 	assert.NotNil(t, eLibraryNameAttribute)
 
 	// check library name
-	eDocumentRoot, _ := eResource.GetContents().Get(0).(EObject)
+	eDocumentRoot, _ := eResource.GetContents().Get(0).(ecore.EObject)
 	assert.NotNil(t, eDocumentRoot)
-	eLibrary, _ := eDocumentRoot.EGet(eDocumentRootLibraryFeature).(EObject)
+	eLibrary, _ := eDocumentRoot.EGet(eDocumentRootLibraryFeature).(ecore.EObject)
 	assert.NotNil(t, eLibrary)
 	assert.Equal(t, "My Library", eLibrary.EGet(eLibraryNameAttribute))
 
 	// book class and attributes
-	eLibraryBooksRefeference, _ := eLibraryClass.GetEStructuralFeatureFromName("books").(EReference)
+	eLibraryBooksRefeference, _ := eLibraryClass.GetEStructuralFeatureFromName("books").(ecore.EReference)
 	assert.NotNil(t, eLibraryBooksRefeference)
-	eBookClass, _ := ePackage.GetEClassifier("Book").(EClass)
+	eBookClass, _ := ePackage.GetEClassifier("Book").(ecore.EClass)
 	require.NotNil(t, eBookClass)
-	eBookTitleAttribute, _ := eBookClass.GetEStructuralFeatureFromName("title").(EAttribute)
+	eBookTitleAttribute, _ := eBookClass.GetEStructuralFeatureFromName("title").(ecore.EAttribute)
 	require.NotNil(t, eBookTitleAttribute)
-	eBookDateAttribute, _ := eBookClass.GetEStructuralFeatureFromName("publicationDate").(EAttribute)
+	eBookDateAttribute, _ := eBookClass.GetEStructuralFeatureFromName("publicationDate").(ecore.EAttribute)
 	require.NotNil(t, eBookDateAttribute)
-	eBookCategoryAttribute, _ := eBookClass.GetEStructuralFeatureFromName("category").(EAttribute)
+	eBookCategoryAttribute, _ := eBookClass.GetEStructuralFeatureFromName("category").(ecore.EAttribute)
 	require.NotNil(t, eBookCategoryAttribute)
-	eBookAuthorReference, _ := eBookClass.GetEStructuralFeatureFromName("author").(EReference)
+	eBookAuthorReference, _ := eBookClass.GetEStructuralFeatureFromName("author").(ecore.EReference)
 	require.NotNil(t, eBookAuthorReference)
 
 	// retrive book
-	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(EList)
+	eBooks, _ := eLibrary.EGet(eLibraryBooksRefeference).(ecore.EList)
 	assert.NotNil(t, eBooks)
-	eBook := eBooks.Get(0).(EObject)
+	eBook := eBooks.Get(0).(ecore.EObject)
 	require.NotNil(t, eBook)
 
 	// check book name
@@ -98,12 +99,12 @@ func TestBinaryDecoder_Complex(t *testing.T) {
 	assert.Equal(t, 2, category)
 
 	// check author
-	author := eBook.EGet(eBookAuthorReference).(EObject)
+	author := eBook.EGet(eBookAuthorReference).(ecore.EObject)
 	require.NotNil(t, author)
 
-	eWriterClass, _ := ePackage.GetEClassifier("Writer").(EClass)
+	eWriterClass, _ := ePackage.GetEClassifier("Writer").(ecore.EClass)
 	require.NotNil(t, eWriterClass)
-	eWriterNameAttribute := eWriterClass.GetEStructuralFeatureFromName("firstName").(EAttribute)
+	eWriterNameAttribute := eWriterClass.GetEStructuralFeatureFromName("firstName").(ecore.EAttribute)
 	require.NotNil(t, eWriterNameAttribute)
 	authorName := author.EGet(eWriterNameAttribute).(string)
 	assert.Equal(t, "First Name 0", authorName)
@@ -115,12 +116,12 @@ func TestBinaryDecoder_ComplexWithID(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := NewURI("testdata/library.complex.id.bin")
-	idManager := NewUUIDManager()
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.id.bin")
+	idManager := ecore.NewUUIDManager()
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResource.SetObjectIDManager(idManager)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -133,15 +134,15 @@ func TestBinaryDecoder_ComplexWithID(t *testing.T) {
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
 	// retrieve document root class , library class & library name attribute
-	eDocumentRootClass, _ := ePackage.GetEClassifier("DocumentRoot").(EClass)
+	eDocumentRootClass, _ := ePackage.GetEClassifier("DocumentRoot").(ecore.EClass)
 	require.NotNil(t, eDocumentRootClass)
-	eDocumentRootLibraryFeature, _ := eDocumentRootClass.GetEStructuralFeatureFromName("library").(EReference)
+	eDocumentRootLibraryFeature, _ := eDocumentRootClass.GetEStructuralFeatureFromName("library").(ecore.EReference)
 	require.NotNil(t, eDocumentRootLibraryFeature)
 
 	// check ids for document root and library
-	eDocumentRoot, _ := eResource.GetContents().Get(0).(EObject)
+	eDocumentRoot, _ := eResource.GetContents().Get(0).(ecore.EObject)
 	require.NotNil(t, eDocumentRoot)
-	eLibrary, _ := eDocumentRoot.EGet(eDocumentRootLibraryFeature).(EObject)
+	eLibrary, _ := eDocumentRoot.EGet(eDocumentRootLibraryFeature).(ecore.EObject)
 	require.NotNil(t, eLibrary)
 	assert.Equal(t, uuid.MustParse("dc48710b-0e2e-419f-94fb-178c7fc1370b"), idManager.GetID(eDocumentRoot))
 	assert.Equal(t, uuid.MustParse("75aa92db-b419-4259-93c4-0e542d33aa35"), idManager.GetID(eLibrary))
@@ -154,12 +155,12 @@ func TestBinaryDecoder_SimpleWithEDataTypeList(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := NewURI("testdata/library.datalist.bin")
-	idManager := NewUUIDManager()
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.datalist.bin")
+	idManager := ecore.NewUUIDManager()
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResource.SetObjectIDManager(idManager)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -172,26 +173,26 @@ func TestBinaryDecoder_SimpleWithEDataTypeList(t *testing.T) {
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
 	// retrieve library class & library name attribute
-	libraryClass, _ := ePackage.GetEClassifier("Library").(EClass)
+	libraryClass, _ := ePackage.GetEClassifier("Library").(ecore.EClass)
 	require.NotNil(t, libraryClass)
 	libraryBooksFeature := libraryClass.GetEStructuralFeatureFromName("books")
 	require.NotNil(t, libraryBooksFeature)
-	bookClass, _ := ePackage.GetEClassifier("Book").(EClass)
+	bookClass, _ := ePackage.GetEClassifier("Book").(ecore.EClass)
 	require.NotNil(t, bookClass)
 	bookContentsFeature := bookClass.GetEStructuralFeatureFromName("contents")
 	require.NotNil(t, bookContentsFeature)
 
 	require.Equal(t, 1, eResource.GetContents().Size())
-	eLibrary, _ := eResource.GetContents().Get(0).(EObject)
+	eLibrary, _ := eResource.GetContents().Get(0).(ecore.EObject)
 	require.NotNil(t, eLibrary)
 
-	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(EList)
+	eBooks, _ := eLibrary.EGet(libraryBooksFeature).(ecore.EList)
 	require.NotNil(t, eBooks)
 	require.Equal(t, 4, eBooks.Size())
 
-	eLastBook, _ := eBooks.Get(3).(EObject)
+	eLastBook, _ := eBooks.Get(3).(ecore.EObject)
 	require.NotNil(t, eLastBook)
-	eContents, _ := eLastBook.EGet(bookContentsFeature).(EList)
+	eContents, _ := eLastBook.EGet(bookContentsFeature).(ecore.EList)
 	require.NotNil(t, eContents)
 	assert.Equal(t, 3, eContents.Size())
 	assert.Equal(t, "c31", eContents.Get(0))
@@ -204,10 +205,10 @@ func TestBinaryDecoder_ComplexBig(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := NewURI("testdata/library.complex.big.bin")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.big.bin")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -226,10 +227,10 @@ func TestBinaryDecoder_Maps(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := NewURI("testdata/emap.bin")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/emap.bin")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -241,27 +242,27 @@ func TestBinaryDecoder_Maps(t *testing.T) {
 	binaryDecoder.DecodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	eMapTestClass, _ := ePackage.GetEClassifier("EMapTest").(EClass)
+	eMapTestClass, _ := ePackage.GetEClassifier("EMapTest").(ecore.EClass)
 	require.NotNil(t, eMapTestClass)
-	eMapTestKeyToValueReference, _ := eMapTestClass.GetEStructuralFeatureFromName("keyToValue").(EReference)
+	eMapTestKeyToValueReference, _ := eMapTestClass.GetEStructuralFeatureFromName("keyToValue").(ecore.EReference)
 	require.NotNil(t, eMapTestKeyToValueReference)
-	eMapTestKeyToIntReference, _ := eMapTestClass.GetEStructuralFeatureFromName("keyToInt").(EReference)
+	eMapTestKeyToIntReference, _ := eMapTestClass.GetEStructuralFeatureFromName("keyToInt").(ecore.EReference)
 	require.NotNil(t, eMapTestKeyToIntReference)
-	eKeyTypeClass, _ := ePackage.GetEClassifier("KeyType").(EClass)
+	eKeyTypeClass, _ := ePackage.GetEClassifier("KeyType").(ecore.EClass)
 	require.NotNil(t, eKeyTypeClass)
-	eKeyTypeNameAttribute, _ := eKeyTypeClass.GetEStructuralFeatureFromName("name").(EAttribute)
+	eKeyTypeNameAttribute, _ := eKeyTypeClass.GetEStructuralFeatureFromName("name").(ecore.EAttribute)
 	require.NotNil(t, eKeyTypeNameAttribute)
-	eValueTypeClass, _ := ePackage.GetEClassifier("ValueType").(EClass)
+	eValueTypeClass, _ := ePackage.GetEClassifier("ValueType").(ecore.EClass)
 	require.NotNil(t, eValueTypeClass)
-	eValueTypeNameAttribute, _ := eValueTypeClass.GetEStructuralFeatureFromName("name").(EAttribute)
+	eValueTypeNameAttribute, _ := eValueTypeClass.GetEStructuralFeatureFromName("name").(ecore.EAttribute)
 	require.NotNil(t, eValueTypeNameAttribute)
 
-	mapTest := eResource.GetContents().Get(0).(EObject)
+	mapTest := eResource.GetContents().Get(0).(ecore.EObject)
 	require.Equal(t, eMapTestClass, mapTest.EClass())
-	mapKeyToValue, _ := mapTest.EGet(eMapTestKeyToValueReference).(EMap)
+	mapKeyToValue, _ := mapTest.EGet(eMapTestKeyToValueReference).(ecore.EMap)
 	require.NotNil(t, mapKeyToValue)
 	assert.Equal(t, 5, mapKeyToValue.Size())
-	mapKeyToInt, _ := mapTest.EGet(eMapTestKeyToIntReference).(EMap)
+	mapKeyToInt, _ := mapTest.EGet(eMapTestKeyToIntReference).(ecore.EMap)
 	require.NotNil(t, mapKeyToInt)
 	assert.Equal(t, 5, mapKeyToInt.Size())
 }
@@ -272,10 +273,10 @@ func TestBinaryDecoder_AllTypes(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// retrive library class & library name attribute
-	objectClass, _ := ePackage.GetEClassifier("Object").(EClass)
+	objectClass, _ := ePackage.GetEClassifier("Object").(ecore.EClass)
 	require.NotNil(t, objectClass)
 
-	enumType := ePackage.GetEClassifier("EnumCategory").(EEnum)
+	enumType := ePackage.GetEClassifier("EnumCategory").(ecore.EEnum)
 	require.NotNil(t, enumType)
 
 	objectF32Attribute := objectClass.GetEStructuralFeatureFromName("f32")
@@ -312,10 +313,10 @@ func TestBinaryDecoder_AllTypes(t *testing.T) {
 	require.NotNil(t, objectEnumAttribute)
 
 	//
-	uri := NewURI("testdata/alltypes.bin")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/alltypes.bin")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -327,7 +328,7 @@ func TestBinaryDecoder_AllTypes(t *testing.T) {
 	binaryDecoder.DecodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	eObject := eResource.GetContents().Get(0).(EObject)
+	eObject := eResource.GetContents().Get(0).(ecore.EObject)
 	require.Equal(t, float32(3.0), eObject.EGet(objectF32Attribute))
 	require.Equal(t, float64(4.0), eObject.EGet(objectF64Attribute))
 	require.Equal(t, "str", eObject.EGet(objectStringAttribute))
@@ -347,10 +348,10 @@ func BenchmarkBinaryDecoderLibraryComplexBig(b *testing.B) {
 	require.NotNil(b, ePackage)
 
 	// create resource
-	uri := NewURI("testdata/library.complex.big.bin")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.big.bin")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 

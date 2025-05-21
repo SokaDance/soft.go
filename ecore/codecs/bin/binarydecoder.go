@@ -7,7 +7,7 @@
 //
 // *****************************************************************************
 
-package ecore
+package bin
 
 import (
 	"bytes"
@@ -16,47 +16,48 @@ import (
 	"io"
 	"time"
 
+	"github.com/masagroup/soft.go/ecore"
 	"github.com/vmihailenco/msgpack/v5"
 )
 
 type binaryDecoderPackageData struct {
-	ePackage   EPackage
+	ePackage   ecore.EPackage
 	eClassData []*binaryDecoderClassData
 }
 
 type binaryDecoderClassData struct {
-	eClass      EClass
-	eFactory    EFactory
+	eClass      ecore.EClass
+	eFactory    ecore.EFactory
 	featureData []*binaryDecoderFeatureData
 }
 
 type binaryDecoderFeatureData struct {
-	eFeature    EStructuralFeature
-	eFactory    EFactory
-	eDataType   EDataType
+	eFeature    ecore.EStructuralFeature
+	eFactory    ecore.EFactory
+	eDataType   ecore.EDataType
 	featureID   int
 	featureKind binaryFeatureKind
 }
 
 type BinaryDecoder struct {
-	resource         EResource
+	resource         ecore.EResource
 	r                io.Reader
 	decoder          *msgpack.Decoder
-	baseURI          *URI
-	objects          []EObject
-	uris             []*URI
+	baseURI          *ecore.URI
+	objects          []ecore.EObject
+	uris             []*ecore.URI
 	packageData      []*binaryDecoderPackageData
 	enumLiterals     []string
 	isResolveProxies bool
 }
 
-func NewBinaryDecoder(resource EResource, r io.Reader, options map[string]any) *BinaryDecoder {
+func NewBinaryDecoder(resource ecore.EResource, r io.Reader, options map[string]any) *BinaryDecoder {
 	d := &BinaryDecoder{
 		resource:     resource,
 		r:            r,
 		decoder:      msgpack.NewDecoder(r),
-		objects:      []EObject{},
-		uris:         []*URI{},
+		objects:      []ecore.EObject{},
+		uris:         []*ecore.URI{},
 		packageData:  []*binaryDecoderPackageData{},
 		enumLiterals: []string{},
 	}
@@ -75,7 +76,7 @@ func (d *BinaryDecoder) DecodeResource() {
 			if d.resource.GetURI() != nil {
 				resourcePath = d.resource.GetURI().String()
 			}
-			d.resource.GetErrors().Add(NewEDiagnosticImpl(err.Error(), resourcePath, 0, 0))
+			d.resource.GetErrors().Add(ecore.NewEDiagnosticImpl(err.Error(), resourcePath, 0, 0))
 		}
 	}()
 	// signature
@@ -99,10 +100,10 @@ func (d *BinaryDecoder) DecodeResource() {
 	}
 
 	// add objects to resource
-	d.resource.GetContents().AddAll(NewImmutableEList(objects))
+	d.resource.GetContents().AddAll(ecore.NewImmutableEList(objects))
 }
 
-func (d *BinaryDecoder) DecodeObject() (EObject, error) {
+func (d *BinaryDecoder) DecodeObject() (ecore.EObject, error) {
 	if err := d.decodeSignature(); err != nil {
 		return nil, err
 	}
@@ -188,7 +189,7 @@ func (d *BinaryDecoder) decodeVersion() error {
 	return nil
 }
 
-func (d *BinaryDecoder) decodeObject() (EObject, error) {
+func (d *BinaryDecoder) decodeObject() (ecore.EObject, error) {
 	id, err := d.decodeInt()
 	if err != nil {
 		return nil, err
@@ -198,12 +199,12 @@ func (d *BinaryDecoder) decodeObject() (EObject, error) {
 		return nil, nil
 	default:
 		if len(d.objects) <= int(id) {
-			var eResult EObject
+			var eResult ecore.EObject
 			eClassData, err := d.decodeClass()
 			if err != nil {
 				return nil, err
 			}
-			eObject := eClassData.eFactory.Create(eClassData.eClass).(EObjectInternal)
+			eObject := eClassData.eFactory.Create(eClassData.eClass).(ecore.EObjectInternal)
 			eResult = eObject
 			decodedInt, err := d.decodeInt()
 			if err != nil {
@@ -219,7 +220,7 @@ func (d *BinaryDecoder) decodeObject() (EObject, error) {
 				}
 				eObject.ESetProxyURI(eProxyURI)
 				if d.isResolveProxies {
-					eResult = ResolveInResource(eObject, d.resource)
+					eResult = ecore.ResolveInResource(eObject, d.resource)
 					d.objects = append(d.objects, eResult)
 				} else {
 					d.objects = append(d.objects, eObject)
@@ -279,7 +280,7 @@ func (d *BinaryDecoder) decodeObject() (EObject, error) {
 	}
 }
 
-func (d *BinaryDecoder) decodeObjects(list EList) error {
+func (d *BinaryDecoder) decodeObjects(list ecore.EList) error {
 	size, err := d.decodeInt()
 	if err != nil {
 		return err
@@ -297,7 +298,7 @@ func (d *BinaryDecoder) decodeObjects(list EList) error {
 	// otherwise, the reference is bidirectional and the list is at least partially populated.
 	existingSize := list.Size()
 	if existingSize == 0 {
-		list.AddAll(NewImmutableEList(objects))
+		list.AddAll(ecore.NewImmutableEList(objects))
 	} else {
 		indices := make([]int, existingSize)
 		duplicateCount := 0
@@ -325,7 +326,7 @@ func (d *BinaryDecoder) decodeObjects(list EList) error {
 		}
 
 		size -= existingSize
-		list.AddAll(NewImmutableEList(objects))
+		list.AddAll(ecore.NewImmutableEList(objects))
 		for i := 0; i < existingSize; i++ {
 			newPosition := indices[i]
 			oldPosition := size + i
@@ -337,7 +338,7 @@ func (d *BinaryDecoder) decodeObjects(list EList) error {
 	return nil
 }
 
-func (d *BinaryDecoder) decodeFeatureValue(eObject EObjectInternal, featureData *binaryDecoderFeatureData) error {
+func (d *BinaryDecoder) decodeFeatureValue(eObject ecore.EObjectInternal, featureData *binaryDecoderFeatureData) error {
 	switch featureData.featureKind {
 	case bfkObjectContainer:
 		fallthrough
@@ -362,7 +363,7 @@ func (d *BinaryDecoder) decodeFeatureValue(eObject EObjectInternal, featureData 
 	case bfkObjectContainmentList:
 		fallthrough
 	case bfkObjectContainmentListProxy:
-		l := eObject.EGetFromID(featureData.featureID, false).(EList)
+		l := eObject.EGetFromID(featureData.featureID, false).(ecore.EList)
 		return d.decodeObjects(l)
 	case bfkData:
 		decoded, err := d.decodeString()
@@ -385,8 +386,8 @@ func (d *BinaryDecoder) decodeFeatureValue(eObject EObjectInternal, featureData 
 			value := featureData.eFactory.CreateFromString(featureData.eDataType, decoded)
 			values = append(values, value)
 		}
-		l := eObject.EGetResolve(featureData.eFeature, false).(EList)
-		l.AddAll(NewBasicEList(values))
+		l := eObject.EGetResolve(featureData.eFeature, false).(ecore.EList)
+		l.AddAll(ecore.NewBasicEList(values))
 	case bfkEnum:
 		var valueStr string
 		id, err := d.decodeInt()
@@ -512,14 +513,14 @@ func (d *BinaryDecoder) decodePackage() (*binaryDecoderPackageData, error) {
 		}
 
 		// retrieve package
-		packageRegistry := GetPackageRegistry()
+		packageRegistry := ecore.GetPackageRegistry()
 		resourceSet := d.resource.GetResourceSet()
 		if resourceSet != nil {
 			packageRegistry = resourceSet.GetPackageRegistry()
 		}
 		ePackage := packageRegistry.GetPackage(nsURI)
 		if ePackage == nil && resourceSet != nil {
-			ePackage, _ = resourceSet.GetEObject(uri, true).(EPackage)
+			ePackage, _ = resourceSet.GetEObject(uri, true).(ecore.EPackage)
 		}
 		if ePackage == nil {
 			return nil, fmt.Errorf("unable to find package '%s'", nsURI)
@@ -534,7 +535,7 @@ func (d *BinaryDecoder) decodePackage() (*binaryDecoderPackageData, error) {
 	}
 }
 
-func (d *BinaryDecoder) decodeURI() (*URI, error) {
+func (d *BinaryDecoder) decodeURI() (*ecore.URI, error) {
 	id, err := d.decodeInt()
 	if err != nil {
 		return nil, err
@@ -543,7 +544,7 @@ func (d *BinaryDecoder) decodeURI() (*URI, error) {
 	case -1:
 		return nil, nil
 	default:
-		var uri *URI
+		var uri *ecore.URI
 		if len(d.uris) <= int(id) {
 			// build uri
 			uriStr, err := d.decodeString()
@@ -553,7 +554,7 @@ func (d *BinaryDecoder) decodeURI() (*URI, error) {
 			if uriStr == "" {
 				uri = d.baseURI
 			} else {
-				uri = d.resolveURI(NewURI(uriStr))
+				uri = d.resolveURI(ecore.NewURI(uriStr))
 			}
 			// add it to the uri array
 			d.uris = append(d.uris, uri)
@@ -564,18 +565,18 @@ func (d *BinaryDecoder) decodeURI() (*URI, error) {
 		if err != nil {
 			return nil, err
 		}
-		return NewURIBuilder(uri).SetFragment(fragment).URI(), nil
+		return ecore.NewURIBuilder(uri).SetFragment(fragment).URI(), nil
 	}
 }
 
-func (d *BinaryDecoder) resolveURI(uri *URI) *URI {
+func (d *BinaryDecoder) resolveURI(uri *ecore.URI) *ecore.URI {
 	if d.baseURI != nil {
 		return d.baseURI.Resolve(uri)
 	}
 	return uri
 }
 
-func (d *BinaryDecoder) newPackageData(ePackage EPackage) *binaryDecoderPackageData {
+func (d *BinaryDecoder) newPackageData(ePackage ecore.EPackage) *binaryDecoderPackageData {
 	return &binaryDecoderPackageData{
 		ePackage:   ePackage,
 		eClassData: make([]*binaryDecoderClassData, ePackage.GetEClassifiers().Size()),
@@ -588,7 +589,7 @@ func (d *BinaryDecoder) newClassData(ePackageData *binaryDecoderPackageData) (*b
 		return nil, err
 	}
 	ePackage := ePackageData.ePackage
-	eClass, _ := ePackage.GetEClassifier(className).(EClass)
+	eClass, _ := ePackage.GetEClassifier(className).(ecore.EClass)
 	if eClass == nil {
 		return nil, fmt.Errorf("unable to find class '%v' in package '%v'", className, ePackage.GetNsURI())
 	}
@@ -613,7 +614,7 @@ func (d *BinaryDecoder) newFeatureData(eClassData *binaryDecoderClassData, featu
 		featureID:   featureID,
 		featureKind: getBinaryCodecFeatureKind(eFeature),
 	}
-	if eAttribute, _ := eFeature.(EAttribute); eAttribute != nil {
+	if eAttribute, _ := eFeature.(ecore.EAttribute); eAttribute != nil {
 		eFeatureData.eDataType = eAttribute.GetEAttributeType()
 		eFeatureData.eFactory = eFeatureData.eDataType.GetEPackage().GetEFactoryInstance()
 	}
