@@ -30,6 +30,12 @@ func (bc *BinaryCodec) NewDecoder(resource ecore.EResource, r io.Reader, options
 	return NewBinaryDecoder(resource, r, options)
 }
 
+func init() {
+	registryCodec := ecore.GetCodecRegistry()
+	codecs := registryCodec.GetExtensionToCodecMap()
+	codecs["bin"] = &BinaryCodec{}
+}
+
 type binaryFeatureKind int
 
 const (

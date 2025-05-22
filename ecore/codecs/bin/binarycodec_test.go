@@ -29,6 +29,20 @@ func loadPackage(packageFileName string) ecore.EPackage {
 	}
 }
 
+func loadTestModel(t *testing.T, resourceSet ecore.EResourceSet, modelURI *ecore.URI) (ecore.EResource, ecore.EObject) {
+	// load package
+	r := resourceSet.CreateResource(modelURI)
+	r.SetObjectIDManager(ecore.NewIncrementalIDManager())
+	r.Load()
+	require.True(t, r.IsLoaded())
+	require.True(t, r.GetErrors().Empty(), diagnosticError(r.GetErrors()))
+	require.True(t, r.GetWarnings().Empty(), diagnosticError(r.GetWarnings()))
+	require.Equal(t, 1, r.GetContents().Size())
+
+	// retrieve root object
+	return r, r.GetContents().Get(0).(ecore.EObject)
+}
+
 func TestBinaryCodec_NewEncoder(t *testing.T) {
 	c := &BinaryCodec{}
 	mockResource := ecore.NewMockEResource(t)
@@ -250,20 +264,6 @@ func loadTestPackage(t *testing.T, resourceSet ecore.EResourceSet, packageURI *e
 	require.NotNil(t, ePackage)
 	resourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 	return r, ePackage
-}
-
-func loadTestModel(t *testing.T, resourceSet ecore.EResourceSet, modelURI *ecore.URI) (ecore.EResource, ecore.EObject) {
-	// load package
-	r := resourceSet.CreateResource(modelURI)
-	r.SetObjectIDManager(ecore.NewIncrementalIDManager())
-	r.Load()
-	require.True(t, r.IsLoaded())
-	require.True(t, r.GetErrors().Empty(), diagnosticError(r.GetErrors()))
-	require.True(t, r.GetWarnings().Empty(), diagnosticError(r.GetWarnings()))
-	require.Equal(t, 1, r.GetContents().Size())
-
-	// retrieve root object
-	return r, r.GetContents().Get(0).(ecore.EObject)
 }
 
 func TestBinaryCodec_EncodeDecodeResource_WithReferences(t *testing.T) {
