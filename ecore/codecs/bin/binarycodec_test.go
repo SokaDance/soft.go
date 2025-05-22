@@ -2,6 +2,7 @@ package bin
 
 import (
 	"bytes"
+	"path"
 	"testing"
 
 	"github.com/masagroup/soft.go/ecore"
@@ -9,6 +10,8 @@ import (
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 )
+
+const testdataPath = "../../testdata"
 
 func diagnosticError(errors ecore.EList) string {
 	if errors.Empty() {
@@ -20,7 +23,7 @@ func diagnosticError(errors ecore.EList) string {
 
 func loadPackage(packageFileName string) ecore.EPackage {
 	xmiProcessor := ecore.NewXMIProcessor()
-	eResource := xmiProcessor.Load(ecore.NewURI("testdata/" + packageFileName))
+	eResource := xmiProcessor.Load(ecore.NewURI(path.Join(testdataPath, packageFileName)))
 	if eResource.IsLoaded() && eResource.GetContents().Size() > 0 {
 		ePackage, _ := eResource.GetContents().Get(0).(ecore.EPackage)
 		return ePackage
@@ -270,17 +273,17 @@ func TestBinaryCodec_EncodeDecodeResource_WithReferences(t *testing.T) {
 	eResourceSet := ecore.NewEResourceSetImpl()
 	binaryCodecOptions := map[string]any{BINARY_OPTION_ID_ATTRIBUTE: true}
 	// load packages & models
-	eShopPackageResource, eShopPackage := loadTestPackage(t, eResourceSet, ecore.NewURI("testdata/shop.ecore"))
+	eShopPackageResource, eShopPackage := loadTestPackage(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "shop.ecore")))
 	require.NotNil(t, eShopPackage)
 	require.NotNil(t, eShopPackageResource)
-	eShopModelResource, eShopModel := loadTestModel(t, eResourceSet, ecore.NewURI("testdata/shop.xml"))
+	eShopModelResource, eShopModel := loadTestModel(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "shop.xml")))
 	require.NotNil(t, eShopModel)
 	require.NotNil(t, eShopModelResource)
 
-	eOrdersPackageResource, eOrdersPackage := loadTestPackage(t, eResourceSet, ecore.NewURI("testdata/orders.ecore"))
+	eOrdersPackageResource, eOrdersPackage := loadTestPackage(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "orders.ecore")))
 	require.NotNil(t, eOrdersPackageResource)
 	require.NotNil(t, eOrdersPackage)
-	eOrdersModelResource, eOrdersModel := loadTestModel(t, eResourceSet, ecore.NewURI("testdata/orders.xml"))
+	eOrdersModelResource, eOrdersModel := loadTestModel(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "orders.xml")))
 	require.NotNil(t, eOrdersModelResource)
 	require.NotNil(t, eOrdersModel)
 	ecore.ResolveAll(eShopModel)
@@ -296,7 +299,7 @@ func TestBinaryCodec_EncodeDecodeResource_WithReferences(t *testing.T) {
 	// decode orders resource
 	eOrdersModelResource = ecore.NewEResourceImpl()
 	eOrdersModelResource.SetObjectIDManager(ecore.NewIncrementalIDManager())
-	eOrdersModelResource.SetURI(ecore.NewURI("testdata/orders.xml"))
+	eOrdersModelResource.SetURI(ecore.NewURI(path.Join(testdataPath, "orders.xml")))
 	eResourceSet.GetResources().Add(eOrdersModelResource)
 	binaryDecoder := NewBinaryDecoder(eOrdersModelResource, &buffer, binaryCodecOptions)
 	binaryDecoder.DecodeResource()
@@ -336,10 +339,10 @@ func TestBinaryCodec_EncodeDecodeResource_WithReferences(t *testing.T) {
 func TestBinaryCodec_EncodeDecodeObject_WithExternalReferences(t *testing.T) {
 	eResourceSet := ecore.NewEResourceSetImpl()
 	binaryCodecOptions := map[string]any{BINARY_OPTION_ID_ATTRIBUTE: true}
-	eLibraryPackageResource, eLibraryPackage := loadTestPackage(t, eResourceSet, ecore.NewURI("testdata/library.complex.ecore"))
+	eLibraryPackageResource, eLibraryPackage := loadTestPackage(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "library.complex.ecore")))
 	require.NotNil(t, eLibraryPackageResource)
 	require.NotNil(t, eLibraryPackage)
-	eLibraryModelResource, eLibraryModel := loadTestModel(t, eResourceSet, ecore.NewURI("testdata/library.complex.xml"))
+	eLibraryModelResource, eLibraryModel := loadTestModel(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "library.complex.xml")))
 	require.NotNil(t, eLibraryModelResource)
 	require.NotNil(t, eLibraryModel)
 
@@ -416,10 +419,10 @@ func TestBinaryCodec_EncodeDecodeObject_WithExternalReferences(t *testing.T) {
 func TestBinaryCodec_EncodeDecodeObject_WithInternalReferences(t *testing.T) {
 	eResourceSet := ecore.NewEResourceSetImpl()
 	binaryCodecOptions := map[string]any{BINARY_OPTION_ID_ATTRIBUTE: true}
-	eLibraryPackageResource, eLibraryPackage := loadTestPackage(t, eResourceSet, ecore.NewURI("testdata/library.complex.ecore"))
+	eLibraryPackageResource, eLibraryPackage := loadTestPackage(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "library.complex.ecore")))
 	require.NotNil(t, eLibraryPackageResource)
 	require.NotNil(t, eLibraryPackage)
-	eLibraryModelResource, eLibraryModel := loadTestModel(t, eResourceSet, ecore.NewURI("testdata/library.complex.xml"))
+	eLibraryModelResource, eLibraryModel := loadTestModel(t, eResourceSet, ecore.NewURI(path.Join(testdataPath, "library.complex.xml")))
 	require.NotNil(t, eLibraryModelResource)
 	require.NotNil(t, eLibraryModel)
 

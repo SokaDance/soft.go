@@ -3,6 +3,7 @@ package bin
 import (
 	"bytes"
 	"os"
+	"path"
 	"testing"
 
 	"github.com/google/uuid"
@@ -18,7 +19,7 @@ func TestBinaryEncoder_Complex(t *testing.T) {
 
 	// load resource
 	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
-	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI("testdata/library.complex.xml"), nil)
+	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI(path.Join(testdataPath, "library.complex.xml")), nil)
 	require.NotNil(t, eResource)
 	require.True(t, eResource.IsLoaded())
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
@@ -29,9 +30,9 @@ func TestBinaryEncoder_Complex(t *testing.T) {
 	binaryEncoder.EncodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	//os.WriteFile("testdata/library.complex.bin", w.Bytes(), 0644)
+	//os.WriteFile(path.Join(testdataPath,"library.complex.bin", w.Bytes(), 0644)
 
-	bytes, err := os.ReadFile("testdata/library.complex.bin")
+	bytes, err := os.ReadFile(path.Join(testdataPath, "library.complex.bin"))
 	assert.Nil(t, err)
 	assert.Equal(t, bytes, w.Bytes())
 }
@@ -42,7 +43,7 @@ func TestBinaryEncoder_ComplexWithID(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// load resource
-	uri := ecore.NewURI("testdata/library.complex.id.xml")
+	uri := ecore.NewURI(path.Join(testdataPath, "library.complex.id.xml"))
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResource.SetObjectIDManager(ecore.NewUUIDManager())
@@ -68,9 +69,9 @@ func TestBinaryEncoder_ComplexWithID(t *testing.T) {
 	binaryEncoder.EncodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	//os.WriteFile("testdata/library.complex.id.bin", w.Bytes(), 0644)
+	//os.WriteFile(path.Join(testdataPath,"library.complex.id.bin", w.Bytes(), 0644)
 
-	bytes, err := os.ReadFile("testdata/library.complex.id.bin")
+	bytes, err := os.ReadFile(path.Join(testdataPath, "library.complex.id.bin"))
 	assert.Nil(t, err)
 	assert.Equal(t, bytes, w.Bytes())
 }
@@ -82,7 +83,7 @@ func TestBinaryEncoder_ComplexBig(t *testing.T) {
 
 	// load resource
 	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
-	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI("testdata/library.complex.big.xml"), nil)
+	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI(path.Join(testdataPath, "library.complex.big.xml")), nil)
 	require.NotNil(t, eResource)
 	require.True(t, eResource.IsLoaded())
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
@@ -93,9 +94,9 @@ func TestBinaryEncoder_ComplexBig(t *testing.T) {
 	binaryEncoder.EncodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	//os.WriteFile("testdata/library.complex.big.bin", w.Bytes(), 0644)
+	//os.WriteFile(path.Join(testdataPath,"library.complex.big.bin", w.Bytes(), 0644)
 
-	bytes, err := os.ReadFile("testdata/library.complex.big.bin")
+	bytes, err := os.ReadFile(path.Join(testdataPath, "library.complex.big.bin"))
 	assert.Nil(t, err)
 	assert.Equal(t, bytes, w.Bytes())
 }
@@ -107,7 +108,7 @@ func TestBinaryEncoder_SimpleWithDataTypeList(t *testing.T) {
 
 	// load resource
 	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
-	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI("testdata/library.datalist.xml"), nil)
+	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI(path.Join(testdataPath, "library.datalist.xml")), nil)
 	require.NotNil(t, eResource)
 	require.True(t, eResource.IsLoaded())
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
@@ -118,9 +119,9 @@ func TestBinaryEncoder_SimpleWithDataTypeList(t *testing.T) {
 	binaryEncoder.EncodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	//os.WriteFile("testdata/library.datalist.bin", w.Bytes(), 0644)
+	//os.WriteFile(path.Join(testdataPath,"library.datalist.bin", w.Bytes(), 0644)
 
-	bytes, err := os.ReadFile("testdata/library.datalist.bin")
+	bytes, err := os.ReadFile(path.Join(testdataPath, "library.datalist.bin"))
 	assert.Nil(t, err)
 	assert.Equal(t, bytes, w.Bytes())
 }
@@ -132,7 +133,7 @@ func TestBinaryEncoder_Maps(t *testing.T) {
 
 	// load resource
 	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
-	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI("testdata/emap.xml"), nil)
+	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI(path.Join(testdataPath, "emap.xml")), nil)
 	require.NotNil(t, eResource)
 	require.True(t, eResource.IsLoaded())
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
@@ -143,9 +144,9 @@ func TestBinaryEncoder_Maps(t *testing.T) {
 	binaryEncoder.EncodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	// os.WriteFile("testdata/emap.bin", w.Bytes(), 0644)
+	// os.WriteFile(path.Join(testdataPath,"emap.bin", w.Bytes(), 0644)
 
-	bytes, err := os.ReadFile("testdata/emap.bin")
+	bytes, err := os.ReadFile(path.Join(testdataPath, "emap.bin"))
 	assert.Nil(t, err)
 	assert.Equal(t, bytes, w.Bytes())
 }
@@ -157,7 +158,7 @@ func TestBinaryEncoder_AllTypes(t *testing.T) {
 
 	// load resource
 	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
-	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI("testdata/alltypes.xml"), nil)
+	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI(path.Join(testdataPath, "alltypes.xml")), nil)
 	require.NotNil(t, eResource)
 	require.True(t, eResource.IsLoaded())
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
@@ -168,9 +169,9 @@ func TestBinaryEncoder_AllTypes(t *testing.T) {
 	binaryEncoder.EncodeResource()
 	require.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 
-	//os.WriteFile("testdata/alltypes.bin", w.Bytes(), 0644)
+	//os.WriteFile(path.Join(testdataPath,"alltypes.bin", w.Bytes(), 0644)
 
-	bytes, err := os.ReadFile("testdata/alltypes.bin")
+	bytes, err := os.ReadFile(path.Join(testdataPath, "alltypes.bin"))
 	assert.Nil(t, err)
 	assert.Equal(t, bytes, w.Bytes())
 }
@@ -182,7 +183,7 @@ func BenchmarkBinaryEncoderLibraryComplexBig(b *testing.B) {
 
 	// load resource
 	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
-	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI("testdata/library.complex.big.xml"), nil)
+	eResource := xmlProcessor.LoadWithOptions(ecore.NewURI(path.Join(testdataPath, "library.complex.big.xml")), nil)
 	require.NotNil(b, eResource)
 	require.True(b, eResource.GetWarnings().Empty(), diagnosticError(eResource.GetWarnings()))
 

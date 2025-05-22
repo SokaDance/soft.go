@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"io"
 	"os"
+	"path"
 	"testing"
 	"time"
 
@@ -16,12 +17,12 @@ import (
 
 func TestBinaryDecoder_Invalid(t *testing.T) {
 	// file
-	f, err := os.Open("testdata/invalid.bin")
+	f, err := os.Open(path.Join(testdataPath, "invalid.bin"))
 	require.Nil(t, err)
 
 	mockErrors := ecore.NewMockEList(t)
 	mockResource := ecore.NewMockEResource(t)
-	mockResource.EXPECT().GetURI().Return(ecore.NewURI("testdata/invalid.bin"))
+	mockResource.EXPECT().GetURI().Return(ecore.NewURI(path.Join(testdataPath, "invalid.bin")))
 	mockResource.EXPECT().GetErrors().Return(mockErrors).Once()
 	mockErrors.EXPECT().Add(mock.Anything).Return(true).Once()
 	binaryDecoder := NewBinaryDecoder(mockResource, f, nil)
@@ -34,7 +35,7 @@ func TestBinaryDecoder_Complex(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := ecore.NewURI("testdata/library.complex.bin")
+	uri := ecore.NewURI(path.Join(testdataPath, "library.complex.bin"))
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResourceSet := ecore.NewEResourceSetImpl()
@@ -116,7 +117,7 @@ func TestBinaryDecoder_ComplexWithID(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := ecore.NewURI("testdata/library.complex.id.bin")
+	uri := ecore.NewURI(path.Join(testdataPath, "library.complex.id.bin"))
 	idManager := ecore.NewUUIDManager()
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
@@ -155,7 +156,7 @@ func TestBinaryDecoder_SimpleWithEDataTypeList(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := ecore.NewURI("testdata/library.datalist.bin")
+	uri := ecore.NewURI(path.Join(testdataPath, "library.datalist.bin"))
 	idManager := ecore.NewUUIDManager()
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
@@ -205,7 +206,7 @@ func TestBinaryDecoder_ComplexBig(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := ecore.NewURI("testdata/library.complex.big.bin")
+	uri := ecore.NewURI(path.Join(testdataPath, "library.complex.big.bin"))
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResourceSet := ecore.NewEResourceSetImpl()
@@ -227,7 +228,7 @@ func TestBinaryDecoder_Maps(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	//
-	uri := ecore.NewURI("testdata/emap.bin")
+	uri := ecore.NewURI(path.Join(testdataPath, "emap.bin"))
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResourceSet := ecore.NewEResourceSetImpl()
@@ -313,7 +314,7 @@ func TestBinaryDecoder_AllTypes(t *testing.T) {
 	require.NotNil(t, objectEnumAttribute)
 
 	//
-	uri := ecore.NewURI("testdata/alltypes.bin")
+	uri := ecore.NewURI(path.Join(testdataPath, "alltypes.bin"))
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResourceSet := ecore.NewEResourceSetImpl()
@@ -348,7 +349,7 @@ func BenchmarkBinaryDecoderLibraryComplexBig(b *testing.B) {
 	require.NotNil(b, ePackage)
 
 	// create resource
-	uri := ecore.NewURI("testdata/library.complex.big.bin")
+	uri := ecore.NewURI(path.Join(testdataPath, "library.complex.big.bin"))
 	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
 	eResourceSet := ecore.NewEResourceSetImpl()

@@ -8,22 +8,13 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+const testdataPath = "../../testdata"
+
 func diagnosticError(errors ecore.EList) string {
 	if errors.Empty() {
 		return ""
 	} else {
 		return errors.Get(0).(ecore.EDiagnostic).GetMessage()
-	}
-}
-
-func loadPackage(packageFileName string) ecore.EPackage {
-	xmiProcessor := ecore.NewXMIProcessor()
-	eResource := xmiProcessor.Load(ecore.NewURI("testdata/" + packageFileName))
-	if eResource.IsLoaded() && eResource.GetContents().Size() > 0 {
-		ePackage, _ := eResource.GetContents().Get(0).(ecore.EPackage)
-		return ePackage
-	} else {
-		return nil
 	}
 }
 
@@ -43,10 +34,12 @@ func loadTestPackage(t *testing.T, resourceSet ecore.EResourceSet, packageURI *e
 	return r, ePackage
 }
 
-func loadTestModel(t *testing.T, resourceSet ecore.EResourceSet, modelURI *ecore.URI) (ecore.EResource, ecore.EObject) {
+func loadTestModel(t *testing.T, resourceSet ecore.EResourceSet, modelURI *ecore.URI, idManager bool) (ecore.EResource, ecore.EObject) {
 	// load package
 	r := resourceSet.CreateResource(modelURI)
-	r.SetObjectIDManager(ecore.NewIncrementalIDManager())
+	if idManager {
+		r.SetObjectIDManager(ecore.NewIncrementalIDManager())
+	}
 	r.Load()
 	require.True(t, r.IsLoaded())
 	require.True(t, r.GetErrors().Empty(), diagnosticError(r.GetErrors()))
