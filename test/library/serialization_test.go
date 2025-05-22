@@ -9,6 +9,7 @@ import (
 	"testing"
 
 	"github.com/masagroup/soft.go/ecore"
+	"github.com/masagroup/soft.go/ecore/codecs/bin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -199,7 +200,7 @@ func BenchmarkBinaryDecoderLibraryComplexBig(b *testing.B) {
 	for i := 0; i < b.N; i++ {
 		_, err := r.Seek(0, io.SeekStart)
 		require.Nil(b, err)
-		xmlDecoder := ecore.NewBinaryDecoder(eResource, r, nil)
+		xmlDecoder := bin.NewBinaryDecoder(eResource, r, nil)
 		xmlDecoder.DecodeResource()
 		require.True(b, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 	}
@@ -214,7 +215,7 @@ func BenchmarkBinaryEncoderLibraryComplexBig(b *testing.B) {
 
 	for i := 0; i < b.N; i++ {
 		var strbuff strings.Builder
-		binaryEncoder := ecore.NewBinaryEncoder(eResource, &strbuff, nil)
+		binaryEncoder := bin.NewBinaryEncoder(eResource, &strbuff, nil)
 		binaryEncoder.EncodeResource()
 		require.True(b, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
 	}
