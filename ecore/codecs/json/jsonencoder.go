@@ -1,4 +1,4 @@
-package ecore
+package json
 
 import (
 	"bytes"
@@ -7,22 +7,23 @@ import (
 	"io"
 
 	"github.com/karlseguin/jsonwriter"
+	"github.com/masagroup/soft.go/ecore"
 )
 
 type JSONEncoder struct {
-	resource        EResource
+	resource        ecore.EResource
 	w               *jsonwriter.Writer
-	featureKinds    map[EStructuralFeature]jsonFeatureKind
-	errorFn         func(diagnostic EDiagnostic)
+	featureKinds    map[ecore.EStructuralFeature]jsonFeatureKind
+	errorFn         func(diagnostic ecore.EDiagnostic)
 	idAttributeName string
 	keepDefaults    bool
 }
 
-func NewJSONEncoder(resource EResource, w io.Writer, options map[string]interface{}) *JSONEncoder {
+func NewJSONEncoder(resource ecore.EResource, w io.Writer, options map[string]interface{}) *JSONEncoder {
 	e := &JSONEncoder{
 		w:            jsonwriter.New(w),
 		resource:     resource,
-		featureKinds: map[EStructuralFeature]jsonFeatureKind{},
+		featureKinds: map[ecore.EStructuralFeature]jsonFeatureKind{},
 	}
 	if options != nil {
 		e.idAttributeName, _ = options[JSON_OPTION_ID_ATTRIBUTE_NAME].(string)
@@ -31,17 +32,17 @@ func NewJSONEncoder(resource EResource, w io.Writer, options map[string]interfac
 }
 
 func (e *JSONEncoder) EncodeResource() {
-	e.errorFn = func(diagnostic EDiagnostic) {
+	e.errorFn = func(diagnostic ecore.EDiagnostic) {
 		e.resource.GetErrors().Add(diagnostic)
 	}
 	if contents := e.resource.GetContents(); !contents.Empty() {
-		object := contents.Get(0).(EObject)
+		object := contents.Get(0).(ecore.EObject)
 		e.encodeTopObject(object)
 	}
 }
 
-func (e *JSONEncoder) EncodeObject(object EObject) (err error) {
-	e.errorFn = func(diagnostic EDiagnostic) {
+func (e *JSONEncoder) EncodeObject(object ecore.EObject) (err error) {
+	e.errorFn = func(diagnostic ecore.EDiagnostic) {
 		if err == nil {
 			err = diagnostic
 		}
@@ -50,13 +51,13 @@ func (e *JSONEncoder) EncodeObject(object EObject) (err error) {
 	return
 }
 
-func (e *JSONEncoder) encodeTopObject(eObject EObject) {
+func (e *JSONEncoder) encodeTopObject(eObject ecore.EObject) {
 	e.w.RootObject(func() {
 		e.encodeObject(eObject)
 	})
 }
 
-func (e *JSONEncoder) encodeObject(eObject EObject) {
+func (e *JSONEncoder) encodeObject(eObject ecore.EObject) {
 	eClass := eObject.EClass()
 	// class
 	e.w.KeyString("eClass", e.getClassName(eClass))
@@ -68,12 +69,12 @@ func (e *JSONEncoder) encodeObject(eObject EObject) {
 	}
 	// features
 	for itFeature := eClass.GetEAllStructuralFeatures().Iterator(); itFeature.HasNext(); {
-		eFeature := itFeature.Next().(EStructuralFeature)
+		eFeature := itFeature.Next().(ecore.EStructuralFeature)
 		e.encodeFeatureValue(eObject, eFeature)
 	}
 }
 
-func (e *JSONEncoder) encodeObjectReference(eObject EObject) {
+func (e *JSONEncoder) encodeObjectReference(eObject ecore.EObject) {
 	e.w.KeyString("eClass", e.getClassName(eObject.EClass()))
 	e.w.KeyString("eRef", e.getReference(eObject))
 }
@@ -90,7 +91,7 @@ func jsonEscape(i string) string {
 	return string(b[:len(b)-1])
 }
 
-func (e *JSONEncoder) encodeFeatureValue(eObject EObject, eFeature EStructuralFeature) {
+func (e *JSONEncoder) encodeFeatureValue(eObject ecore.EObject, eFeature ecore.EStructuralFeature) {
 	if !e.shouldSaveFeature(eObject, eFeature) {
 		return
 	}
@@ -114,7 +115,7 @@ func (e *JSONEncoder) encodeFeatureValue(eObject EObject, eFeature EStructuralFe
 			e.w.Raw([]byte(jsonEscape(str)))
 		}
 	case jfkDataList:
-		l := value.(EList)
+		l := value.(ecore.EList)
 		e.w.Array(eFeature.GetName(), func() {
 			for it := l.Iterator(); it.HasNext(); {
 				str, ok := e.getData(it.Next(), eFeature)
@@ -125,47 +126,47 @@ func (e *JSONEncoder) encodeFeatureValue(eObject EObject, eFeature EStructuralFe
 		})
 	case jfkObject:
 		e.w.Object(eFeature.GetName(), func() {
-			e.encodeObject(value.(EObject))
+			e.encodeObject(value.(ecore.EObject))
 		})
 	case jfkObjectList:
-		l := value.(EList)
+		l := value.(ecore.EList)
 		e.w.Array(eFeature.GetName(), func() {
 			for it := l.Iterator(); it.HasNext(); {
 				e.w.ArrayObject(func() {
-					e.encodeObject(it.Next().(EObject))
+					e.encodeObject(it.Next().(ecore.EObject))
 				})
 			}
 		})
 	case jfkObjectReference:
 		e.w.Object(eFeature.GetName(), func() {
-			e.encodeObjectReference(value.(EObject))
+			e.encodeObjectReference(value.(ecore.EObject))
 		})
 	case jfkObjectReferenceList:
-		l := value.(EList)
+		l := value.(ecore.EList)
 		e.w.Array(eFeature.GetName(), func() {
 			for it := l.Iterator(); it.HasNext(); {
 				e.w.ArrayObject(func() {
-					e.encodeObjectReference(it.Next().(EObject))
+					e.encodeObjectReference(it.Next().(ecore.EObject))
 				})
 			}
 		})
 	}
 }
 
-func (e *JSONEncoder) shouldSaveFeature(o EObject, f EStructuralFeature) bool {
+func (e *JSONEncoder) shouldSaveFeature(o ecore.EObject, f ecore.EStructuralFeature) bool {
 	return o.EIsSet(f) || (e.keepDefaults && f.GetDefaultValueLiteral() != "")
 }
 
-func (e *JSONEncoder) getClassName(eClass EClass) string {
+func (e *JSONEncoder) getClassName(eClass ecore.EClass) string {
 	ePackage := eClass.GetEPackage()
 	return ePackage.GetNsURI() + "#//" + eClass.GetName()
 }
 
-func (e *JSONEncoder) getData(value interface{}, f EStructuralFeature) (string, bool) {
+func (e *JSONEncoder) getData(value interface{}, f ecore.EStructuralFeature) (string, bool) {
 	if value == nil {
 		return "", false
 	} else {
-		d := f.GetEType().(EDataType)
+		d := f.GetEType().(ecore.EDataType)
 		p := d.GetEPackage()
 		f := p.GetEFactoryInstance()
 		s := f.ConvertToString(d, value)
@@ -173,8 +174,8 @@ func (e *JSONEncoder) getData(value interface{}, f EStructuralFeature) (string, 
 	}
 }
 
-func (e *JSONEncoder) getReference(eObject EObject) string {
-	eInternal, _ := eObject.(EObjectInternal)
+func (e *JSONEncoder) getReference(eObject ecore.EObject) string {
+	eInternal, _ := eObject.(ecore.EObjectInternal)
 	if eInternal != nil {
 		objectURI := eInternal.EProxyURI()
 		if objectURI == nil {
@@ -195,6 +196,6 @@ func (e *JSONEncoder) getReference(eObject EObject) string {
 	return ""
 }
 
-func (e *JSONEncoder) getResourceReference(resource EResource, object EObject) *URI {
-	return NewURIBuilder(resource.GetURI()).SetFragment(resource.GetURIFragment(object)).URI()
+func (e *JSONEncoder) getResourceReference(resource ecore.EResource, object ecore.EObject) *ecore.URI {
+	return ecore.NewURIBuilder(resource.GetURI()).SetFragment(resource.GetURIFragment(object)).URI()
 }

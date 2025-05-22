@@ -7,10 +7,12 @@
 //
 // *****************************************************************************
 
-package ecore
+package json
 
 import (
 	"io"
+
+	"github.com/masagroup/soft.go/ecore"
 )
 
 const (
@@ -20,10 +22,10 @@ const (
 type JSONCodec struct {
 }
 
-func (jc *JSONCodec) NewEncoder(resource EResource, w io.Writer, options map[string]interface{}) EEncoder {
+func (jc *JSONCodec) NewEncoder(resource ecore.EResource, w io.Writer, options map[string]interface{}) ecore.EEncoder {
 	return NewJSONEncoder(resource, w, options)
 }
-func (jc *JSONCodec) NewDecoder(resource EResource, r io.Reader, options map[string]interface{}) EDecoder {
+func (jc *JSONCodec) NewDecoder(resource ecore.EResource, r io.Reader, options map[string]interface{}) ecore.EDecoder {
 	panic("not implemented")
 }
 
@@ -39,10 +41,10 @@ const (
 	jfkObjectReferenceList
 )
 
-func getJSONCodecFeatureKind(eFeature EStructuralFeature) jsonFeatureKind {
+func getJSONCodecFeatureKind(eFeature ecore.EStructuralFeature) jsonFeatureKind {
 	if eFeature.IsTransient() {
 		return jfkTransient
-	} else if eReference, _ := eFeature.(EReference); eReference != nil {
+	} else if eReference, _ := eFeature.(ecore.EReference); eReference != nil {
 		if eReference.IsContainment() {
 			if eReference.IsMany() {
 				return jfkObjectList
@@ -66,7 +68,7 @@ func getJSONCodecFeatureKind(eFeature EStructuralFeature) jsonFeatureKind {
 		} else {
 			return jfkObject
 		}
-	} else if eAttribute, _ := eFeature.(EAttribute); eAttribute != nil {
+	} else if eAttribute, _ := eFeature.(ecore.EAttribute); eAttribute != nil {
 		if eAttribute.IsMany() {
 			return jfkDataList
 		} else {

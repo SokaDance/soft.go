@@ -8,7 +8,6 @@ require (
 	github.com/chebyrash/promise v0.0.0-20230709133807-42ec49ba1459
 	github.com/davecgh/go-spew v1.1.1
 	github.com/google/uuid v1.6.0
-	github.com/karlseguin/jsonwriter v1.0.4-0.20170525085137-6f05566bac1c
 	github.com/oklog/ulid/v2 v2.1.0
 	github.com/panjf2000/ants/v2 v2.11.3
 	github.com/petermattis/goid v0.0.0-20250508124226-395b08cebbdb
@@ -22,7 +21,6 @@ require (
 
 require (
 	github.com/dustin/go-humanize v1.0.1 // indirect
-	github.com/karlseguin/expect v1.0.8 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
 	github.com/ncruces/go-strftime v0.1.9 // indirect
 	github.com/remyoudompheng/bigfft v0.0.0-20230129092748-24d4a6f8daec // indirect

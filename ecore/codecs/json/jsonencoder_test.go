@@ -1,4 +1,4 @@
-package ecore
+package json
 
 import (
 	"bytes"
@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/masagroup/soft.go/ecore"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -16,8 +17,8 @@ func TestJSONEncoder_EncodeResourceSimple(t *testing.T) {
 	assert.NotNil(t, ePackage)
 
 	// load model file
-	xmlProcessor := NewXMLProcessor(XMLProcessorPackages([]EPackage{ePackage}))
-	eResource := xmlProcessor.Load(CreateFileURI("testdata/library.simple.xml"))
+	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
+	eResource := xmlProcessor.Load(ecore.CreateFileURI("testdata/library.simple.xml"))
 	require.NotNil(t, eResource)
 	assert.True(t, eResource.IsLoaded())
 	assert.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
@@ -38,8 +39,8 @@ func TestJSONEncoder_EncodeResourceComplex(t *testing.T) {
 	assert.NotNil(t, ePackage)
 
 	// load model file
-	xmlProcessor := NewXMLProcessor(XMLProcessorPackages([]EPackage{ePackage}))
-	eResource := xmlProcessor.Load(CreateFileURI("testdata/library.complex.xml"))
+	xmlProcessor := ecore.NewXMLProcessor(ecore.XMLProcessorPackages([]ecore.EPackage{ePackage}))
+	eResource := xmlProcessor.Load(ecore.CreateFileURI("testdata/library.complex.xml"))
 	require.NotNil(t, eResource)
 	assert.True(t, eResource.IsLoaded())
 	assert.True(t, eResource.GetErrors().Empty(), diagnosticError(eResource.GetErrors()))
@@ -54,19 +55,19 @@ func TestJSONEncoder_EncodeResourceComplex(t *testing.T) {
 }
 
 func TestJSONEncoder_EncodeObject(t *testing.T) {
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	// load packages & models
-	eShopPackageResource, eShopPackage := loadTestPackage(t, eResourceSet, NewURI("testdata/shop.ecore"))
+	eShopPackageResource, eShopPackage := loadTestPackage(t, eResourceSet, ecore.NewURI("testdata/shop.ecore"))
 	require.NotNil(t, eShopPackage)
 	require.NotNil(t, eShopPackageResource)
-	eShopModelResource, eShopModel := loadTestModel(t, eResourceSet, NewURI("testdata/shop.xml"))
+	eShopModelResource, eShopModel := loadTestModel(t, eResourceSet, ecore.NewURI("testdata/shop.xml"))
 	require.NotNil(t, eShopModel)
 	require.NotNil(t, eShopModelResource)
 
-	eOrdersPackageResource, eOrdersPackage := loadTestPackage(t, eResourceSet, NewURI("testdata/orders.ecore"))
+	eOrdersPackageResource, eOrdersPackage := loadTestPackage(t, eResourceSet, ecore.NewURI("testdata/orders.ecore"))
 	require.NotNil(t, eOrdersPackageResource)
 	require.NotNil(t, eOrdersPackage)
-	eOrdersModelResource, eOrdersModel := loadTestModel(t, eResourceSet, NewURI("testdata/orders.xml"))
+	eOrdersModelResource, eOrdersModel := loadTestModel(t, eResourceSet, ecore.NewURI("testdata/orders.xml"))
 	require.NotNil(t, eOrdersModelResource)
 	require.NotNil(t, eOrdersModel)
 

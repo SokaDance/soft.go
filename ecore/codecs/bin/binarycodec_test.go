@@ -29,6 +29,22 @@ func loadPackage(packageFileName string) ecore.EPackage {
 	}
 }
 
+func loadTestPackage(t *testing.T, resourceSet ecore.EResourceSet, packageURI *ecore.URI) (ecore.EResource, ecore.EPackage) {
+	// load package
+	r := resourceSet.CreateResource(packageURI)
+	r.SetObjectIDManager(ecore.NewIncrementalIDManager())
+	r.Load()
+	assert.True(t, r.IsLoaded())
+	assert.True(t, r.GetErrors().Empty(), diagnosticError(r.GetErrors()))
+	assert.True(t, r.GetWarnings().Empty(), diagnosticError(r.GetWarnings()))
+
+	// retrieve package
+	ePackage, _ := r.GetContents().Get(0).(ecore.EPackage)
+	require.NotNil(t, ePackage)
+	resourceSet.GetPackageRegistry().RegisterPackage(ePackage)
+	return r, ePackage
+}
+
 func loadTestModel(t *testing.T, resourceSet ecore.EResourceSet, modelURI *ecore.URI) (ecore.EResource, ecore.EObject) {
 	// load package
 	r := resourceSet.CreateResource(modelURI)
@@ -248,22 +264,6 @@ func TestBinaryCodec_EncodeDecodeEcore(t *testing.T) {
 	require.NotNil(t, eDataType)
 	assert.Equal(t, "EString", eDataType.GetName())
 
-}
-
-func loadTestPackage(t *testing.T, resourceSet ecore.EResourceSet, packageURI *ecore.URI) (ecore.EResource, ecore.EPackage) {
-	// load package
-	r := resourceSet.CreateResource(packageURI)
-	r.SetObjectIDManager(ecore.NewIncrementalIDManager())
-	r.Load()
-	assert.True(t, r.IsLoaded())
-	assert.True(t, r.GetErrors().Empty(), diagnosticError(r.GetErrors()))
-	assert.True(t, r.GetWarnings().Empty(), diagnosticError(r.GetWarnings()))
-
-	// retrieve package
-	ePackage, _ := r.GetContents().Get(0).(ecore.EPackage)
-	require.NotNil(t, ePackage)
-	resourceSet.GetPackageRegistry().RegisterPackage(ePackage)
-	return r, ePackage
 }
 
 func TestBinaryCodec_EncodeDecodeResource_WithReferences(t *testing.T) {
