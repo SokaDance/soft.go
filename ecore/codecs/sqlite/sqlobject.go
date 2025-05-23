@@ -1,7 +1,9 @@
-package ecore
+package sqlite
+
+import "github.com/masagroup/soft.go/ecore"
 
 type SQLObject interface {
-	EObject
+	ecore.EObject
 	SetSQLID(int64)
 	GetSQLID() int64
 }

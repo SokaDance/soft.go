@@ -1,4 +1,4 @@
-package ecore
+package sqlite
 
 import (
 	"bytes"
@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/masagroup/soft.go/ecore"
 	"github.com/stretchr/testify/require"
 	"zombiezen.com/go/sqlite"
 	"zombiezen.com/go/sqlite/sqlitex"
@@ -19,10 +20,10 @@ func TestSQLDecoder_DecodeResource(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	uri := NewURI("testdata/library.complex.sqlite")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.sqlite")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -41,10 +42,10 @@ func TestSQLDecoder_DecodeResource_Memory(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	uri := NewURI("testdata/library.complex.sqlite")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.sqlite")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -63,10 +64,10 @@ func BenchmarkSQLDecoder_Complex(b *testing.B) {
 	require.NotNil(b, ePackage)
 
 	// resource
-	uri := NewURI("testdata/library.complex.sqlite")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.sqlite")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -92,10 +93,10 @@ func BenchmarkSQLDecoder_Complex_Memory(b *testing.B) {
 	require.NotNil(b, ePackage)
 
 	// resource
-	uri := NewURI("testdata/library.complex.sqlite")
-	eResource := NewEResourceImpl()
+	uri := ecore.NewURI("testdata/library.complex.sqlite")
+	eResource := ecore.NewEResourceImpl()
 	eResource.SetURI(uri)
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(eResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -121,11 +122,11 @@ func TestSQLDecoder_EMaps(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/emap.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/emap.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -145,11 +146,11 @@ func TestSQLDecoder_SimpleNoIDs_NoObjectIDManager(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/library.simple.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/library.simple.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -170,12 +171,12 @@ func TestSQLDecoder_SimpleNoIDs(t *testing.T) {
 	objectIDManager := NewIncrementalIDManager()
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/library.simple.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/library.simple.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 	sqlResource.SetObjectIDManager(objectIDManager)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -200,13 +201,13 @@ func TestSQLDecoder_SimpleWithIDs(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	objectIDManager := NewIncrementalIDManager()
-	sqlURI := NewURI("testdata/library.simple.ids.sqlite")
-	sqlResource := NewEResourceImpl()
+	objectIDManager := ecore.NewIncrementalIDManager()
+	sqlURI := ecore.NewURI("testdata/library.simple.ids.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 	sqlResource.SetObjectIDManager(objectIDManager)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -232,12 +233,12 @@ func TestSQLDecoder_SimpleWithULIDs(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/library.simple.ulids.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/library.simple.ulids.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
-	sqlResource.SetObjectIDManager(NewULIDManager())
+	sqlResource.SetObjectIDManager(ecore.NewULIDManager())
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -256,11 +257,11 @@ func TestSQLDecoder_SimpleWithContainerIDs(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/library.container.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/library.container.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -418,11 +419,11 @@ func TestSQLDecoder_AllTypes(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/alltypes.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/alltypes.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -441,11 +442,11 @@ func TestSQLDecoder_InvalidVersion(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/alltypes.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/alltypes.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -464,11 +465,11 @@ func TestSQLDecoder_WithConnectionPool(t *testing.T) {
 	require.NotNil(t, ePackage)
 
 	// create resource & resourceset
-	sqlURI := NewURI("testdata/alltypes.sqlite")
-	sqlResource := NewEResourceImpl()
+	sqlURI := ecore.NewURI("testdata/alltypes.sqlite")
+	sqlResource := ecore.NewEResourceImpl()
 	sqlResource.SetURI(sqlURI)
 
-	eResourceSet := NewEResourceSetImpl()
+	eResourceSet := ecore.NewEResourceSetImpl()
 	eResourceSet.GetResources().Add(sqlResource)
 	eResourceSet.GetPackageRegistry().RegisterPackage(ePackage)
 
@@ -510,7 +511,7 @@ func TestSQLDecoder_NewMemoryConnectionPool(t *testing.T) {
 }
 
 func TestSQLDecoder_DecodeObject(t *testing.T) {
-	mockResource := NewMockEResource(t)
+	mockResource := ecore.NewMockEResource(t)
 	mockResource.EXPECT().GetResourceSet().Return(nil).Once()
 	mockResource.EXPECT().GetURI().Return(nil).Once()
 	mockResource.EXPECT().GetObjectIDManager().Return(nil).Once()

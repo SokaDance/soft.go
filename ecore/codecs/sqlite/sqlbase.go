@@ -1,4 +1,4 @@
-package ecore
+package sqlite
 
 import (
 	"context"
@@ -10,6 +10,8 @@ import (
 	"sync/atomic"
 
 	"github.com/chebyrash/promise"
+	"github.com/masagroup/soft.go/ecore"
+	sqlcodec "github.com/masagroup/soft.go/ecore/codecs/sql"
 	"github.com/panjf2000/ants/v2"
 	"github.com/petermattis/goid"
 	"github.com/rqlite/sql"
@@ -108,10 +110,10 @@ loop:
 
 type sqlBase struct {
 	codecVersion     int64
-	schema           *sqlSchema
-	uri              *URI
+	schema           *sqlcodec.SQLSchema
+	uri              *ecore.URI
 	objectIDName     string
-	objectIDManager  EObjectIDManager
+	objectIDManager  ecore.EObjectIDManager
 	isObjectID       bool
 	isContainerID    bool
 	sqliteMutex      sync.Mutex

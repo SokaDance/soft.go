@@ -1,4 +1,4 @@
-package ecore
+package sqlite
 
 import (
 	"bytes"

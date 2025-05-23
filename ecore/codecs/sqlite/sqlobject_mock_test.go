@@ -1,14 +1,15 @@
-package ecore
+package sqlite
 
 import (
 	"testing"
 
+	"github.com/masagroup/soft.go/ecore"
 	"github.com/stretchr/testify/require"
 )
 
 func TestMockSQLObject_GetSQLID(t *testing.T) {
 	m := NewMockSQLObject(t)
-	r := NewMockRun(t)
+	r := ecore.NewMockRun(t)
 	m.EXPECT().GetSQLID().Return(1).Run(func() { r.Run() }).Once()
 	m.EXPECT().GetSQLID().RunAndReturn(func() int64 { return 1 }).Once()
 	m.EXPECT().GetSQLID()
@@ -22,7 +23,7 @@ func TestMockSQLObject_GetSQLID(t *testing.T) {
 func TestMockSQLObject_SetSQLID(t *testing.T) {
 	v := int64(1)
 	m := NewMockSQLObject(t)
-	r := NewMockRun(t, v)
+	r := ecore.NewMockRun(t, v)
 	m.EXPECT().SetSQLID(v).Return().Run(func(a int64) { r.Run(a) }).Once()
 	m.EXPECT().SetSQLID(v).RunAndReturn(func(a int64) {}).Once()
 	m.SetSQLID(v)

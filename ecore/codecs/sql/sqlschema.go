@@ -317,7 +317,7 @@ type SQLSchema struct {
 	objectIDName      string
 }
 
-type sqlSchemaOption interface {
+type SQLSchemaOption interface {
 	apply(s *SQLSchema)
 }
 
@@ -333,25 +333,25 @@ func newFuncSqlSchemaOption(f func(s *SQLSchema)) *funcSqlSchemaOption {
 	return &funcSqlSchemaOption{f: f}
 }
 
-func WithObjectIDName(objectIDName string) sqlSchemaOption {
+func WithObjectIDName(objectIDName string) SQLSchemaOption {
 	return newFuncSqlSchemaOption(func(s *SQLSchema) {
 		s.objectIDName = objectIDName
 	})
 }
 
-func WithContainerID(isContainerID bool) sqlSchemaOption {
+func WithContainerID(isContainerID bool) SQLSchemaOption {
 	return newFuncSqlSchemaOption(func(s *SQLSchema) {
 		s.isContainerID = isContainerID
 	})
 }
 
-func WithCreateIfNotExists(createIfNotExists bool) sqlSchemaOption {
+func WithCreateIfNotExists(createIfNotExists bool) SQLSchemaOption {
 	return newFuncSqlSchemaOption(func(s *SQLSchema) {
 		s.createIfNotExists = createIfNotExists
 	})
 }
 
-func NewSQLSchema(options ...sqlSchemaOption) *SQLSchema {
+func NewSQLSchema(options ...SQLSchemaOption) *SQLSchema {
 	// create scheam and apply options
 	s := &SQLSchema{
 		classSchemaMap: map[ecore.EClass]*SQLClassSchema{},
