@@ -91,17 +91,17 @@ func (o *CompactEStoreEObjectImpl) setCached(featureID int, value any) {
 	}
 	bit := uint64(1) << featureID
 	if (o.cacheMask & bit) == 0 {
-		count := bits.OnesCount64(o.cacheMask)
-		if count == 0 {
+		switch count := bits.OnesCount64(o.cacheMask); count {
+		case 0:
 			o.cachedValues = value
-		} else if count == 1 {
+		case 1:
 			idx := bits.OnesCount64(o.cacheMask & (bit - 1))
 			if idx == 0 {
 				o.cachedValues = []any{value, o.cachedValues}
 			} else {
 				o.cachedValues = []any{o.cachedValues, value}
 			}
-		} else {
+		default:
 			oldSlice := o.cachedValues.([]any)
 			idx := bits.OnesCount64(o.cacheMask & (bit - 1))
 			newSlice := make([]any, count+1)
@@ -112,9 +112,10 @@ func (o *CompactEStoreEObjectImpl) setCached(featureID int, value any) {
 		}
 		o.cacheMask |= bit
 	} else {
-		if bits.OnesCount64(o.cacheMask) == 1 {
+		switch count := bits.OnesCount64(o.cacheMask); count {
+		case 1:
 			o.cachedValues = value
-		} else {
+		default:
 			idx := bits.OnesCount64(o.cacheMask & (bit - 1))
 			o.cachedValues.([]any)[idx] = value
 		}
@@ -126,13 +127,13 @@ func (o *CompactEStoreEObjectImpl) unsetCached(featureID int) {
 		return
 	}
 	bit := uint64(1) << featureID
-	count := bits.OnesCount64(o.cacheMask)
-	if count == 1 {
+	switch count := bits.OnesCount64(o.cacheMask); count {
+	case 1:
 		o.cachedValues = nil
-	} else if count == 2 {
+	case 2:
 		idx := bits.OnesCount64(o.cacheMask & (bit - 1))
 		o.cachedValues = o.cachedValues.([]any)[1-idx]
-	} else {
+	default:
 		idx := bits.OnesCount64(o.cacheMask & (bit - 1))
 		s := o.cachedValues.([]any)
 		o.cachedValues = append(s[:idx], s[idx+1:]...)
