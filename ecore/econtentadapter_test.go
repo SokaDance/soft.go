@@ -525,7 +525,7 @@ type testContentAdapter struct {
 }
 
 func BenchmarkEContentAdapterWithBigModel(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		// load package
 		ePackage := loadPackage("library.complex.ecore")
 		assert.NotNil(b, ePackage)
@@ -547,7 +547,7 @@ func BenchmarkEContentAdapterWithBigModel(b *testing.B) {
 }
 
 func BenchmarkEContentAdapterWithTreeModel(b *testing.B) {
-	for n := 0; n < b.N; n++ {
+	for b.Loop() {
 		// load package
 		ePackage := loadPackage("tree.ecore")
 		assert.NotNil(b, ePackage)
